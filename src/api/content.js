@@ -69,3 +69,10 @@ export function getAllGp(){
         method: 'get'
     })
 }
+
+export function getFlows() {
+        return request({
+        url: 'http://101.37.246.72:8084/shenlvye/getRecord',
+        method: 'get'
+    })
+}

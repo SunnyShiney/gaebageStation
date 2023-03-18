@@ -10,6 +10,73 @@
       <template #time>
         <div class="text-week">今天是: {{ date }} {{ week }}</div>
       </template>
+      <template #warning>
+        <div class="text-week">
+          <!-- <i
+            id="dotClass"
+            style="
+         
+              background-color: #11e1b0;
+              
+              width: 25px;
+              height: 25px;
+              border-radius: 50%;
+              display: block;
+              margin-top: 2.2vh;
+            "
+            
+            @click="fault_details"
+          ></i> -->
+
+                  <div id="dotClass" @click="fault_details">
+        <div id="lamp" style="display: none;"></div>
+    </div>
+          <el-dialog
+            v-model="defaultVisible"
+            title="事故详情" 
+            @close="handleClose"
+          >
+                        <div
+                style="
+                  text-align: center;
+                  font-size: x-large;
+                  font-weight: bold;
+                "
+              >
+                事故原因：{{cause}}
+              </div>
+            <el-table
+              :data="defaultList"
+              style="width: 100%"
+              size="large"
+              class="data-table"
+            >
+              <el-table-column
+                prop="site_name"
+                label="站点名称"
+                min-width="150"
+                header-align="center"
+                align="center"
+                :show-overflow-tooltip="true"
+              >
+              </el-table-column>
+              <el-table-column
+                prop="Accident_cause"
+                label="事故详情"
+                min-width="250"
+                header-align="center"
+                align="center"
+                :show-overflow-tooltip="true"
+              />
+
+            </el-table>
+          </el-dialog>
+        </div>
+      </template>
+
+      <!-- <template #time>
+        <div class="text-week"></div>
+      </template> -->
 
       <!-- 用户信息 -->
       <template #userinfo>
@@ -64,7 +131,7 @@
             >
               <h5
                 class="card-title"
-                style="font-size: 25px; padding: 5px; text-align: center"
+                style="font-size: 20px; padding: 5px; text-align: center"
               >
                 金牛区垃圾净重量
               </h5>
@@ -85,7 +152,7 @@
             >
               <h5
                 class="card-title"
-                style="font-size: 25px; padding: 5px; text-align: center"
+                style="font-size: 20px; padding: 5px; text-align: center"
               >
                 小站垃圾净重量
               </h5>
@@ -104,14 +171,14 @@
               style="
                 height: 35vh;
                 width: 25vw;
-                padding: 10px;
+
                 margin: auto;
                 /* background-color: grey; */
               "
             >
               <h5
                 class="card-title"
-                style="font-size: 25px; padding: 5px; text-align: center"
+                style="font-size: 20px; padding: 5px; text-align: center"
               >
                 仁和星牛车辆
               </h5>
@@ -132,7 +199,7 @@
             >
               <h5
                 class="card-title"
-                style="font-size: 25px; padding: 5px; text-align: center"
+                style="font-size: 20px; padding: 5px; text-align: center"
               >
                 天府环境车辆
               </h5>
@@ -142,6 +209,7 @@
             </dv-border-box7>
           </div>
         </tdt-control>
+
         <tdt-polygon
           :path="polygon.path"
           :opacity="0.8"
@@ -480,6 +548,7 @@
         </el-dialog>
       </tdt-map>
     </div>
+
   </el-container>
 </template>
 
@@ -531,12 +600,17 @@ const huangzhongVisible = ref(false);
 const yingmenkouVisible = ref(false);
 const xingshengVisible = ref(false);
 const innerVisible = ref(false);
+const cause = ref("部分垃圾站网络断开！")
+
+
 // ========================================================sunny
 let tianfuhuanjing = new Map();
 const renheVisible = ref(false);
+const defaultVisible = ref(false);
 const tianfuVisible = ref(false);
 const tianfuList = reactive([]);
 const renheList = reactive([]);
+const defaultList = reactive([]);
 // const current_page = ref(1);
 // const total_records = ref(0);
 const queryName = ref("");
@@ -552,7 +626,64 @@ const banshichuSelectedStyle = ref(
 // 车辆的状态
 const tianfu_carStatus = ref("在活动");
 const renhe_carStatus = ref("在活动");
+const total_xihua = ref(0);
 
+// ===============================================事故故障详情
+const fault_details = () => {
+  var div = document.getElementById('dotClass')
+console.log("div.style.backgroundColor"+div.style.backgroundColor)
+  if(div.style.backgroundColor == "rgb(17, 225, 176)"){ defaultVisible.value = false; }
+    // 出现事故
+  if (div.style.backgroundColor == "rgb(225, 41, 17)") {
+    
+    axios({
+      url:
+        "/api/dump-record/check_status",
+
+      method: "get",
+    }).then(function (resp) {
+      var data = resp.data.data;
+      
+      for (var key in data) {
+        var default_site = {
+          site_name: key,
+          Accident_cause: data[key],
+        }
+        defaultList.push(default_site)
+      }
+      if (defaultList.length == 5) {
+        cause.value="数据采集服务器断开！"
+      }
+      console.log("data.length:"+defaultList.length)
+    });
+    defaultVisible.value = true;
+    console.log(defaultVisible.value)
+  }
+};
+
+const changeColor = () => {
+  axios({
+    url:
+      "/api/dump-record/check_status",
+
+    method: "get",
+  }).then(function (resp) {
+    var data = resp.data.data;
+    var div = document.getElementById('dotClass')
+    
+    // 出现事故
+    if (data.value != null) {
+      document.getElementById('dotClass').style.backgroundColor = "#E12911";
+      document.getElementById('lamp').style.display="block";
+    }
+    else document.getElementById('dotClass').style.backgroundColor = "#11e1b0";
+
+  });
+}
+changeColor();
+setInterval(changeColor,60000)
+
+// =========================================================
 // ============================================================
 
 var time = new Date().getTime();
@@ -923,13 +1054,13 @@ const state = reactive({
   zoom: 12,
   doubleClickZoom: false,
   scrollWheelZoom: true,
-  controls: [
-    //显示放大缩小的控件
-    {
-      name: "Zoom",
-      position: "bottomright",
-    },
-  ],
+  // controls: [
+  //   //显示放大缩小的控件
+  //   {
+  //     name: "Zoom",
+  //     // position: "bottomright",
+  //   },
+  // ],
   visible: true,
   copyright: true,
 });
@@ -3338,6 +3469,13 @@ onBeforeUnmount(() => {
   line-height: 60px;
   width: 100%;
 }
+.text-warning {
+  margin-left: 20px;
+  font-size: large;
+  color: #fff;
+  line-height: 60px;
+  width: 100%;
+}
 
 .text-title {
   margin-left: 20px;
@@ -3516,4 +3654,33 @@ onBeforeUnmount(() => {
   opacity: 1;
 }
 /* ============================================================= */
+       #dotClass{
+            width: 25px;
+            height: 25px;
+            margin-top: 2.2vh;
+            background-color: red;
+            border-radius:50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        #lamp{
+            width: 25px;
+            height: 25px;
+            animation-name: imageAnim;
+            animation-duration: 0.5s;
+            animation-iteration-count: infinite;
+            animation-direction: alternate;
+            animation-timing-function: ease;
+            animation-play-state: running;
+            background-image: radial-gradient(yellow,red);
+        }
+        @keyframes imageAnim{
+            0% {opacity: 0.8;}
+            80% {opacity: 0.5;}
+            100% {opacity: 0;}
+        }
+
+
 </style>

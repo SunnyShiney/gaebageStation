@@ -4,7 +4,7 @@
     <!-- 商标栏-->
     <el-row>
       <!--商标-->
-      <el-col :span="12">
+      <el-col :span="11">
         <div style="margin-top:15px">
           <el-page-header class="page-header" @back="goback" :icon="null">
             <!-- <template #icon>
@@ -21,11 +21,15 @@
         </div>
       </el-col>
       <!-- 时间 -->
-      <el-col :span="6" class="time">
+      
+      <el-col :span="5" class="time">
         <slot name="time"></slot>
       </el-col>
+            <el-col :span="3" class="warning">
+        <slot name="warning"></slot>
+      </el-col>
       <!--用户信息-->
-      <el-col :span="6" class="userinfo">
+      <el-col :span="5" class="userinfo">
         <slot name="userinfo"></slot>
       </el-col>
     </el-row>

@@ -6,6 +6,7 @@ import Home from '@/views/home/Home.vue'
 import Content from '@/views/content/Content.vue'
 import CarRecord from '@/views/content/components/CarRecord.vue'
 import CarWarning from '@/views/content/components/CarWarning.vue'
+import OsmoticFluid from '@/views/content/components/OsmoticFluid.vue'
 import CarDetailInfo from '@/views/content/components/CarDetailInfo.vue'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.min.js'
@@ -41,6 +42,10 @@ const routes = [
             },
                                 {
                 name: 'carWarning', path: 'carWarning', component: CarWarning,
+                meta: { requestAuth: false },
+            },
+            {
+                name: 'osmoticFluid', path: 'osmoticFluid', component: OsmoticFluid,
                 meta: { requestAuth: false },
             },
             {
