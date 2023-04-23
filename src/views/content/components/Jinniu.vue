@@ -77,16 +77,16 @@
       <div class="card-header"></div>
       <div class="card-body">
         <div>
-          <h5 class="card-title" style="font-size: 25px; padding: 5px">
+          <!-- <h5 class="card-title" style="font-size: 25px; padding: 5px">
             垃圾大站总量趋势统计
           </h5>
           <div class="card-body">
-            <!-- <dv-active-ring-chart :config="config_jgzm" style="width:25vw;height: 20vh;" /> -->
+    
             <dv-charts
               :option="config_jgzm"
               style="width: 95%; height: 40vh; margin: auto"
             />
-          </div>
+          </div> -->
         </div>
         <div class="data-view" style="width: 100%">
           <div class="card-Left" style="width: 40%">
@@ -132,11 +132,11 @@
             <h5 class="card-title" style="font-size: 25px; padding: 5px">
               过去一周各时段垃圾净重平均值统计
             </h5>
-            <!-- <div id="avgTime_Line"></div> -->
-            <dv-charts
+            <div id="avgTime_Lines"></div>
+            <!-- <dv-charts
               :option="avgTime_Line"
               style="width: 95%; height: 39vh; margin: auto; padding-top: 4vh"
-            />
+            /> -->
           </div>
 
           <!-- ===================================================================================================================================== -->
@@ -335,7 +335,7 @@ const carListRenhe = ref([]);
 const disabledDate = (time) => {
   return (
     time.getTime() < new Date("2022-8-31").getTime() ||
-    time.getTime() > new Date("2023-3-8").getTime()
+    time.getTime() > new Date().getTime()
   );
 };
 
@@ -735,7 +735,7 @@ site_name_date.value[2] = moment().add(-2, "d").format("YYYY-MM-DD");
 site_name_date.value[3] = moment().add(-1, "d").format("YYYY-MM-DD");
 site_name_date.value[4] = today_time;
 
-const site_name_sum = ref(0);
+var site_name_sum = ref(0);
 // 过去一周各时段垃圾净重平均值统计
 const site_name_total = reactive({
   title: {
@@ -765,6 +765,7 @@ const site_name_total = reactive({
 
 // =====================================================================================
 // 站点天，周，月，季度统计
+
 const search_site_name = () => {
   ElMessage("固定展示五个日/周/月，其余可导出报表查看详细信息！");
   site_name_date.value = [];
@@ -793,7 +794,7 @@ const search_site_name = () => {
         getSiteNameList(
           site_name_date.value[i],
           site_name_date.value[i],
-          "西华",
+          "all",
           1,
           10000,
           i
@@ -813,7 +814,7 @@ const search_site_name = () => {
         getSiteNameList(
           site_name_date.value[i],
           site_name_date.value[i],
-          "西华",
+          "all",
           1,
           10000,
           i
@@ -839,7 +840,7 @@ const search_site_name = () => {
         }
 
         //统计一个月的总量
-        getSiteNameList(start, end, "西华", 1, 10000, date);
+        getSiteNameList(start, end, "all", 1, 10000, date);
         //图标x轴标签展示月份
         site_name_date.value[date] = moment(start)
           .startOf("month")
@@ -881,6 +882,7 @@ const getSiteNameList = (start, end, site_name, pageNum, pageSize, date) => {
 
       site_name_yAxis.value[date] = Number(site_name_sum.value.toFixed(0));
     }
+
   });
 };
 const recent_days_total = (site_name_date) => {
@@ -888,7 +890,7 @@ const recent_days_total = (site_name_date) => {
     getSiteNameList(
       site_name_date.value[date],
       site_name_date.value[date],
-      "西华",
+      "all",
       1,
       10000,
       date
@@ -1869,10 +1871,14 @@ const pull_page = (page) => {
   // Object.keys(patrolInfo).map(key => {
   //     delete patrolInfo[key]
   // });
+  if (value.value[0] == null) {
+    start = moment().format("YYYY-MM-DD");
+    end = moment().add(1, "d").format("YYYY-MM-DD");
+  }
+
   current_page.value = page;
-  getQuery("红星", "transporter", start, end, page, 10).then(function (resp) {
+  getQuery("金牛", "transporter", start, end, page, 10).then(function (resp) {
     data.value = resp;
-    ifShowQueryResult.value = false;
   });
 };
 const config_alert = reactive({
@@ -2020,317 +2026,318 @@ const config_today = reactive({
   ],
 });
 // ======================================================================================================sunny
-// const fontSizeSwitch = (res) => {
-//   let clientWidth =
-//     window.innerWidth ||
-//     document.documentElement.clientWidth ||
-//     document.body.clientWidth
-//   if (!clientWidth) return
-//   let fontSize = 100 * (clientWidth / 1707)
-//   return res * fontSize
+const fontSizeSwitch = (res) => {
+  let clientWidth =
+    window.innerWidth ||
+    document.documentElement.clientWidth ||
+    document.body.clientWidth
+  if (!clientWidth) return
+  let fontSize = 100 * (clientWidth / 1707)
+  return res * fontSize
+}
+
+let category_chart = null
+let categoryOption = {
+  // 绘制图表
+  // title: {
+  //   text: 'ECharts 入门示例',
+  // },
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: {
+      type: 'shadow',
+    },
+  },
+  grid: {
+    left: '0%',
+    right: '10%',
+    bottom: '0%',
+    containLabel: true,
+  },
+
+  xAxis: {
+    data: ['0-4点', '4-8点', '8-12点', '12-16点', '16-20点', '20-24点'],
+
+    axisTick: {
+      alignWithLabel: true,
+    },
+    axisLabel: {
+      interval: 0,
+
+    },
+  },
+  yAxis: {
+    name: '垃圾净重',
+    //设置数轴显示内容的类型是数值
+    type: 'value',
+    //从0开始，刻度之间间隔10
+    min: 0,
+    interval: 30,
+    //显示竖轴的边框线
+    show: true,
+    axisLine: { show: true },
+    //显示刻度
+    axisTick: { show: true },
+    axisLabel: {
+      // fontSize: fontSizeSwitch(0.14),
+    },
+  },
+  //图表上显示不同颜色的折线表示什么意义，必须与下面series中name的名字对应才能显示出来！
+  // legend: {
+  //   data: ['一', '二','三','四','五','六','七'],
+  // },
+  //鼠标浮动在图表上会有具体内容展示
+  tooltip: {
+    trigger: 'axis',
+  },
+  series: [
+    {
+      //设置图表类型是折线图
+      name: '垃圾净重量平均值',
+      type: 'line',
+      data: [
+        { value: 0 },
+        { value: 0 },
+        { value: 0 },
+        { value: 0 },
+        { value: 0 },
+        { value: 0 },
+      ],
+      label: {
+        show: true,
+        position: 'top',
+        // fontSize: fontSizeSwitch(0.1),
+        formatter: '{c} 吨',
+      },
+      smooth:true,
+    },
+  ],
+}
+const create_category_data = () => {
+  let chartDom = document.getElementById('avgTime_Lines')
+  category_chart = echarts.init(chartDom)
+
+  category_chart.setOption(categoryOption)
+  window.addEventListener('resize', category_chart.resize)
+  console.log(categoryOption.series[0].data[0].value)
+
+  /**
+   * 先调用getQuery统计西华的不同时段垃圾净重量平均值，并绘制到图表上
+   * 再调用getQuery统计红星的，并在统计某一个时段的垃圾净重量平均值之后加上图表上已展示出来的西华对应时段的垃圾净重量平均值
+   */
+  getQuery(
+    '西华',
+    'transporter',
+    new Date(time - 7 * 24 * 60 * 60 * 1000).getFullYear() +
+      '-' +
+      (new Date(time - 7 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      '-' +
+      new Date(time - 7 * 24 * 60 * 60 * 1000).getDate(),
+    new Date(time).getFullYear() +
+      '-' +
+      (new Date(time).getMonth() + 1) +
+      '-' +
+      new Date(time).getDate(),
+    1,
+    10000
+  ).then(function (resp) {
+    total.value = 0
+    for (let i = 0; i < resp.length; i++) {
+      let index = resp[i].exactDate.indexOf('T')
+      let result = Number(resp[i].exactDate.substr(index + 1, 2))
+      if (0 <= result && result < 4) {
+        total.value = resp[i].netWeight + total.value
+      }
+    }
+    total.value = Math.floor((total.value / 1000) * 100) / 100 / 7
+    categoryOption.series[0].data[0].value = Number(total.value.toFixed(0))
+    category_chart.setOption(categoryOption)
+
+    total.value = 0
+    for (let i = 0; i < resp.length; i++) {
+      let index = resp[i].exactDate.indexOf('T')
+      let result = Number(resp[i].exactDate.substr(index + 1, 2))
+      if (4 <= result && result < 8) {
+        total.value = resp[i].netWeight + total.value
+      }
+    }
+    total.value = Math.floor((total.value / 1000) * 100) / 100 / 7
+    categoryOption.series[0].data[1].value = Number(total.value.toFixed(0))
+    category_chart.setOption(categoryOption)
+
+    total.value = 0
+    for (let i = 0; i < resp.length; i++) {
+      let index = resp[i].exactDate.indexOf('T')
+      let result = Number(resp[i].exactDate.substr(index + 1, 2))
+      if (8 <= result && result < 12) {
+        total.value = resp[i].netWeight + total.value
+      }
+    }
+    total.value = Math.floor((total.value / 1000) * 100) / 100 / 7
+    categoryOption.series[0].data[2].value = Number(total.value.toFixed(0))
+    category_chart.setOption(categoryOption)
+
+    total.value = 0
+    for (let i = 0; i < resp.length; i++) {
+      let index = resp[i].exactDate.indexOf('T')
+      let result = Number(resp[i].exactDate.substr(index + 1, 2))
+      if (12 <= result && result < 16) {
+        total.value = resp[i].netWeight + total.value
+      }
+    }
+    total.value = Math.floor((total.value / 1000) * 100) / 100 / 7
+    categoryOption.series[0].data[3].value = Number(total.value.toFixed(0))
+    category_chart.setOption(categoryOption)
+
+    total.value = 0
+    for (let i = 0; i < resp.length; i++) {
+      let index = resp[i].exactDate.indexOf('T')
+      let result = Number(resp[i].exactDate.substr(index + 1, 2))
+      if (16 <= result && result < 20) {
+        total.value = resp[i].netWeight + total.value
+      }
+    }
+    total.value = Math.floor((total.value / 1000) * 100) / 100 / 7
+    categoryOption.series[0].data[4].value = Number(total.value.toFixed(0))
+    category_chart.setOption(categoryOption)
+
+    total.value = 0
+    for (let i = 0; i < resp.length; i++) {
+      let index = resp[i].exactDate.indexOf('T')
+      let result = Number(resp[i].exactDate.substr(index + 1, 2))
+      if (20 <= result && result < 24) {
+        total.value = resp[i].netWeight + total.value
+      }
+    }
+    total.value = Math.floor((total.value / 1000) * 100) / 100 / 7
+    categoryOption.series[0].data[5].value = Number(total.value.toFixed(0))
+    category_chart.setOption(categoryOption)
+  })
+
+  getQuery(
+    '红星',
+    'transporter',
+    new Date(time - 6 * 24 * 60 * 60 * 1000).getFullYear() +
+      '-' +
+      (new Date(time - 6 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      '-' +
+      new Date(time - 6 * 24 * 60 * 60 * 1000).getDate(),
+    new Date(time).getFullYear() +
+      '-' +
+      (new Date(time).getMonth() + 1) +
+      '-' +
+      new Date(time).getDate(),
+    1,
+    10000
+  ).then(function (resp) {
+    total.value = 0
+    // console.log(categoryOption.series[0].data[0].value)
+    for (let i = 0; i < resp.length; i++) {
+      let index = resp[i].exactDate.indexOf('T')
+      let result = Number(resp[i].exactDate.substr(index + 1, 2))
+      if (0 <= result && result < 4) {
+        total.value = resp[i].netWeight + total.value
+      }
+    }
+    //加上的categoryOption.series[0].data[0].value是图表上对应时段的数据，也就是西华该时段的一周垃圾净重量的平均值
+    total.value =
+      Math.floor((total.value / 1000) * 100) / 100 / 7 +
+      categoryOption.series[0].data[0].value
+    categoryOption.series[0].data[0].value = Number(total.value.toFixed(0))
+    category_chart.setOption(categoryOption)
+
+    total.value = 0
+    for (let i = 0; i < resp.length; i++) {
+      let index = resp[i].exactDate.indexOf('T')
+      let result = Number(resp[i].exactDate.substr(index + 1, 2))
+      if (4 <= result && result < 8) {
+        total.value = resp[i].netWeight + total.value
+      }
+    }
+    total.value =
+      Math.floor((total.value / 1000) * 100) / 100 / 7 +
+      categoryOption.series[0].data[1].value
+    categoryOption.series[0].data[1].value = Number(total.value.toFixed(0))
+    category_chart.setOption(categoryOption)
+
+    total.value = 0
+    for (let i = 0; i < resp.length; i++) {
+      let index = resp[i].exactDate.indexOf('T')
+      let result = Number(resp[i].exactDate.substr(index + 1, 2))
+      if (8 <= result && result < 12) {
+        total.value = resp[i].netWeight + total.value
+      }
+    }
+    total.value =
+      Math.floor((total.value / 1000) * 100) / 100 / 7 +
+      categoryOption.series[0].data[2].value
+    categoryOption.series[0].data[2].value = Number(total.value.toFixed(0))
+    category_chart.setOption(categoryOption)
+
+    total.value = 0
+    for (let i = 0; i < resp.length; i++) {
+      let index = resp[i].exactDate.indexOf('T')
+      let result = Number(resp[i].exactDate.substr(index + 1, 2))
+      if (12 <= result && result < 16) {
+        total.value = resp[i].netWeight + total.value
+      }
+    }
+    total.value =
+      Math.floor((total.value / 1000) * 100) / 100 / 7 +
+      categoryOption.series[0].data[3].value
+    categoryOption.series[0].data[3].value = Number(total.value.toFixed(0))
+    category_chart.setOption(categoryOption)
+
+    total.value = 0
+    for (let i = 0; i < resp.length; i++) {
+      let index = resp[i].exactDate.indexOf('T')
+      let result = Number(resp[i].exactDate.substr(index + 1, 2))
+      if (16 <= result && result < 20) {
+        total.value = resp[i].netWeight + total.value
+      }
+    }
+    total.value =
+      Math.floor((total.value / 1000) * 100) / 100 / 7 +
+      categoryOption.series[0].data[4].value
+    categoryOption.series[0].data[4].value = Number(total.value.toFixed(0))
+    category_chart.setOption(categoryOption)
+
+    total.value = 0
+    for (let i = 0; i < resp.length; i++) {
+      let index = resp[i].exactDate.indexOf('T')
+      let result = Number(resp[i].exactDate.substr(index + 1, 2))
+      if (20 <= result && result < 24) {
+        total.value = resp[i].netWeight + total.value
+      }
+    }
+    total.value =
+      Math.floor((total.value / 1000) * 100) / 100 / 7 +
+      categoryOption.series[0].data[5].value
+    categoryOption.series[0].data[5].value = Number(total.value.toFixed(0))
+    category_chart.setOption(categoryOption)
+  })
+}
+
+// const ageGenderRequest = () => {
+
 // }
 
-// let category_chart = null
-// let categoryOption = {
-//   // 绘制图表
-//   // title: {
-//   //   text: 'ECharts 入门示例',
-//   // },
-//   tooltip: {
-//     trigger: 'axis',
-//     axisPointer: {
-//       type: 'shadow',
-//     },
-//   },
-//   grid: {
-//     left: '0%',
-//     right: '10%',
-//     bottom: '0%',
-//     containLabel: true,
-//   },
+onMounted(() => {
+  create_category_data()
+})
 
-//   xAxis: {
-//     data: ['0-4点', '4-8点', '8-12点', '12-16点', '16-20点', '20-24点'],
-
-//     axisTick: {
-//       alignWithLabel: true,
-//     },
-//     axisLabel: {
-//       interval: 0,
-//       rotate: 50,
-//     },
-//   },
-//   yAxis: {
-//     name: '垃圾净重',
-//     //设置数轴显示内容的类型是数值
-//     type: 'value',
-//     //从0开始，刻度之间间隔10
-//     min: 0,
-//     interval: 30,
-//     //显示竖轴的边框线
-//     show: true,
-//     axisLine: { show: true },
-//     //显示刻度
-//     axisTick: { show: true },
-//     axisLabel: {
-//       // fontSize: fontSizeSwitch(0.14),
-//     },
-//   },
-//   //图表上显示不同颜色的折线表示什么意义，必须与下面series中name的名字对应才能显示出来！
-//   // legend: {
-//   //   data: ['一', '二','三','四','五','六','七'],
-//   // },
-//   //鼠标浮动在图表上会有具体内容展示
-//   tooltip: {
-//     trigger: 'axis',
-//   },
-//   series: [
-//     {
-//       //设置图表类型是折线图
-//       name: '垃圾净重量平均值',
-//       type: 'line',
-//       data: [
-//         { value: 0 },
-//         { value: 0 },
-//         { value: 0 },
-//         { value: 0 },
-//         { value: 0 },
-//         { value: 0 },
-//       ],
-//       label: {
-//         show: true,
-//         position: 'top',
-//         // fontSize: fontSizeSwitch(0.1),
-//         formatter: '{c} 吨',
-//       },
-//     },
-//   ],
-// }
-// const create_category_data = () => {
-//   let chartDom = document.getElementById('avgTime_Line')
-//   category_chart = echarts.init(chartDom)
-
-//   category_chart.setOption(categoryOption)
-//   window.addEventListener('resize', category_chart.resize)
-//   console.log(categoryOption.series[0].data[0].value)
-
-//   /**
-//    * 先调用getQuery统计西华的不同时段垃圾净重量平均值，并绘制到图表上
-//    * 再调用getQuery统计红星的，并在统计某一个时段的垃圾净重量平均值之后加上图表上已展示出来的西华对应时段的垃圾净重量平均值
-//    */
-//   getQuery(
-//     '西华',
-//     'transporter',
-//     new Date(time - 7 * 24 * 60 * 60 * 1000).getFullYear() +
-//       '-' +
-//       (new Date(time - 7 * 24 * 60 * 60 * 1000).getMonth() + 1) +
-//       '-' +
-//       new Date(time - 7 * 24 * 60 * 60 * 1000).getDate(),
-//     new Date(time).getFullYear() +
-//       '-' +
-//       (new Date(time).getMonth() + 1) +
-//       '-' +
-//       new Date(time).getDate(),
-//     1,
-//     10000
-//   ).then(function (resp) {
-//     total.value = 0
-//     for (let i = 0; i < resp.length; i++) {
-//       let index = resp[i].exactDate.indexOf('T')
-//       let result = Number(resp[i].exactDate.substr(index + 1, 2))
-//       if (0 <= result && result < 4) {
-//         total.value = resp[i].netWeight + total.value
-//       }
-//     }
-//     total.value = Math.floor((total.value / 1000) * 100) / 100 / 7
-//     categoryOption.series[0].data[0].value = Number(total.value.toFixed(0))
-//     category_chart.setOption(categoryOption)
-
-//     total.value = 0
-//     for (let i = 0; i < resp.length; i++) {
-//       let index = resp[i].exactDate.indexOf('T')
-//       let result = Number(resp[i].exactDate.substr(index + 1, 2))
-//       if (4 <= result && result < 8) {
-//         total.value = resp[i].netWeight + total.value
-//       }
-//     }
-//     total.value = Math.floor((total.value / 1000) * 100) / 100 / 7
-//     categoryOption.series[0].data[1].value = Number(total.value.toFixed(0))
-//     category_chart.setOption(categoryOption)
-
-//     total.value = 0
-//     for (let i = 0; i < resp.length; i++) {
-//       let index = resp[i].exactDate.indexOf('T')
-//       let result = Number(resp[i].exactDate.substr(index + 1, 2))
-//       if (8 <= result && result < 12) {
-//         total.value = resp[i].netWeight + total.value
-//       }
-//     }
-//     total.value = Math.floor((total.value / 1000) * 100) / 100 / 7
-//     categoryOption.series[0].data[2].value = Number(total.value.toFixed(0))
-//     category_chart.setOption(categoryOption)
-
-//     total.value = 0
-//     for (let i = 0; i < resp.length; i++) {
-//       let index = resp[i].exactDate.indexOf('T')
-//       let result = Number(resp[i].exactDate.substr(index + 1, 2))
-//       if (12 <= result && result < 16) {
-//         total.value = resp[i].netWeight + total.value
-//       }
-//     }
-//     total.value = Math.floor((total.value / 1000) * 100) / 100 / 7
-//     categoryOption.series[0].data[3].value = Number(total.value.toFixed(0))
-//     category_chart.setOption(categoryOption)
-
-//     total.value = 0
-//     for (let i = 0; i < resp.length; i++) {
-//       let index = resp[i].exactDate.indexOf('T')
-//       let result = Number(resp[i].exactDate.substr(index + 1, 2))
-//       if (16 <= result && result < 20) {
-//         total.value = resp[i].netWeight + total.value
-//       }
-//     }
-//     total.value = Math.floor((total.value / 1000) * 100) / 100 / 7
-//     categoryOption.series[0].data[4].value = Number(total.value.toFixed(0))
-//     category_chart.setOption(categoryOption)
-
-//     total.value = 0
-//     for (let i = 0; i < resp.length; i++) {
-//       let index = resp[i].exactDate.indexOf('T')
-//       let result = Number(resp[i].exactDate.substr(index + 1, 2))
-//       if (20 <= result && result < 24) {
-//         total.value = resp[i].netWeight + total.value
-//       }
-//     }
-//     total.value = Math.floor((total.value / 1000) * 100) / 100 / 7
-//     categoryOption.series[0].data[5].value = Number(total.value.toFixed(0))
-//     category_chart.setOption(categoryOption)
-//   })
-
-//   getQuery(
-//     '红星',
-//     'transporter',
-//     new Date(time - 6 * 24 * 60 * 60 * 1000).getFullYear() +
-//       '-' +
-//       (new Date(time - 6 * 24 * 60 * 60 * 1000).getMonth() + 1) +
-//       '-' +
-//       new Date(time - 6 * 24 * 60 * 60 * 1000).getDate(),
-//     new Date(time).getFullYear() +
-//       '-' +
-//       (new Date(time).getMonth() + 1) +
-//       '-' +
-//       new Date(time).getDate(),
-//     1,
-//     10000
-//   ).then(function (resp) {
-//     total.value = 0
-//     // console.log(categoryOption.series[0].data[0].value)
-//     for (let i = 0; i < resp.length; i++) {
-//       let index = resp[i].exactDate.indexOf('T')
-//       let result = Number(resp[i].exactDate.substr(index + 1, 2))
-//       if (0 <= result && result < 4) {
-//         total.value = resp[i].netWeight + total.value
-//       }
-//     }
-//     //加上的categoryOption.series[0].data[0].value是图表上对应时段的数据，也就是西华该时段的一周垃圾净重量的平均值
-//     total.value =
-//       Math.floor((total.value / 1000) * 100) / 100 / 7 +
-//       categoryOption.series[0].data[0].value
-//     categoryOption.series[0].data[0].value = Number(total.value.toFixed(0))
-//     category_chart.setOption(categoryOption)
-
-//     total.value = 0
-//     for (let i = 0; i < resp.length; i++) {
-//       let index = resp[i].exactDate.indexOf('T')
-//       let result = Number(resp[i].exactDate.substr(index + 1, 2))
-//       if (4 <= result && result < 8) {
-//         total.value = resp[i].netWeight + total.value
-//       }
-//     }
-//     total.value =
-//       Math.floor((total.value / 1000) * 100) / 100 / 7 +
-//       categoryOption.series[0].data[1].value
-//     categoryOption.series[0].data[1].value = Number(total.value.toFixed(0))
-//     category_chart.setOption(categoryOption)
-
-//     total.value = 0
-//     for (let i = 0; i < resp.length; i++) {
-//       let index = resp[i].exactDate.indexOf('T')
-//       let result = Number(resp[i].exactDate.substr(index + 1, 2))
-//       if (8 <= result && result < 12) {
-//         total.value = resp[i].netWeight + total.value
-//       }
-//     }
-//     total.value =
-//       Math.floor((total.value / 1000) * 100) / 100 / 7 +
-//       categoryOption.series[0].data[2].value
-//     categoryOption.series[0].data[2].value = Number(total.value.toFixed(0))
-//     category_chart.setOption(categoryOption)
-
-//     total.value = 0
-//     for (let i = 0; i < resp.length; i++) {
-//       let index = resp[i].exactDate.indexOf('T')
-//       let result = Number(resp[i].exactDate.substr(index + 1, 2))
-//       if (12 <= result && result < 16) {
-//         total.value = resp[i].netWeight + total.value
-//       }
-//     }
-//     total.value =
-//       Math.floor((total.value / 1000) * 100) / 100 / 7 +
-//       categoryOption.series[0].data[3].value
-//     categoryOption.series[0].data[3].value = Number(total.value.toFixed(0))
-//     category_chart.setOption(categoryOption)
-
-//     total.value = 0
-//     for (let i = 0; i < resp.length; i++) {
-//       let index = resp[i].exactDate.indexOf('T')
-//       let result = Number(resp[i].exactDate.substr(index + 1, 2))
-//       if (16 <= result && result < 20) {
-//         total.value = resp[i].netWeight + total.value
-//       }
-//     }
-//     total.value =
-//       Math.floor((total.value / 1000) * 100) / 100 / 7 +
-//       categoryOption.series[0].data[4].value
-//     categoryOption.series[0].data[4].value = Number(total.value.toFixed(0))
-//     category_chart.setOption(categoryOption)
-
-//     total.value = 0
-//     for (let i = 0; i < resp.length; i++) {
-//       let index = resp[i].exactDate.indexOf('T')
-//       let result = Number(resp[i].exactDate.substr(index + 1, 2))
-//       if (20 <= result && result < 24) {
-//         total.value = resp[i].netWeight + total.value
-//       }
-//     }
-//     total.value =
-//       Math.floor((total.value / 1000) * 100) / 100 / 7 +
-//       categoryOption.series[0].data[5].value
-//     categoryOption.series[0].data[5].value = Number(total.value.toFixed(0))
-//     category_chart.setOption(categoryOption)
-//   })
-// }
-
-// // const ageGenderRequest = () => {
-
-// // }
-
-// onMounted(() => {
-//   create_category_data()
-// })
-
-// onBeforeUnmount(() => {
-//   window.removeEventListener('resize', category_chart.resize)
-//   if (category_chart) {
-//     category_chart.dispose()
-//     category_chart = null
-//   }
-// })
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', category_chart.resize)
+  if (category_chart) {
+    category_chart.dispose()
+    category_chart = null
+  }
+})
 
 // ===========================================================================================================
 </script>
 
-<style>
+<style  lang="scss" scoped>
 .data-view {
   width: 100%;
   display: flex;
@@ -2343,12 +2350,15 @@ const config_today = reactive({
   width: 60%;
   /* padding-left:2vw; */
 }
-#avgTime_Line {
+#avgTime_Lines {
   /* padding-left:2vw; */
   height: 22vw;
   /* width:50%; */
 }
 .card-body {
   width: 100%;
+}
+::v-deep .el-tabs__item{
+  font-size:0.3rem;
 }
 </style>

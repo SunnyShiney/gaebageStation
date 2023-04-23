@@ -26,6 +26,7 @@ import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import 'dayjs/locale/zh-cn';
 import weekRange from 'date-picker-week-range'
 import DateWeekRange from 'date-week-range'
+import './assets/font/iconfont.css'
 
 
 

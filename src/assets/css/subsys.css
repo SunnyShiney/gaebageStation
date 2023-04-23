@@ -2,24 +2,23 @@
 .dcontainer{
     display: flex;
     flex-direction: column;
-    /* width:100%; */
     height: 100%;
   }
   .logo-title {
-    font-size: 24px;
+    font-size: .3rem;
     color: #ffffff;
-    line-height: 50px;
+    line-height: .625rem;
   }
   .logo-title::after{
     content: "|";
-    margin-left: 10px;
-    margin-right: 10px;
+    margin-left: .125rem;
+    margin-right: .125rem;
   }
   
   .content{
-    font-size: 18px;
+    font-size: .225rem;
     color: #ffffff;
-    line-height: 50px;
+    line-height: .625rem;
   }
   
   .data-container{

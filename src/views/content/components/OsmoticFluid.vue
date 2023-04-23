@@ -109,13 +109,13 @@
             size="large"
             @change="search_site_name"
           />
-          <el-button
+          <!-- <el-button
             type="primary"
             size="large"
             style="margin-left: 10px"
-            @click="junk_exportExcel"
+            @click="car_exportExcel"
             >打印报表</el-button
-          >
+          > -->
           <dv-charts
             :option="site_name_total"
             style="width: 95%; height: 40vh; margin: auto"
@@ -176,7 +176,7 @@ const site_name_option = [
 // 禁选今天以后的日期以及没有数据的
 const disabledDate = (time) => {
   return (
-    time.getTime() < new Date("2022-8-31").getTime() ||
+    time.getTime() < new Date("2023-3-12").getTime() ||
     time.getTime() > new Date().getTime()
   );
 };
@@ -236,8 +236,6 @@ const search_site_name = () => {
       type: "error",
     });
   } else {
-    var d = new Date(site_name_select_value.value);
-
     if (site_name_select_way.value == "day") {
       start = moment(site_name_select_value.value[0]).format("YYYY-MM-DD");
       end = moment(site_name_select_value.value[1]).format("YYYY-MM-DD");
@@ -247,13 +245,20 @@ const search_site_name = () => {
           .add(i, "d")
           .format("YYYY-MM-DD");
         console.log(site_name_date.value[i]);
-        getSiteNameList(
-          1,
-          site_name_date.value[i] + "T23:59:00",
-          site_name_date.value[i] + "T23:59:00",
-          10,
-          i
-        );
+
+        if (site_name_date.value[i] != moment().format("YYYY-MM-DD")) {
+          getSiteNameList(
+            1,
+            moment(site_name_date.value[i]).add(-1, "d").format("YYYY-MM-DD") +
+              "T23:59:00",
+            site_name_date.value[i] + "T23:59:00",
+            10,
+            i
+          );
+        }
+        else if (site_name_date.value[i] == moment().format("YYYY-MM-DD")) {
+          site_name_yAxis.value[i] = today_flow.value;
+        }
       }
     }
 
@@ -265,10 +270,14 @@ const search_site_name = () => {
         start = moment(site_name_select_value.value[0])
           .add(date, "months")
           .format("YYYY-MM-DD");
-
-        end = moment(start).endOf("month").format("YYYY-MM-DD");
+        if (moment(start).format("YYYY-MM") == moment().format("YYYY-MM")) {
+          end = moment().format("YYYY-MM-DD");
+        } else {
+          end = moment(start).endOf("month").format("YYYY-MM-DD");
+        }
+        console.log("end:" + end);
         //统计一个月的总量
-        getSiteNameList(start, end, date);
+        getSiteNameList(1, start + "T23:59:00", end + "T23:59:00", 1000, date);
         //图标x轴标签展示月份
         site_name_date.value[date] = moment(start)
           .startOf("month")
@@ -279,8 +288,6 @@ const search_site_name = () => {
     // site_name_select_way.value = "";
   }
 };
-
-var Flows=ref(0,0,0,0,0);
 
 const getSiteNameList = (pageNum, start, end, pageSize, date) => {
   axios({
@@ -298,85 +305,123 @@ const getSiteNameList = (pageNum, start, end, pageSize, date) => {
     if (resp.status == 200) {
       var data = resp.data.data.records;
 
-      for (var key in data) {
-       
-        console.log(data[key].w00000l);
-        site_name_yAxis.value[date] = Number(data[key].w00000l);
+      console.log("data:" + data.length);
+      if (data.length == 0) {
+        site_name_yAxis.value[date] = 0;
       }
+      var total = 0;
+
+      let a = end.indexOf("T");
+      let l = end.substring(0, a);
+      if (l == moment().format("YYYY-MM-DD")) {
+        total = total + today_flow.value;
+      }
+      console.log("total:" + total);
+      for (var key in data) {
+        console.log("data[key].flow:" + data[key].flow);
+        total = total + Number(data[key].flow);
+      }
+
+      site_name_yAxis.value[date] = total;
     }
   });
 };
+var today_flow = ref(0);
 const recent_days_total = (site_name_date) => {
-  for (var date = 0; date < 5; date++) {
-    getSiteNameList(
-      1,
-      site_name_date.value[date] + "T23:59:00",
-      site_name_date.value[date] + "T23:59:00",
-      10,
-      date
-    );
-    
+  for (var date = 0; date < 4; date++) {
+    if (date == 0) {
+      getSiteNameList(
+        1,
+        moment(site_name_date.value[date]).add("-1", "d").format("YYYY-MM-DD") +
+          "T23:59:00",
+        site_name_date.value[date] + "T23:59:00",
+        10,
+        date
+      );
+    } else {
+      getSiteNameList(
+        1,
+        site_name_date.value[date - 1] + "T23:59:00",
+        site_name_date.value[date] + "T23:59:00",
+        10,
+        date
+      );
+    }
   }
+
+  axios({
+    url: "http://101.37.246.72:8084/shenlvye/getRecord",
+    method: "get",
+  }).then(function (resp) {
+    if (resp.status == 200) {
+      var data = resp.data.data;
+      site_name_yAxis.value[4] = data.今日流量;
+      today_flow.value = data.今日流量;
+    }
+  });
 };
 recent_days_total(site_name_date);
 
-const getJunkForm = (start, end, site_name) => {
-  axios({
-    url:
-      "/api/dump-record/site_data_day/" + start + "/" + end + "/" + site_name,
+const car_exportExcel = () => {
+  const titleArr = ["时间", "当天流量", "累计流量"]; //表头中文名
 
-    method: "get",
-    // 下载后台文件：请求头部一定要加上responseType:'blob'
-    responseType: "blob",
-  }).then(function (res) {
-    if (res.status == 200) {
-      console.log("成功了！");
-      // 生成blob对象 定义下载格式
-      let blob = new Blob([res.data], { type: res.type });
-      // 获取文件名
-      let filename = res.headers["content-disposition"];
-      filename = decodeURIComponent(filename.split("filename=")[1]);
-      // 创建 a标签 执行下载
-      let downloadElement = document.createElement("a");
-      let href = window.URL.createObjectURL(blob); //创建下载的链接
-      downloadElement.href = href;
-      downloadElement.download = filename; //下载后文件名
-      document.body.appendChild(downloadElement); // 项目插入a元素
-      downloadElement.click(); //点击下载
-      document.body.removeChild(downloadElement); //下载完成移除元素
-      window.URL.revokeObjectURL(href); //释放blob对象
+  exportExcel(
+    json_data.value,
+    start + "至" + end + "垃圾站渗滤液流量统计",
+    titleArr,
+    "sheetName"
+  );
+};
+
+function exportExcel(json, name, titleArr, sheetName) {
+  /* convert state to workbook */
+  var data = new Array();
+  var keyArray = new Array();
+  const getLength = function (obj) {
+    var count = 0;
+    for (var i in obj) {
+      if (obj.hasOwnProperty(i)) {
+        count++;
+      }
     }
-  });
-};
+    return count;
+  };
+  for (const key1 in json) {
+    if (json.hasOwnProperty(key1)) {
+      const element = json[key1];
+      var rowDataArray = new Array();
+      for (const key2 in element) {
+        if (element.hasOwnProperty(key2)) {
+          const element2 = element[key2];
+          rowDataArray.push(element2);
+          if (keyArray.length < getLength(element)) {
+            keyArray.push(key2);
+          }
+        }
+      }
+      data.push(rowDataArray);
+    }
+  }
+  // keyArray为英文字段表头
+  data.splice(0, 0, keyArray, titleArr);
+  console.log("data", data);
+  const ws = XLSX.utils.aoa_to_sheet(data);
+  const wb = XLSX.utils.book_new();
+  let wscols = [
+    // 每列不同宽度px
+    { wpx: 160 },
+    { wpx: 80 },
+    { wpx: 80 },
+  ];
+  ws["!cols"] = wscols;
+  // 此处隐藏英文字段表头
+  var wsrows = [{ hidden: true }];
+  ws["!rows"] = wsrows; // ws - worksheet
+  XLSX.utils.book_append_sheet(wb, ws, sheetName);
+  /* generate file and send to client */
+  XLSX.writeFile(wb, name + ".xlsx");
+}
 
-var junk_export_start = moment().add(-4, "d").format("YYYY-MM-DD");
-var junk_export_end = today_time;
-
-// 导出垃圾报表
-const junk_exportExcel = () => {
-  // if (
-  //   site_name_select_value.value[0] != null &&
-  //   site_name_select_value.value[1] != null
-  // ) {
-  //   if (site_name_select_way.value == "day") {
-  //     junk_export_start = moment(site_name_select_value.value[0]).format(
-  //       "YYYY-MM-DD"
-  //     );
-  //     junk_export_end = moment(site_name_select_value.value[1]).format(
-  //       "YYYY-MM-DD"
-  //     );
-  //   }
-  //   if (site_name_select_way.value == "month") {
-  //     junk_export_start = moment(site_name_select_value.value[0])
-  //       .startOf("month")
-  //       .format("YYYY-MM-DD");
-  //     junk_export_end = moment(site_name_select_value.value[1])
-  //       .endOf("month")
-  //       .format("YYYY-MM-DD");
-  //   }
-  // }
-  // getJunkForm(junk_export_start, junk_export_end, "西华");
-};
 //===============================================================================================================
 
 const getCarWarning = () => {

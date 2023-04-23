@@ -215,7 +215,7 @@ getPersonInfo();
 }
 
 .card-header {
-  font-size: 1.5rem;
+  font-size: 0.4rem;
 }
 
 .case-box-body {
@@ -229,7 +229,7 @@ getPersonInfo();
 }
 
 :deep(.el-form-item__label) {
-  font-size: 1rem;
+  font-size: 0.3rem;
 }
 
 :deep(.is-disabled .el-input__inner) {
@@ -239,4 +239,13 @@ getPersonInfo();
 :deep(.el-input.is-disabled) {
   cursor: text;
 }
+.card{
+  --bs-card-spacer-y: 0.3rem;
+--bs-card-spacer-x: 0.3rem;
+--bs-card-border-radius: 0.175rem;
+--bs-card-inner-border-radius: calc(0.175rem - 1px);
+--bs-card-cap-padding-y: 0.2rem;
+--bs-card-cap-padding-x: 0.5rem;
+}
+
 </style>

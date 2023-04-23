@@ -34,6 +34,25 @@
           style="font-size: 25px; padding: 5px"
           size="large"
         >
+                  <el-option-group label="天府环境" value="天府环境">
+            <el-option
+              v-for="car in carListTianfu"
+              :key="car.carNumber"
+              :label="car.carNumber"
+              :value="car.carNumber"
+            >
+              <span style="float: left">{{ car.carNumber }}</span>
+              <span
+                style="
+                  float: right;
+                  color: var(--el-text-color-secondary);
+                  font-size: 13px;
+                  padding: 5px;
+                "
+                >{{ car.company }}</span
+              >
+            </el-option>
+          </el-option-group>
           <el-option-group label="仁和星牛" value="仁和星牛">
             <el-option
               v-for="car in carListRenhe"
@@ -53,25 +72,7 @@
               >
             </el-option>
           </el-option-group>
-          <el-option-group label="天府环境" value="天府环境">
-            <el-option
-              v-for="car in carListTianfu"
-              :key="car.carNumber"
-              :label="car.carNumber"
-              :value="car.carNumber"
-            >
-              <span style="float: left">{{ car.carNumber }}</span>
-              <span
-                style="
-                  float: right;
-                  color: var(--el-text-color-secondary);
-                  font-size: 13px;
-                  padding: 5px;
-                "
-                >{{ car.company }}</span
-              >
-            </el-option>
-          </el-option-group>
+
         </el-select>
         <el-button @click="showCars()">点击搜索</el-button>
       </div>
@@ -108,7 +109,7 @@ import { getCars } from "@/api/content";
 import { getCarGps } from "@/api/content";
 import { ElMessage, ElDialog, tabBarProps } from "element-plus";
 import { useRoute } from "vue-router";
-const carValue = ref("川ABS126");
+const carValue = ref("川AAB052");
 const carData = ref([]);
 const carList = ref([]);
 const carListTianfu = ref([]);
@@ -117,7 +118,7 @@ const route = useRoute();
 
 // 禁选今天以后的日期以及没有数据的
 const disabledDate = (time) => {
-        return time.getTime() < new Date("2022-8-31").getTime() || time.getTime() > new Date("2023-3-8").getTime()
+        return time.getTime() < new Date("2022-8-31").getTime() || time.getTime() > new Date().getTime()
 }
 
 const car = ref({});
@@ -212,13 +213,13 @@ const shortcuts = [
 var current_car = {
   carVisible: true,
   location: state.center,
-  company: "仁和星牛",
+  company: "天府环境",
   current_path: [
     [104.001068, 30.749755],
     [104.001173, 30.749773],
   ],
   icon: {
-    iconUrl: require("@/assets/truck.png"),
+    iconUrl: require("@/assets/truck_tianfu.png"),
     iconSize: [35, 35],
     iconAnchor: [9, 26],
   },
@@ -257,6 +258,15 @@ onBeforeMount(() => {
     carData.value = data;
 
     for (var i = 0; i < carData.value.length; i++) {
+
+            if (carData.value[i].company == "天府环境") {
+        var car = {
+          carNumber: carData.value[i].carNumber,
+          company: "天府环境",
+        };
+        carListTianfu.value.push(car);
+        //console.log(carListTianfu.value)
+      }
       if (carData.value[i].company == "仁和星牛") {
         //console.log(carData.value[i].carNumber)
         var car = {
@@ -266,14 +276,7 @@ onBeforeMount(() => {
         carListRenhe.value.push(car);
       }
 
-      if (carData.value[i].company == "天府环境") {
-        var car = {
-          carNumber: carData.value[i].carNumber,
-          company: "天府环境",
-        };
-        carListTianfu.value.push(car);
-        //console.log(carListTianfu.value)
-      }
+
     }
   });
 });
@@ -285,7 +288,8 @@ onMounted(() => {
   }
 });
 function showCars() {
-  console.log("车辆："+carValue.value);
+  console.log("车辆：" + carValue.value);
+
   getCars().then((data) => {
     for (var i = 0; i < data.length; i++) {
       if (data[i].carNumber == carValue.value) {

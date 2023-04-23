@@ -76,18 +76,18 @@
           />
         </div>
       </div>
-      <div>
+      <!-- <div>
         <h5 class="card-title" style="font-size: 25px; padding: 5px">
           垃圾趋势统计
         </h5>
         <div class="card-body">
-          <!-- <dv-active-ring-chart :config="config_jgzm" style="width:25vw;height: 20vh;" /> -->
+       
           <dv-charts
             :option="config_jgzm"
             style="width: 95%; height: 40vh; margin: auto"
           />
         </div>
-      </div>
+      </div> -->
 
       <div class="data-view" style="width: 100%">
         <div class="card-Left" style="width: 40%">
@@ -116,19 +116,31 @@
             过去一周各时段垃圾净重平均值统计
           </h5>
 
-          <!-- <div id="avgTime_Line"></div> -->
-          <dv-charts
+          <div id="avgTime_Lines"></div>
+          <!-- <dv-charts
             :option="avgTime_Line"
             style="width: 95%; height: 39vh; margin: auto; padding-top: 4vh"
-          />
+          /> -->
         </div>
 
         <!-- ===================================================================================================================================== -->
       </div>
-      <div>
-        <h5 class="card-title" style="font-size: 25px; padding: 5px">
-          垃圾记录
-        </h5>
+
+       <el-tabs
+            v-model="activeName"
+            @tab-click="handleClick"
+            :stretch="false"
+            style="
+              color: white;
+            
+              width: 100%;
+              caret-color: transparent;
+              margin-top: 1em;
+            "
+          >
+            <el-tab-pane label="垃圾记录" name="first" >
+                <div>
+
         <el-date-picker
           v-model="value"
           type="daterange"
@@ -140,6 +152,7 @@
           :shortcuts="shortcuts"
           @change="changeDate"
           size="large"
+          style="margin:0.5rem 0 0.5rem"
         />
         <!-- <el-button @click="excuteQuery" size="large" type="primary" style="padding:20px">查询</el-button> -->
 
@@ -194,7 +207,200 @@
           @current-change="pull_page"
         />
       </div>
-      <div class="car-transport-header" style="margin-top: 8vh">
+            </el-tab-pane>
+            <el-tab-pane label="车辆运输量统计" name="second" :lazy="true">
+
+          <el-select
+            v-model="queryCarNum"
+            placeholder="选择车牌信息"
+            style="font-size: 25px"
+            size="large"
+            @change="search_car_transport"
+          >
+            <el-option-group>
+              <el-option
+                v-for="car in carListRenhe"
+                :key="car.carNumber"
+                :label="car.carNumber"
+                :value="car.carNumber"
+              >
+                <span>{{ car.carNumber }}</span>
+                <span
+                  style="
+                    float: right;
+                    color: var(--el-text-color-secondary);
+                    font-size: 13px;
+                  "
+                  >{{ car.sitename }}</span
+                >
+              </el-option>
+            </el-option-group>
+          </el-select>
+          <el-select
+            v-model="car_transport_select_way"
+            class="m-2"
+            placeholder="选择查询方式"
+            clearable
+            size="large"
+          >
+            <el-option
+              v-for="item in car_transport_option"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+          <el-date-picker
+            v-if="car_transport_select_way == 'week'"
+            v-model="car_transport_select_value"
+            type="week"
+            placeholder="请选择某一周"
+            :disabled-date="disabledDate"
+            size="large"
+            @change="search_car_transport"
+          />
+          <el-date-picker
+            v-if="car_transport_select_way == 'month'"
+            v-model="car_transport_select_value"
+            type="monthrange"
+            range-separator="到"
+            start-placeholder="选择开始时间"
+            end-placeholder="选择结束时间"
+            :disabled-date="disabledDate"
+            size="large"
+            @change="search_car_transport"
+          />
+
+          <el-date-picker
+            v-if="car_transport_select_way == 'day'"
+            v-model="car_transport_select_value"
+            type="daterange"
+            range-separator="到"
+            start-placeholder="选择开始时间"
+            end-placeholder="选择结束时间"
+            :disabled-date="disabledDate"
+            size="large"
+            @change="search_car_transport"
+          />
+          <el-button
+            type="primary"
+            size="large"
+            @click="car_exportExcel"
+            style="margin-left: 10px"
+            >打印报表</el-button
+          >
+        <!-- </div> -->
+
+        <el-table
+          :data="data_total.slice((currentPage - 1) * 10, currentPage * 10)"
+          :size="large"
+          width="100%"
+          id="#vcfResult"
+        >
+          <el-table-column property="day" label="时间" width="300px" />
+          <el-table-column property="siteName" label="站点" width="150" />
+          <el-table-column property="carNumber" label="承运车辆" width="150">
+          </el-table-column>
+          <el-table-column property="frequency" label="运输次数" width="150" />
+          <el-table-column
+            property="totalWeight"
+            label="运输总量/kg"
+            width="150"
+          />
+          <el-table-column
+            property="avgWeight"
+            label="单次平均运输量/kg"
+            width="200"
+          />
+
+          <el-table-column property="driver" label="司机" width="300" />
+          <el-table-column property="tel" label="司机电话" width="300" />
+          <el-table-column property="wechat" label="司机微信" width="300" />
+        </el-table>
+ 
+      <div class="float-end" style="margin-top: 10px">
+        <el-pagination
+          background
+          layout="total, prev, pager, next, jumper"
+          :total="totalRecords"
+          :current-page="currentPage"
+          @current-change="getTransport"
+        />
+      </div>
+      
+            </el-tab-pane>
+          </el-tabs>
+
+      <!-- <div>
+        <h5 class="card-title" style="font-size: 25px; padding: 5px">
+          垃圾记录
+        </h5>
+        <el-date-picker
+          v-model="value"
+          type="daterange"
+          unlink-panels
+          range-separator="到"
+          start-placeholder="选择开始时间"
+          end-placeholder="选择结束时间"
+          :disabled-date="disabledDate"
+          :shortcuts="shortcuts"
+          @change="changeDate"
+          size="large"
+        />
+  
+
+        <el-table :data="data" :size="large" width="100%">
+          <el-table-column
+            property="exactDate"
+            label="处理时间"
+            width="200px"
+          />
+          <el-table-column label="承运车辆" width="150">
+            <template #default="scope">
+              <el-button
+                size="medium"
+                type="primary"
+                link
+                @click="handleEdit(scope.$index, scope.row)"
+                >{{ scope.row.carNumber }}</el-button
+              >
+            </template>
+          </el-table-column>
+          <el-table-column
+            property="netWeight"
+            label="垃圾净重/kg"
+            width="150"
+          />
+          <el-table-column
+            property="grossWeight"
+            label="垃圾毛重/kg"
+            width="150"
+          />
+          <el-table-column
+            property="tareWeight"
+            label="垃圾皮重/kg"
+            width="150"
+          />
+          <el-table-column
+            property="transporter"
+            label="承运单位"
+            width="300"
+          />
+          <el-table-column property="driver" label="司机" width="300" />
+          <el-table-column property="tel" label="司机电话" width="300" />
+          <el-table-column property="wechat" label="司机微信" width="300" />
+        </el-table>
+      </div>
+      <div class="float-end" style="margin-top: 10px">
+        <el-pagination
+          background
+          layout="total, prev, pager, next, jumper"
+          :total="total_records"
+          :current-page="current_page"
+          @current-change="pull_page"
+        />
+      </div> -->
+      <!-- <div class="car-transport-header" style="margin-top: 8vh">
         <h5 class="card-title" style="font-size: 25px; padding: 5px">
           车辆运输量统计
         </h5>
@@ -315,7 +521,7 @@
           :current-page="currentPage"
           @current-change="getTransport"
         />
-      </div>
+      </div> -->
     </el-main>
   </el-container>
 </template>
@@ -378,6 +584,7 @@ let junk_form_select_value = ref("");
 // 报表信息
 // var form_disabled = ref(true);
 const dialogFormVisible = ref(false);
+const activeName = ref("first");
 
 // ==========================================================
 const carData = ref([]);
@@ -386,7 +593,7 @@ const carListTianfu = ref([]);
 const carListRenhe = ref([]);
 // 禁选今天以后的日期以及没有数据的
 const disabledDate = (time) => {
-        return time.getTime() < new Date("2022-8-31").getTime() || time.getTime() > new Date("2023-3-8").getTime()
+        return time.getTime() < new Date("2022-8-31").getTime() || time.getTime() > new Date().getTime()
 }
 // 车牌号列表
 const getAllSiteCar = (site_name) => {
@@ -1041,31 +1248,31 @@ const config_alert = reactive({
 // =============================================================================sunny
 // 过去一周各时段垃圾净重平均值统计
 
-const avgTime_Line = reactive({
-  title: {
-    text: "各时段垃圾平均净重",
-  },
-  xAxis: {
-    name: "日期",
-    data: ["0-4点", "4-8点", "8-12点", "12-16点", "16-20点", "20-24点"],
-  },
-  yAxis: {
-    name: "垃圾净重",
-    data: "value",
-    min: 0,
-    interval: 20,
-  },
-  series: [
-    {
-      data: yAxis_line,
-      type: "line",
-      label: {
-        show: true,
-        formatter: "{value} 吨",
-      },
-    },
-  ],
-});
+// const avgTime_Line = reactive({
+//   title: {
+//     text: "各时段垃圾平均净重",
+//   },
+//   xAxis: {
+//     name: "日期",
+//     data: ["0-4点", "4-8点", "8-12点", "12-16点", "16-20点", "20-24点"],
+//   },
+//   yAxis: {
+//     name: "垃圾净重",
+//     data: "value",
+//     min: 0,
+//     interval: 20,
+//   },
+//   series: [
+//     {
+//       data: yAxis_line,
+//       type: "line",
+//       label: {
+//         show: true,
+//         formatter: "{value} 吨",
+//       },
+//     },
+//   ],
+// });
 // =====================================================================================
 
 onBeforeMount(() => {
@@ -1411,17 +1618,15 @@ const pull_page = (page) => {
   // Object.keys(patrolInfo).map(key => {
   //     delete patrolInfo[key]
   // });
+  if (value.value[0] == null) {
+    start = moment().format("YYYY-MM-DD")
+    end = moment().add(1,"d").format("YYYY-MM-DD")
+  }
+
   current_page.value = page;
-  getQuery(
-    "西华",
-    "transporter",
-    start,
-    end,
-    page,
-    10
-  ).then(function (resp) {
+  getQuery("西华", "transporter", start, end, page, 10).then(function (resp) {
     data.value = resp;
-    ifShowQueryResult.value = false;
+
   });
 };
 
@@ -1490,218 +1695,221 @@ const handleEdit = (index, row) => {
 
 // ======================================================================================================sunny
 //调整字体大小
-// const fontSizeSwitch = (res) => {
-//   let clientWidth =
-//     window.innerWidth ||
-//     document.documentElement.clientWidth ||
-//     document.body.clientWidth
-//   if (!clientWidth) return
-//   let fontSize = 100 * (clientWidth / 1707)
-//   return res * fontSize
-// }
+const fontSizeSwitch = (res) => {
+  let clientWidth =
+    window.innerWidth ||
+    document.documentElement.clientWidth ||
+    document.body.clientWidth
+  if (!clientWidth) return
+  let fontSize = 100 * (clientWidth / 1707)
+  return res * fontSize
+}
+
 
 //全局定义图表
-// let category_chart = null;
+let category_chart = null;
 
-// //图表的基础模板
-// let categoryOption = {
-//   // 绘制图表
-//   // title: {
-//   //   text: 'ECharts 入门示例',
-//   // },
-//   tooltip: {
-//     trigger: "axis",
-//     axisPointer: {
-//       type: "shadow",
-//     },
-//   },
-//   grid: {
-//     left: "10%",
-//     right: "10%",
-//     bottom: "0%",
-//     containLabel: true,
-//   },
+//图表的基础模板
+let categoryOption = {
+  // 绘制图表
+  // title: {
+  //   text: 'ECharts 入门示例',
+  // },
+  tooltip: {
+    trigger: "axis",
+    axisPointer: {
+      type: "shadow",
+    },
+  },
+  grid: {
+    left: "10%",
+    right: "10%",
+    bottom: "0%",
+    containLabel: true,
+  },
 
-//   xAxis: {
-//     data: ["0-4点", "4-8点", "8-12点", "12-16点", "16-20点", "20-24点"],
+  xAxis: {
+    data: ["0-4点", "4-8点", "8-12点", "12-16点", "16-20点", "20-24点"],
 
-//     axisTick: {
-//       alignWithLabel: true,
-//     },
-//     axisLabel: {
-//       interval: 0,
-//       rotate: 50,
-//     },
-//   },
-//   yAxis: {
-//     name: "垃圾净重",
-//     //设置数轴显示内容的类型是数值
-//     type: "value",
-//     //从0开始，刻度之间间隔10
-//     min: 0,
-//     interval: 20,
-//     //显示竖轴的边框线
-//     show: true,
-//     axisLine: { show: true },
-//     //显示刻度
-//     axisTick: { show: true },
-//     axisLabel: {
-//       // fontSize: fontSizeSwitch(0.14),
-//     },
-//   },
+    axisTick: {
+      alignWithLabel: true,
+    },
+    axisLabel: {
+      interval: 0,
+ 
+    },
+  },
+  yAxis: {
+    name: "垃圾净重",
+    //设置数轴显示内容的类型是数值
+    type: "value",
+    //从0开始，刻度之间间隔10
+    min: 0,
+    interval: 20,
+    //显示竖轴的边框线
+    show: true,
+    axisLine: { show: true },
+    //显示刻度
+    axisTick: { show: true },
+    axisLabel: {
+      // fontSize: fontSizeSwitch(0.14),
+    },
+  },
 //   //图表上显示不同颜色的折线表示什么意义，必须与下面series中name的名字对应才能显示出来！
 //   // legend: {
 //   //   data: ['一', '二','三','四','五','六','七'],
 //   // },
 //   //鼠标浮动在图表上会有具体内容展示
-//   tooltip: {
-//     trigger: "axis",
-//   },
-//   series: [
-//     {
-//       name: "垃圾净重量平均值",
-//       //设置图表类型是折线图
-//       type: "line",
-//       data: [
-//         { value: 0 },
-//         { value: 0 },
-//         { value: 0 },
-//         { value: 0 },
-//         { value: 0 },
-//         { value: 0 },
-//       ],
-//       label: {
-//         show: true,
-//         position: "top",
-//         // fontSize: fontSizeSwitch(0.1),
-//         //展示每个点的对应数值，这里必须是{c}才能显示数据
-//         formatter: "{c} 吨",
-//       },
-//     },
-//   ],
-// };
+  tooltip: {
+    trigger: "axis",
+  },
+  series: [
+    {
+      name: "垃圾净重量平均值",
+      //设置图表类型是折线图
+      type: "line",
+      data: [
+        { value: 0 },
+        { value: 0 },
+        { value: 0 },
+        { value: 0 },
+        { value: 0 },
+        { value: 0 },
+      ],
+      smooth: true,
+      label: {
+        show: true,
+        position: "top",
+        // fontSize: fontSizeSwitch(0.1),
+        //展示每个点的对应数值，这里必须是{c}才能显示数据
+        formatter: "{c} 吨",
+      },
+    },
+  ],
+};
 
 // //Dom挂载完毕，可以拿到组件渲染后的 DOM节点，展示图表
-// onMounted(() => {
-//   create_category_data();
-// });
+
 
 /**
  * 获取后端数据，并动态展示在图表上
  */
-// const create_category_data = () => {
-//   let chartDom = document.getElementById("avgTime_Line");
-//   //初始化图表
-//   category_chart = echarts.init(chartDom);
+const create_category_data = () => {
+  let chartDom = document.getElementById("avgTime_Lines");
+  //初始化图表
+  category_chart = echarts.init(chartDom);
 
-//   //绘制图表
-//   category_chart.setOption(categoryOption);
-//   window.addEventListener("resize", category_chart.resize);
+  //绘制图表
+  category_chart.setOption(categoryOption);
+  window.addEventListener("resize", category_chart.resize);
 
-//   /**
-//    * 通过接口获取后端数据
-//    * 查找开始时间是七天前凌晨开始，到今天凌晨，一共七天，比如今天是2023.02.01，则从2023.01.25凌晨开始，2023.02.01凌晨结束，不算今天的
-//    */
-//   getQuery(
-//     "西华",
-//     "transporter",
-//     new Date(time - 7 * 24 * 60 * 60 * 1000).getFullYear() +
-//       "-" +
-//       (new Date(time - 7 * 24 * 60 * 60 * 1000).getMonth() + 1) +
-//       "-" +
-//       new Date(time - 7 * 24 * 60 * 60 * 1000).getDate(),
-//     new Date(time).getFullYear() +
-//       "-" +
-//       (new Date(time).getMonth() + 1) +
-//       "-" +
-//       new Date(time).getDate(),
-//     1,
-//     10000
-//   ).then(function (resp) {
-//     total.value = 0;
-//     for (let i = 0; i < resp.length; i++) {
-//       //截取后台数据中的处理时间的几点，比如2023-02-01T03:20:41  截取字符串03并转换成数值3，表示3点
-//       let index = resp[i].exactDate.indexOf("T");
-//       let result = Number(resp[i].exactDate.substr(index + 1, 2));
-//       if (0 <= result && result < 4) {
-//         //满足00：00-04：00之间的垃圾求净重量的总量
-//         total.value = resp[i].netWeight + total.value;
-//       }
-//     }
-//     //七天的平均值
-//     total.value = Math.floor((total.value / 1000) * 100) / 100 / 7;
-//     //更改图表上对应位置的数据
-//     categoryOption.series[0].data[0].value = Number(total.value.toFixed(0));
-//     //更新页面上的图表
-//     category_chart.setOption(categoryOption);
+  /**
+   * 通过接口获取后端数据
+   * 查找开始时间是七天前凌晨开始，到今天凌晨，一共七天，比如今天是2023.02.01，则从2023.01.25凌晨开始，2023.02.01凌晨结束，不算今天的
+   */
+  getQuery(
+    "西华",
+    "transporter",
+    new Date(time - 7 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 7 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 7 * 24 * 60 * 60 * 1000).getDate(),
+    new Date(time).getFullYear() +
+      "-" +
+      (new Date(time).getMonth() + 1) +
+      "-" +
+      new Date(time).getDate(),
+    1,
+    10000
+  ).then(function (resp) {
+    total.value = 0;
+    for (let i = 0; i < resp.length; i++) {
+      //截取后台数据中的处理时间的几点，比如2023-02-01T03:20:41  截取字符串03并转换成数值3，表示3点
+      let index = resp[i].exactDate.indexOf("T");
+      let result = Number(resp[i].exactDate.substr(index + 1, 2));
+      if (0 <= result && result < 4) {
+        //满足00：00-04：00之间的垃圾求净重量的总量
+        total.value = resp[i].netWeight + total.value;
+      }
+    }
+    //七天的平均值
+    total.value = Math.floor((total.value / 1000) * 100) / 100 / 7;
+    //更改图表上对应位置的数据
+    categoryOption.series[0].data[0].value = Number(total.value.toFixed(0));
+    //更新页面上的图表
+    category_chart.setOption(categoryOption);
 
-//     //满足00：40-08：00之间的垃圾求净重量的总量
-//     total.value = 0;
-//     for (let i = 0; i < resp.length; i++) {
-//       let index = resp[i].exactDate.indexOf("T");
-//       let result = Number(resp[i].exactDate.substr(index + 1, 2));
-//       if (4 <= result && result < 8) {
-//         total.value = resp[i].netWeight + total.value;
-//       }
-//     }
-//     total.value = Math.floor((total.value / 1000) * 100) / 100 / 7;
-//     categoryOption.series[0].data[1].value = Number(total.value.toFixed(0));
-//     category_chart.setOption(categoryOption);
+    //满足00：40-08：00之间的垃圾求净重量的总量
+    total.value = 0;
+    for (let i = 0; i < resp.length; i++) {
+      let index = resp[i].exactDate.indexOf("T");
+      let result = Number(resp[i].exactDate.substr(index + 1, 2));
+      if (4 <= result && result < 8) {
+        total.value = resp[i].netWeight + total.value;
+      }
+    }
+    total.value = Math.floor((total.value / 1000) * 100) / 100 / 7;
+    categoryOption.series[0].data[1].value = Number(total.value.toFixed(0));
+    category_chart.setOption(categoryOption);
 
-//     //满足08：00-12：00之间的垃圾求净重量的总量
-//     total.value = 0;
-//     for (let i = 0; i < resp.length; i++) {
-//       let index = resp[i].exactDate.indexOf("T");
-//       let result = Number(resp[i].exactDate.substr(index + 1, 2));
-//       if (8 <= result && result < 12) {
-//         total.value = resp[i].netWeight + total.value;
-//       }
-//     }
-//     total.value = Math.floor((total.value / 1000) * 100) / 100 / 7;
-//     categoryOption.series[0].data[2].value = Number(total.value.toFixed(0));
-//     category_chart.setOption(categoryOption);
+    //满足08：00-12：00之间的垃圾求净重量的总量
+    total.value = 0;
+    for (let i = 0; i < resp.length; i++) {
+      let index = resp[i].exactDate.indexOf("T");
+      let result = Number(resp[i].exactDate.substr(index + 1, 2));
+      if (8 <= result && result < 12) {
+        total.value = resp[i].netWeight + total.value;
+      }
+    }
+    total.value = Math.floor((total.value / 1000) * 100) / 100 / 7;
+    categoryOption.series[0].data[2].value = Number(total.value.toFixed(0));
+    category_chart.setOption(categoryOption);
 
-//     //满足12：00-16：00之间的垃圾求净重量的总量
-//     total.value = 0;
-//     for (let i = 0; i < resp.length; i++) {
-//       let index = resp[i].exactDate.indexOf("T");
-//       let result = Number(resp[i].exactDate.substr(index + 1, 2));
-//       if (12 <= result && result < 16) {
-//         total.value = resp[i].netWeight + total.value;
-//       }
-//     }
-//     total.value = Math.floor((total.value / 1000) * 100) / 100 / 7;
-//     categoryOption.series[0].data[3].value = Number(total.value.toFixed(0));
-//     category_chart.setOption(categoryOption);
+    //满足12：00-16：00之间的垃圾求净重量的总量
+    total.value = 0;
+    for (let i = 0; i < resp.length; i++) {
+      let index = resp[i].exactDate.indexOf("T");
+      let result = Number(resp[i].exactDate.substr(index + 1, 2));
+      if (12 <= result && result < 16) {
+        total.value = resp[i].netWeight + total.value;
+      }
+    }
+    total.value = Math.floor((total.value / 1000) * 100) / 100 / 7;
+    categoryOption.series[0].data[3].value = Number(total.value.toFixed(0));
+    category_chart.setOption(categoryOption);
 
-//     //满足16：00-20：00之间的垃圾求净重量的总量
-//     total.value = 0;
-//     for (let i = 0; i < resp.length; i++) {
-//       let index = resp[i].exactDate.indexOf("T");
-//       let result = Number(resp[i].exactDate.substr(index + 1, 2));
-//       if (16 <= result && result < 20) {
-//         total.value = resp[i].netWeight + total.value;
-//       }
-//     }
-//     total.value = Math.floor((total.value / 1000) * 100) / 100 / 7;
-//     categoryOption.series[0].data[4].value = Number(total.value.toFixed(0));
-//     category_chart.setOption(categoryOption);
+    //满足16：00-20：00之间的垃圾求净重量的总量
+    total.value = 0;
+    for (let i = 0; i < resp.length; i++) {
+      let index = resp[i].exactDate.indexOf("T");
+      let result = Number(resp[i].exactDate.substr(index + 1, 2));
+      if (16 <= result && result < 20) {
+        total.value = resp[i].netWeight + total.value;
+      }
+    }
+    total.value = Math.floor((total.value / 1000) * 100) / 100 / 7;
+    categoryOption.series[0].data[4].value = Number(total.value.toFixed(0));
+    category_chart.setOption(categoryOption);
 
-//     //满足20：00-24：00之间的垃圾求净重量的总量
-//     total.value = 0;
-//     for (let i = 0; i < resp.length; i++) {
-//       let index = resp[i].exactDate.indexOf("T");
-//       let result = Number(resp[i].exactDate.substr(index + 1, 2));
-//       if (20 <= result && result < 24) {
-//         total.value = resp[i].netWeight + total.value;
-//       }
-//     }
-//     total.value = Math.floor((total.value / 1000) * 100) / 100 / 7;
-//     categoryOption.series[0].data[5].value = Number(total.value.toFixed(0));
-//     category_chart.setOption(categoryOption);
-//   });
-// };
+    //满足20：00-24：00之间的垃圾求净重量的总量
+    total.value = 0;
+    for (let i = 0; i < resp.length; i++) {
+      let index = resp[i].exactDate.indexOf("T");
+      let result = Number(resp[i].exactDate.substr(index + 1, 2));
+      if (20 <= result && result < 24) {
+        total.value = resp[i].netWeight + total.value;
+      }
+    }
+    total.value = Math.floor((total.value / 1000) * 100) / 100 / 7;
+    categoryOption.series[0].data[5].value = Number(total.value.toFixed(0));
+    category_chart.setOption(categoryOption);
+  });
+};
 
+onMounted(() => {
+  create_category_data();
+});
 // const ageGenderRequest = () => {
 
 // }
@@ -1717,9 +1925,21 @@ const handleEdit = (index, row) => {
 
 // ===========================================================================================================
 </script>
-<style scoped>
+<style  lang="scss" scoped>
 @import "date-picker-week-range/style.css";
 .xiaoxin {
   margin-top: 10px;
 }
+
+#avgTime_Lines {
+  height: 5rem;
+  width: 100%;
+  /* margin-top: -7vh; */
+  opacity: 1;
+}
+
+::v-deep .el-tabs__item{
+  font-size:0.3rem;
+}
+
 </style>

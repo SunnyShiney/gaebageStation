@@ -1,6 +1,15 @@
 <template>
-  <el-container class="dcontainer">
-    <Header style="height: 7%" :icon="null">
+  <body
+    style="background-image: url(/images/bg.jpg);no-repeat top center;height:auto"
+  >
+    <Header
+      style="
+        height: 1.25rem;
+        background-image: url(/images/head_bg.png);
+        background-size: 100% 100%; ;
+      "
+      :icon="null"
+    >
       <!-- 系统名字 -->
       <template #title>
         <span class="text-title">金牛区生活垃圾全生命周期管家</span>
@@ -12,39 +21,19 @@
       </template>
       <template #warning>
         <div class="text-week">
-          <!-- <i
-            id="dotClass"
-            style="
-         
-              background-color: #11e1b0;
-              
-              width: 25px;
-              height: 25px;
-              border-radius: 50%;
-              display: block;
-              margin-top: 2.2vh;
-            "
-            
-            @click="fault_details"
-          ></i> -->
-
-                  <div id="dotClass" @click="fault_details">
-        <div id="lamp" style="display: none;"></div>
-    </div>
+          <div id="dotClass" title="运行正常" @click="fault_details">
+            <div id="lamp" style="display: none"></div>
+          </div>
           <el-dialog
             v-model="defaultVisible"
-            title="事故详情" 
+            title="事故详情"
             @close="handleClose"
           >
-                        <div
-                style="
-                  text-align: center;
-                  font-size: x-large;
-                  font-weight: bold;
-                "
-              >
-                事故原因：{{cause}}
-              </div>
+            <div
+              style="text-align: center; font-size: x-large; font-weight: bold"
+            >
+              事故原因：{{ cause }}
+            </div>
             <el-table
               :data="defaultList"
               style="width: 100%"
@@ -54,7 +43,7 @@
               <el-table-column
                 prop="site_name"
                 label="站点名称"
-                min-width="150"
+                min-width="80"
                 header-align="center"
                 align="center"
                 :show-overflow-tooltip="true"
@@ -68,7 +57,6 @@
                 align="center"
                 :show-overflow-tooltip="true"
               />
-
             </el-table>
           </el-dialog>
         </div>
@@ -87,14 +75,18 @@
             link
             color="fff"
             @click="toHome"
-            size="large"
+            size="0.25rem"
             >前往数据主页</el-button
           >
         </div>
         <el-dropdown>
           <span class="el-dropdown-link">
-            {{ user.username + "（" + user.role + "）" }}
-            <el-icon>
+            <div style="font-size: 0.25rem; padding-right: 10px">
+              {{ user.username + "（" + user.role + "）" }}
+            </div>
+            <el-icon
+              style="font-size: 0.25rem; position: absolute; right: 0; top: 0"
+            >
               <ArrowDown />
             </el-icon>
           </span>
@@ -107,449 +99,515 @@
       </template>
     </Header>
 
-    <div class="mapDiv">
-      <MapContent />
-      <tdt-map
-        :center="state.center"
-        :zoom="state.zoom"
-        mapStyle="black"
-        :doubleClickZoom="true"
-        :scrollWheelZoom="true"
-        :controls="state.controls"
-      >
-        <!-- 设置控件 -->
-        <tdt-control position="topleft" :visible="state.visible">
-          <div class="chart">
-            <dv-border-box7
-              style="
-                height: 35vh;
-                width: 25vw;
-                padding: 10px;
-                margin: auto;
-                /* background-color: grey; */
-              "
-            >
-              <h5
-                class="card-title"
-                style="font-size: 20px; padding: 5px; text-align: center"
-              >
-                金牛区垃圾净重量
-              </h5>
-              <div class="card-body" style="padding-top: 5px">
-                <div id="large_pie"></div>
-              </div>
-            </dv-border-box7>
+    <div class="mainDiv">
+      <div class="columns">
+        <div class="panel bar">
+          <h2>金牛区垃圾净重量</h2>
 
-            <dv-border-box7
-              style="
-                height: 35vh;
-                width: 25vw;
-                padding: 10px;
-                margin: auto;
-                /* background-color: rgb(40, 33, 109); */
-                margin-top: 10px;
-              "
-            >
-              <h5
-                class="card-title"
-                style="font-size: 20px; padding: 5px; text-align: center"
-              >
-                小站垃圾净重量
-              </h5>
-              <div
-                class="card-body"
-                style="padding-top: 10px; width: 23vw; height: 35vh"
-              >
-                <div id="small_pie"></div>
-              </div>
-            </dv-border-box7>
+          <div id="large_pie"></div>
+
+          <div class="panel_footer"></div>
+        </div>
+
+        <div class="panel line">
+          <h2>小站垃圾净重量</h2>
+
+          <div id="small_pie"></div>
+
+          <div class="panel_footer"></div>
+        </div>
+
+        <div class="panel line">
+          <h2>过去一周垃圾净重趋势</h2>
+
+          <div id="tow_pie"></div>
+
+          <div class="panel_footer"></div>
+        </div>
+      </div>
+      <div class="columns">
+        <div class="no">
+          <div class="no-hd">
+            <ul>
+              <li>{{ total_jinniu.toFixed(2) }}</li>
+              <li>{{ total_hongxing.toFixed(2) }}</li>
+              <li>{{ total_xihua.toFixed(2) }}</li>
+              <li>{{ today_flow.toFixed(2) }}</li>
+              <li>{{ Number(cumulative_flow).toFixed(2) }}</li>
+            </ul>
+          </div>
+          <div class="no-bd">
+            <ul>
+              <li>金牛区垃圾净重 /吨</li>
+              <li>红星站垃圾净重 /吨</li>
+              <li>西华站垃圾净重 /吨</li>
+              <li>垃圾渗滤液流量 /方</li>
+              <li>渗滤液本月流量 /方</li>
+            </ul>
+          </div>
+        </div>
+        <div class="mapDiv">
+          <!-- <MapContent /> -->
+          <tdt-map
+            :center="state.center"
+            :zoom="state.zoom"
+            mapStyle="blue"
+            :doubleClickZoom="true"
+            :scrollWheelZoom="true"
+            :controls="state.controls"
+          >
+            <!-- <tdt-control position="topleft" :visible="state.visible">
+          <div class="chart">
+
+
+
           </div>
         </tdt-control>
         <tdt-control position="topright" :visible="state.visible">
           <div class="chart">
-            <dv-border-box7
-              style="
-                height: 35vh;
-                width: 25vw;
 
-                margin: auto;
-                /* background-color: grey; */
-              "
+
+ 
+          </div>
+        </tdt-control> -->
+
+            <tdt-polygon
+              :path="polygon.path"
+              :opacity="0.8"
+              :visible="polygon.visible"
+              :lineStyle="polygon.lineStyle"
+              :fillColor="polygon.fillColor"
+            ></tdt-polygon>
+            <tdt-marker
+              :position="station_hongxing.position"
+              @click="station(1)"
+              :icon="station_hongxing.icon"
             >
-              <h5
-                class="card-title"
-                style="font-size: 20px; padding: 5px; text-align: center"
-              >
-                仁和星牛车辆
-              </h5>
-              <div class="card-body" style="padding-top: 5px">
-                <div id="renhe_pie"></div>
+            </tdt-marker>
+            <tdt-marker
+              :position="station_xihua.position"
+              @click="station(2)"
+              :icon="station_xihua.icon"
+            >
+            </tdt-marker>
+            <tdt-marker
+              :position="station_honghuayan.position"
+              @click="station(5)"
+            ></tdt-marker>
+            <tdt-marker
+              :position="station_wulidun.position"
+              @click="station(4)"
+            ></tdt-marker>
+            <tdt-marker
+              :position="station_wukuaishi.position"
+              @click="station(3)"
+            ></tdt-marker>
+            <tdt-marker
+              :position="station_xibeiqiao.position"
+              @click="xibeiqiaoVisible = true"
+              :icon="station_jinquan.icon"
+            ></tdt-marker>
+            <tdt-marker
+              :position="station_jinquan.position"
+              @click="jinquanVisible = true"
+              :icon="station_jinquan.icon"
+            >
+            </tdt-marker>
+
+            <tdt-marker
+              :position="station_quanshui.position"
+              @click="quanshuiVisible = true"
+              :icon="station_jinquan.icon"
+            >
+            </tdt-marker>
+            <tdt-marker
+              :position="station_huangzhong.position"
+              @click="huangzhongVisible = true"
+              :icon="station_jinquan.icon"
+            ></tdt-marker>
+            <tdt-marker
+              :position="station_yingmenkou.position"
+              @click="yingmenkouVisible = true"
+              :icon="station_jinquan.icon"
+            ></tdt-marker>
+            <tdt-marker
+              :position="station_xingsheng.position"
+              @click="xingshengVisible = true"
+              :icon="station_jinquan.icon"
+            ></tdt-marker>
+
+            <template v-for="car in carList">
+              <tdt-marker
+                :position="car.location"
+                @click="showCar(car)"
+                :icon="car.icon"
+              ></tdt-marker>
+              <el-dialog v-model="car.carVisible" title="车辆今日轨迹">
+                <el-descriptions
+                  class="margin-top"
+                  title="车辆信息"
+                  :column="3"
+                  size="large"
+                  border
+                >
+                  <el-descriptions-item>
+                    <template #label>
+                      <div class="cell-item">车牌号</div>
+                    </template>
+                    {{ car.carNumber }}
+                  </el-descriptions-item>
+                  <el-descriptions-item>
+                    <template #label>
+                      <div class="cell-item">司机电话</div>
+                    </template>
+                    18100000000
+                  </el-descriptions-item>
+                  <el-descriptions-item>
+                    <template #label>
+                      <div class="cell-item">司机姓名</div>
+                    </template>
+                    待完善
+                  </el-descriptions-item>
+                  <el-descriptions-item>
+                    <template #label>
+                      <div class="cell-item">所属公司</div>
+                    </template>
+                    {{ car.company }}
+                  </el-descriptions-item>
+                  <el-descriptions-item>
+                    <template #label>
+                      <div class="cell-item">最后记录gps时间</div>
+                    </template>
+                    {{ car.lastTime }}
+                  </el-descriptions-item>
+                </el-descriptions>
+                <div class="mapDiv" style="width: 100%; height: 600px">
+                  <tdt-map
+                    :center="car.location"
+                    :zoom="state.zoom"
+                    :scrollWheelZoom="true"
+                    :doubleClickZoom="state.doubleClickZoom"
+                    mapStyle="black"
+                  >
+                    <tdt-marker
+                      :position="car.location"
+                      :icon="car.icon"
+                    ></tdt-marker>
+                    <tdt-polyline
+                      :path="car.path"
+                      color="#FF0000"
+                      :opacity="0.5"
+                    ></tdt-polyline>
+                  </tdt-map>
+                </div>
+              </el-dialog>
+            </template>
+
+            <el-dialog v-model="hongxingVisible" title="红星垃圾站今日数据">
+              <Hongxing style="width: 100%" />
+            </el-dialog>
+            <el-dialog v-model="xihuaVisible" title="西华垃圾站今日数据">
+              <Xihua style="width: 100%" />
+            </el-dialog>
+            <el-dialog v-model="honghuayanVisible" title="红花堰垃圾站今日数据">
+              <Honghuayan style="width: 100%" />
+            </el-dialog>
+            <el-dialog v-model="wulidunVisible" title="五里墩垃圾站今日数据">
+              <Wulidun style="width: 100%" />
+            </el-dialog>
+            <el-dialog v-model="wukuaishiVisible" title="五块石垃圾站今日数据">
+              <Wukuaishi style="width: 100%" />
+            </el-dialog>
+            <el-dialog v-model="xibeiqiaoVisible" title="西北桥垃圾站今日数据">
+              <div>
+                <h2>垃圾站部署中</h2>
               </div>
-            </dv-border-box7>
+            </el-dialog>
+            <el-dialog v-model="jinquanVisible" title="金泉垃圾站今日数据">
+              <div>
+                <h2>垃圾站部署中</h2>
+              </div>
+            </el-dialog>
 
-            <dv-border-box7
-              style="
-                height: 35vh;
-                width: 25vw;
-                padding: 10px;
-                margin: auto;
-                /* background-color: rgb(40, 33, 109); */
-                margin-top: 10px;
-              "
+            <el-dialog v-model="quanshuiVisible" title="泉水垃圾站今日数据">
+              <div>
+                <h2>垃圾站部署中</h2>
+              </div>
+            </el-dialog>
+            <el-dialog
+              v-model="huangzhongVisible"
+              title="黄忠中转站垃圾站今日数据"
             >
-              <h5
-                class="card-title"
-                style="font-size: 20px; padding: 5px; text-align: center"
-              >
-                天府环境车辆
-              </h5>
-              <div class="card-body" style="padding-top: 5px">
+              <div>
+                <h2>垃圾站部署中</h2>
+              </div>
+            </el-dialog>
+            <el-dialog v-model="yingmenkouVisible" title="营门口垃圾站今日数据">
+              <div>
+                <h2>垃圾站部署中</h2>
+              </div>
+            </el-dialog>
+            <el-dialog v-model="xingshengVisible" title="兴盛垃圾站今日数据">
+              <div>
+                <h2>垃圾站部署中</h2>
+              </div>
+            </el-dialog>
+            <!-- <el-dialog
+              v-model="renheVisible"
+              title="仁和星牛车辆活动情况"
+              @close="handleClose"
+            >
+              <div class="card">
+                <div class="card-body" style="text-align: center">
+                  <div
+                    style="
+                      text-align: center;
+                      font-size: x-large;
+                      font-weight: bold;
+                    "
+                  >
+                    过去4小时内仁和星牛的车辆活动情况列表
+                  </div>
+                  <el-table
+                    :data="
+                      renheList.slice(
+                        (currentpage - 1) * pageSize,
+                        currentpage * pageSize
+                      )
+                    "
+                    style="width: 100%"
+                    size="large"
+                    class="data-table"
+                  >
+                    <el-table-column
+                      prop="carNumber"
+                      label="车牌号"
+                      min-width="150"
+                      header-align="center"
+                      align="center"
+                      :show-overflow-tooltip="true"
+                    >
+                      <template #default="scope">
+                        <el-button
+                          size="medium"
+                          type="primary"
+                          link
+                          @click="handleEdit(scope.$index, scope.row)"
+                          >{{ scope.row.carNumber }}
+                        </el-button>
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      prop="day"
+                      label="最新gps记录时间"
+                      min-width="140"
+                      header-align="center"
+                      align="center"
+                    />
+                    <el-table-column
+                      prop="location"
+                      label="地理位置"
+                      min-width="250"
+                      header-align="center"
+                      align="center"
+                      :show-overflow-tooltip="true"
+                    />tianfuVisible
+                  </el-table>
+
+                  <div
+                    class="float-end"
+                    style="margin-top: 1vh; display: inline-block; float: none"
+                  >
+                    <el-pagination
+                      background
+                      layout="total, prev, pager, next, jumper"
+                      :total="totalrecords"
+                      :current-page="currentpage"
+                      :page-size="pageSize"
+                      @current-change="getRenhe"
+                      @size-change="handleSizeChange"
+                    />
+                  </div>
+                </div>
+              </div>
+            </el-dialog>
+            <el-dialog
+              v-model="tianfuVisible"
+              title="天府环境车辆活动情况"
+              @close="handleClose"
+            >
+              <div class="card">
+                <div class="card-body" style="text-align: center">
+                  <div
+                    style="
+                      text-align: center;
+                      font-size: x-large;
+                      font-weight: bold;
+                    "
+                  >
+                    过去4小时内天府环境的车辆活动情况列表
+                  </div>
+                  <el-table
+                    :data="
+                      tianfuList.slice(
+                        (current_page - 1) * pageSize,
+                        current_page * pageSize
+                      )
+                    "
+                    style="width: 100%"
+                    size="large"
+                    class="data-table"
+                  >
+                    <el-table-column
+                      prop="carNumber"
+                      label="车牌号"
+                      min-width="150"
+                      header-align="center"
+                      align="center"
+                      :show-overflow-tooltip="true"
+                    >
+                      <template #default="scope">
+                        <el-button
+                          size="medium"
+                          type="primary"
+                          link
+                          @click="handleEdit(scope.$index, scope.row)"
+                          >{{ scope.row.carNumber }}
+                        </el-button>
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      prop="day"
+                      label="最新gps记录时间"
+                      min-width="140"
+                      header-align="center"
+                      align="center"
+                    />
+                    <el-table-column
+                      prop="location"
+                      label="地理位置"
+                      min-width="250"
+                      header-align="center"
+                      align="center"
+                      :show-overflow-tooltip="true"
+                    />
+                  </el-table>
+
+                  <div
+                    class="float-end"
+                    style="margin-top: 1vh; display: inline-block; float: none"
+                  >
+                    <el-pagination
+                      background
+                      layout="total, prev, pager, next, jumper"
+                      :total="total_records"
+                      :current-page="current_page"
+                      :page-size="pageSize"
+                      @current-change="getTianfu"
+                      @size-change="handleSizeChange"
+                    />
+                  </div>
+                </div>
+              </div>
+            </el-dialog> -->
+          </tdt-map>
+        </div>
+      </div>
+      <div class="columns">
+        <div class="panels bar" style="">
+          <el-tabs
+            v-model="activeName"
+            @tab-click="handleClick"
+            :stretch="false"
+            style="
+              color: white;
+            
+              width: 100%;
+              caret-color: transparent;
+              margin-top: -0.7rem;
+            "
+          >
+            <el-tab-pane label="仁和星牛车辆" name="first" >
+              <div id="renhe_pie"></div>
+
+              <div class="titles">
+                <i class="iconfont icon-doubleright" aria-hidden="true"></i>
+                车辆使用情况
+              </div>
+              <div>
+                <el-table
+                  :data="renheList"
+                  height="7.2rem"
+                  :header-cell-style="{
+                    background: '#03487B',
+                    color: '#1adafb',
+                  }"
+                >
+                  style="width: 100%" size="default" >
+                  <el-table-column prop="carNumber" label="车牌号" width="200">
+                    <template #default="scope">
+                      <el-button
+                        size="medium"
+                        type="primary"
+                        link
+                        @click="handleEdit(scope.$index, scope.row)"
+                        >{{ scope.row.carNumber }}
+                      </el-button>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    prop="day"
+                    label="最新gps记录时间"
+                    width="190"
+                  />
+                </el-table>
+              </div>
+            </el-tab-pane>
+            <el-tab-pane label="天府环境车辆" name="second" :lazy="true">
                 <div id="tianfu_pie"></div>
+              <div class="titles">
+                <i class="iconfont icon-doubleright" aria-hidden="true"></i>
+                车辆使用情况
               </div>
-            </dv-border-box7>
-          </div>
-        </tdt-control>
-
-        <tdt-polygon
-          :path="polygon.path"
-          :opacity="0.8"
-          :visible="polygon.visible"
-          :lineStyle="polygon.lineStyle"
-          :fillColor="polygon.fillColor"
-        ></tdt-polygon>
-        <tdt-marker
-          :position="station_hongxing.position"
-          @click="hongxingVisible = true"
-          :icon="station_hongxing.icon"
-        >
-        </tdt-marker>
-        <tdt-marker
-          :position="station_xihua.position"
-          @click="xihuaVisible = true"
-          :icon="station_xihua.icon"
-        >
-        </tdt-marker>
-        <tdt-marker
-          :position="station_honghuayan.position"
-          @click="honghuayanVisible = true"
-        ></tdt-marker>
-        <tdt-marker
-          :position="station_wulidun.position"
-          @click="wulidunVisible = true"
-        ></tdt-marker>
-        <tdt-marker
-          :position="station_wukuaishi.position"
-          @click="wukuaishiVisible = true"
-        ></tdt-marker>
-        <tdt-marker
-          :position="station_xibeiqiao.position"
-          @click="xibeiqiaoVisible = true"
-          :icon="station_jinquan.icon"
-        ></tdt-marker>
-        <tdt-marker
-          :position="station_jinquan.position"
-          @click="jinquanVisible = true"
-          :icon="station_jinquan.icon"
-        >
-        </tdt-marker>
-
-        <tdt-marker
-          :position="station_quanshui.position"
-          @click="quanshuiVisible = true"
-          :icon="station_jinquan.icon"
-        >
-        </tdt-marker>
-        <tdt-marker
-          :position="station_huangzhong.position"
-          @click="huangzhongVisible = true"
-          :icon="station_jinquan.icon"
-        ></tdt-marker>
-        <tdt-marker
-          :position="station_yingmenkou.position"
-          @click="yingmenkouVisible = true"
-          :icon="station_jinquan.icon"
-        ></tdt-marker>
-        <tdt-marker
-          :position="station_xingsheng.position"
-          @click="xingshengVisible = true"
-          :icon="station_jinquan.icon"
-        ></tdt-marker>
-
-        <template v-for="car in carList">
-          <tdt-marker
-            :position="car.location"
-            @click="showCar(car)"
-            :icon="car.icon"
-          ></tdt-marker>
-          <el-dialog v-model="car.carVisible" title="车辆今日轨迹">
-            <el-descriptions
-              class="margin-top"
-              title="车辆信息"
-              :column="3"
-              size="large"
-              border
-            >
-              <el-descriptions-item>
-                <template #label>
-                  <div class="cell-item">车牌号</div>
-                </template>
-                {{ car.carNumber }}
-              </el-descriptions-item>
-              <el-descriptions-item>
-                <template #label>
-                  <div class="cell-item">司机电话</div>
-                </template>
-                18100000000
-              </el-descriptions-item>
-              <el-descriptions-item>
-                <template #label>
-                  <div class="cell-item">司机姓名</div>
-                </template>
-                待完善
-              </el-descriptions-item>
-              <el-descriptions-item>
-                <template #label>
-                  <div class="cell-item">所属公司</div>
-                </template>
-                {{ car.company }}
-              </el-descriptions-item>
-              <el-descriptions-item>
-                <template #label>
-                  <div class="cell-item">最后记录gps时间</div>
-                </template>
-                {{ car.lastTime }}
-              </el-descriptions-item>
-            </el-descriptions>
-            <div class="mapDiv" style="width: 100%; height: 600px">
-              <tdt-map
-                :center="car.location"
-                :zoom="state.zoom"
-                :scrollWheelZoom="true"
-                :doubleClickZoom="state.doubleClickZoom"
-                mapStyle="black"
-              >
-                <tdt-marker
-                  :position="car.location"
-                  :icon="car.icon"
-                ></tdt-marker>
-                <tdt-polyline
-                  :path="car.path"
-                  color="#FF0000"
-                  :opacity="0.5"
-                ></tdt-polyline>
-              </tdt-map>
-            </div>
-          </el-dialog>
-        </template>
-
-        <el-dialog v-model="hongxingVisible" title="红星垃圾站今日数据">
-          <Hongxing style="width: 100%" />
-        </el-dialog>
-        <el-dialog v-model="xihuaVisible" title="西华垃圾站今日数据">
-          <Xihua style="width: 100%" />
-        </el-dialog>
-        <el-dialog v-model="honghuayanVisible" title="红花堰垃圾站今日数据">
-          <Honghuayan style="width: 100%" />
-        </el-dialog>
-        <el-dialog v-model="wulidunVisible" title="五里墩垃圾站今日数据">
-          <Wulidun style="width: 100%" />
-        </el-dialog>
-        <el-dialog v-model="wukuaishiVisible" title="五块石垃圾站今日数据">
-          <Wukuaishi style="width: 100%" />
-        </el-dialog>
-        <el-dialog v-model="xibeiqiaoVisible" title="西北桥垃圾站今日数据">
-          <div>
-            <h2>垃圾站部署中</h2>
-          </div>
-        </el-dialog>
-        <el-dialog v-model="jinquanVisible" title="金泉垃圾站今日数据">
-          <div>
-            <h2>垃圾站部署中</h2>
-          </div>
-        </el-dialog>
-
-        <el-dialog v-model="quanshuiVisible" title="泉水垃圾站今日数据">
-          <div>
-            <h2>垃圾站部署中</h2>
-          </div>
-        </el-dialog>
-        <el-dialog v-model="huangzhongVisible" title="黄忠中转站垃圾站今日数据">
-          <div>
-            <h2>垃圾站部署中</h2>
-          </div>
-        </el-dialog>
-        <el-dialog v-model="yingmenkouVisible" title="营门口垃圾站今日数据">
-          <div>
-            <h2>垃圾站部署中</h2>
-          </div>
-        </el-dialog>
-        <el-dialog v-model="xingshengVisible" title="兴盛垃圾站今日数据">
-          <div>
-            <h2>垃圾站部署中</h2>
-          </div>
-        </el-dialog>
-        <el-dialog
-          v-model="renheVisible"
-          title="仁和星牛车辆活动情况"
-          @close="handleClose"
-        >
-          <div class="card">
-            <div class="card-body" style="text-align: center">
-              <div
-                style="
-                  text-align: center;
-                  font-size: x-large;
-                  font-weight: bold;
-                "
-              >
-                过去4小时内仁和星牛的车辆活动情况列表
-              </div>
-              <el-table
-                :data="
-                  renheList.slice(
-                    (currentpage - 1) * pageSize,
-                    currentpage * pageSize
-                  )
-                "
-                style="width: 100%"
-                size="large"
-                class="data-table"
-              >
-                <el-table-column
-                  prop="carNumber"
-                  label="车牌号"
-                  min-width="150"
-                  header-align="center"
-                  align="center"
-                  :show-overflow-tooltip="true"
+              <div>
+                <el-table
+                  :data="tianfuList"
+                  style="width: 100%"
+                  height="7.2rem"
+                  :header-cell-style="{
+                    background: '#03487B',
+                    color: '#1adafb',
+                  }"
                 >
-                  <template #default="scope">
-                    <el-button
-                      size="medium"
-                      type="primary"
-                      link
-                      @click="handleEdit(scope.$index, scope.row)"
-                      >{{ scope.row.carNumber }}
-                    </el-button>
-                  </template>
-                </el-table-column>
-                <el-table-column
-                  prop="day"
-                  label="最新gps记录时间"
-                  min-width="140"
-                  header-align="center"
-                  align="center"
-                />
-                <el-table-column
-                  prop="location"
-                  label="地理位置"
-                  min-width="250"
-                  header-align="center"
-                  align="center"
-                  :show-overflow-tooltip="true"
-                />tianfuVisible
-              </el-table>
+                  style="width: 100%" size="default" >
+                  <el-table-column prop="carNumber" label="车牌号" width="200">
+                    <template #default="scope">
+                      <el-button
+                        size="medium"
+                        type="primary"
+                        link
+                        @click="handleEdit(scope.$index, scope.row)"
+                        >{{ scope.row.carNumber }}
+                      </el-button>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    prop="day"
+                    label="最新gps记录时间"
+                    width="190"
+                  />
+                </el-table>
+              </div>
+            </el-tab-pane>
+          </el-tabs>
 
-              <div
-                class="float-end"
-                style="margin-top: 1vh; display: inline-block; float: none"
-              >
-                <el-pagination
-                  background
-                  layout="total, prev, pager, next, jumper"
-                  :total="totalrecords"
-                  :current-page="currentpage"
-                  :page-size="pageSize"
-                  @current-change="getRenhe"
-                  @size-change="handleSizeChange"
-                />
-              </div>
-            </div>
-          </div>
-        </el-dialog>
-        <el-dialog
-          v-model="tianfuVisible"
-          title="天府环境车辆活动情况"
-          @close="handleClose"
-        >
-          <div class="card">
-            <div class="card-body" style="text-align: center">
-              <div
-                style="
-                  text-align: center;
-                  font-size: x-large;
-                  font-weight: bold;
-                "
-              >
-                过去4小时内天府环境的车辆活动情况列表
-              </div>
-              <el-table
-                :data="
-                  tianfuList.slice(
-                    (current_page - 1) * pageSize,
-                    current_page * pageSize
-                  )
-                "
-                style="width: 100%"
-                size="large"
-                class="data-table"
-              >
-                <el-table-column
-                  prop="carNumber"
-                  label="车牌号"
-                  min-width="150"
-                  header-align="center"
-                  align="center"
-                  :show-overflow-tooltip="true"
-                >
-                  <template #default="scope">
-                    <el-button
-                      size="medium"
-                      type="primary"
-                      link
-                      @click="handleEdit(scope.$index, scope.row)"
-                      >{{ scope.row.carNumber }}
-                    </el-button>
-                  </template>
-                </el-table-column>
-                <el-table-column
-                  prop="day"
-                  label="最新gps记录时间"
-                  min-width="140"
-                  header-align="center"
-                  align="center"
-                />
-                <el-table-column
-                  prop="location"
-                  label="地理位置"
-                  min-width="250"
-                  header-align="center"
-                  align="center"
-                  :show-overflow-tooltip="true"
-                />
-              </el-table>
+          <div class="panels_footer"></div>
+        </div>
 
-              <div
-                class="float-end"
-                style="margin-top: 1vh; display: inline-block; float: none"
-              >
-                <el-pagination
-                  background
-                  layout="total, prev, pager, next, jumper"
-                  :total="total_records"
-                  :current-page="current_page"
-                  :page-size="pageSize"
-                  @current-change="getTianfu"
-                  @size-change="handleSizeChange"
-                />
-              </div>
-            </div>
-          </div>
-        </el-dialog>
-      </tdt-map>
+
+      </div>
     </div>
-
-  </el-container>
+  </body>
 </template>
 
 <script setup>
@@ -568,9 +626,10 @@ import {
 } from "vue";
 // 调用接口中的方法
 import { getPage, getQuery, getJinNniuToday } from "@/api/content.js";
+
 // 搜索的图标
 import { Location, Search } from "@element-plus/icons-vue";
-
+import "@/assets/js/flexible.js";
 //==============================================================================================================
 import { useRouter, useRoute } from "vue-router";
 import Charts from "@jiaminghi/charts";
@@ -588,6 +647,9 @@ import CarRecord from "@/views/content/components/CarRecord.vue";
 import { getCars } from "@/api/content";
 import { getCarGps, getAllGps } from "@/api/content";
 import { getCarsLocation } from "@/api/home";
+import { getFlows } from "@/api/content.js";
+
+import moment from "moment";
 const xihuaVisible = ref(false);
 const hongxingVisible = ref(false);
 const honghuayanVisible = ref(false);
@@ -600,8 +662,8 @@ const huangzhongVisible = ref(false);
 const yingmenkouVisible = ref(false);
 const xingshengVisible = ref(false);
 const innerVisible = ref(false);
-const cause = ref("部分垃圾站网络断开！")
-
+const cause = ref("部分垃圾站网络断开！");
+const activeName = ref("first");
 
 // ========================================================sunny
 let tianfuhuanjing = new Map();
@@ -611,6 +673,7 @@ const tianfuVisible = ref(false);
 const tianfuList = reactive([]);
 const renheList = reactive([]);
 const defaultList = reactive([]);
+const changeColorList = reactive([]);
 // const current_page = ref(1);
 // const total_records = ref(0);
 const queryName = ref("");
@@ -628,60 +691,171 @@ const tianfu_carStatus = ref("在活动");
 const renhe_carStatus = ref("在活动");
 const total_xihua = ref(0);
 
+//=================================================地图页面中间显示数字
+const total_jinniu = ref(0);
+const total_hongxing = ref(0);
+const today_flow = ref(0);
+const cumulative_flow = ref(0);
+const total_jinniu_fixed = ref("");
+var time = new Date().getTime();
+const tomorrow =
+  new Date(time + 1 * 24 * 60 * 60 * 1000).getFullYear() +
+  "-" +
+  (new Date(time + 1 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+  "-" +
+  new Date(time + 1 * 24 * 60 * 60 * 1000).getDate();
+
+function refreshData() {
+  total_jinniu.value = 0;
+
+  getQuery("红星", "transporter", today, tomorrow, 1, 10000).then(function (
+    resp
+  ) {
+    total_hongxing.value = 0;
+    for (let i = 0; i < resp.length; i++) {
+      total_hongxing.value = resp[i].netWeight + total_hongxing.value;
+    }
+    total_hongxing.value =
+      Math.floor((total_hongxing.value / 1000) * 100) / 100;
+    total_jinniu.value = total_hongxing.value + total_jinniu.value;
+  });
+  getQuery("西华", "transporter", today, tomorrow, 1, 10000).then(function (
+    resp
+  ) {
+    total_xihua.value = 0;
+    for (let i = 0; i < resp.length; i++) {
+      total_xihua.value = resp[i].netWeight + total_xihua.value;
+    }
+    total_xihua.value = Math.floor((total_xihua.value / 1000) * 100) / 100;
+    total_jinniu.value = total_xihua.value + total_jinniu.value;
+
+    total_jinniu.value = Math.floor(total_jinniu.value * 100) / 100;
+  });
+}
+setInterval(refreshData, 60000);
+
+const getSiteNameList = (pageNum, start, end, pageSize) => {
+  axios({
+    url:
+      "http://101.37.246.72:8084/shenlvye/getPeriodRecordByPage?pageNum=" +
+      pageNum +
+      "&start=" +
+      start +
+      "&end=" +
+      end +
+      "&pageSize=" +
+      pageSize,
+    method: "get",
+  }).then(function (resp) {
+    if (resp.status == 200) {
+      var data = resp.data.data.records;
+
+      console.log("data:" + data.length);
+
+      var total = 0;
+
+      total = total + today_flow.value;
+
+      console.log("total:" + total);
+      for (var key in data) {
+        console.log("data[key].flow:" + data[key].flow);
+        total = total + Number(data[key].flow);
+      }
+      cumulative_flow.value = Number(total);
+    }
+  });
+};
+
+onBeforeMount(() => {
+  getFlows().then(function (resp) {
+    // var data = resp.data.data;
+    // console.log("resp.message:" + resp.data.message)
+    //  carData.value = data;
+    today_flow.value = resp.今日流量;
+    // cumulative_flow.value = resp.累计流量;
+    // console.log("today_flow:" + resp.累计流量);
+  });
+  var start = moment().startOf("month").format("YYYY-MM-DD");
+  var end = moment().format("YYYY-MM-DD");
+
+  console.log("end:" + end);
+  //统计一个月的总量
+  getSiteNameList(1, start + "T23:59:00", end + "T23:59:00", 1000);
+
+  getQuery("红星", "transporter", today, tomorrow, 1, 10000).then(function (
+    resp
+  ) {
+    total_hongxing.value = 0;
+    for (let i = 0; i < resp.length; i++) {
+      total_hongxing.value = resp[i].netWeight + total_hongxing.value;
+    }
+    total_hongxing.value =
+      Math.floor((total_hongxing.value / 1000) * 100) / 100;
+    total_jinniu.value = total_hongxing.value + total_jinniu.value;
+  });
+  getQuery("西华", "transporter", today, tomorrow, 1, 10000).then(function (
+    resp
+  ) {
+    total_xihua.value = 0;
+    for (let i = 0; i < resp.length; i++) {
+      total_xihua.value = resp[i].netWeight + total_xihua.value;
+    }
+    total_xihua.value = Math.floor((total_xihua.value / 1000) * 100) / 100;
+    total_jinniu.value = total_xihua.value + total_jinniu.value;
+
+    total_jinniu.value = Math.floor(total_jinniu.value * 100) / 100;
+    total_jinniu_fixed.value = total_jinniu.value.toFixed(2);
+  });
+});
+
+//===============================================================
 // ===============================================事故故障详情
 const fault_details = () => {
-  var div = document.getElementById('dotClass')
-console.log("div.style.backgroundColor"+div.style.backgroundColor)
-  if(div.style.backgroundColor == "rgb(17, 225, 176)"){ defaultVisible.value = false; }
-    // 出现事故
+  var div = document.getElementById("dotClass");
+  console.log("div.style.backgroundColor" + div.style.backgroundColor);
+  if (div.style.backgroundColor == "rgb(17, 225, 176)") {
+    defaultVisible.value = false;
+  }
+  // 出现事故
   if (div.style.backgroundColor == "rgb(225, 41, 17)") {
-    
-    axios({
-      url:
-        "/api/dump-record/check_status",
-
-      method: "get",
-    }).then(function (resp) {
-      var data = resp.data.data;
-      
-      for (var key in data) {
-        var default_site = {
-          site_name: key,
-          Accident_cause: data[key],
-        }
-        defaultList.push(default_site)
-      }
-      if (defaultList.length == 5) {
-        cause.value="数据采集服务器断开！"
-      }
-      console.log("data.length:"+defaultList.length)
-    });
     defaultVisible.value = true;
-    console.log(defaultVisible.value)
+    console.log(defaultVisible.value);
   }
 };
 
 const changeColor = () => {
   axios({
-    url:
-      "/api/dump-record/check_status",
+    url: "/api/dump-record/check_status",
 
     method: "get",
   }).then(function (resp) {
+    defaultList.splice(0, defaultList.length);
     var data = resp.data.data;
-    var div = document.getElementById('dotClass')
-    
-    // 出现事故
-    if (data.value != null) {
-      document.getElementById('dotClass').style.backgroundColor = "#E12911";
-      document.getElementById('lamp').style.display="block";
-    }
-    else document.getElementById('dotClass').style.backgroundColor = "#11e1b0";
 
+    for (var key in data) {
+      var default_site = {
+        site_name: key,
+        Accident_cause: data[key],
+      };
+      defaultList.push(default_site);
+    }
+    if (defaultList.length == 5) {
+      cause.value = "数据采集服务器断开！";
+    }
+    console.log("data.length:" + defaultList.length);
+    // 出现事故
+    if (defaultList.length != 0) {
+      document.getElementById("dotClass").title = "出现异常！请点击查看详情！";
+      document.getElementById("dotClass").style.backgroundColor = "#E12911";
+      document.getElementById("lamp").style.display = "block";
+    } else {
+      document.getElementById("dotClass").style.backgroundColor = "#11e1b0";
+      document.getElementById("lamp").style.display = "none";
+    }
   });
-}
+};
 changeColor();
-setInterval(changeColor,60000)
+setInterval(changeColor, 60000);
 
 // =========================================================
 // ============================================================
@@ -794,7 +968,7 @@ const getTianfuList = (page) => {
       gong++;
       if (val != 2) {
         var currentCar = {
-          day: "停用",
+          day: "过去4小时内停用",
           carNumber: key,
           location: "停用",
         };
@@ -852,9 +1026,9 @@ const getRenheList = (page) => {
     renhe_car.forEach((val, key) => {
       if (val != 2) {
         var currentCar = {
-          day: "停用",
+          day: "过去4小时内停用",
           carNumber: key,
-          location: "停用",
+          location: "过去4小时内停用",
         };
         renheList.push(currentCar);
         num++;
@@ -884,6 +1058,10 @@ const handleEdit = (index, row) => {
   router.push({ name: "cardetailinfo", query: { carNumber: carNumber } });
   console.log(index, carNumber);
 };
+const station= (station_name) => {
+  var station = station_name;
+  router.push({ name: "hongxing", query: {station:station} });
+}
 
 onMounted(() => {
   if (window.screen.width > 2000 && window.devicePixelRatio == 1) {
@@ -2812,21 +2990,17 @@ let category_chart = null;
 
 //图表的基础模板
 let categoryOption = {
-  // 绘制图表
-  // title: {
-  //   text: 'ECharts 入门示例',
-  // },
   tooltip: {
     trigger: "item",
   },
-  labelLine: {
-    // 统一设置指示线长度
-    show: true,
-    normal: {
-      length: 40, //设置指示线的长度
-      lineStyle: {
-        color: "red", // 设置标示线的颜色
-      },
+  legend: {
+    bottom: "2%",
+    left: "center",
+    selectedMode: false,
+
+    textStyle: {
+      color: "rgba(255,255,255,0.8)",
+      fontSize: "12",
     },
   },
 
@@ -2835,31 +3009,44 @@ let categoryOption = {
       name: "当天垃圾净重总量",
       //设置图表类型是折线图
       type: "pie",
-      radius: "50%",
+      radius: ["65%"],
+      center: ["50%", "40%"],
+
+      startAngle: 180,
+      label: {
+        show: false,
+        position: "center",
+        formatter(param) {
+          // correct the percentage
+          return param.name + " (" + param.percent + "%)";
+        },
+        color: "#fff",
+      },
+      emphasis: {
+        label: {
+          show: true,
+          fontSize: 20,
+          fontWeight: "bold",
+        },
+      },
       data: [
         { value: 0, name: "红星" },
         { value: 0, name: "西华" },
-      ],
+        {
+          // make an record to fill the bottom 50%
 
-      emphasis: {
-        itemStyle: {
-          shadowBlur: 10,
-          shadowOffsetX: 0,
-          shadowColor: "rgba(0, 0, 0, 0.5)",
+          itemStyle: {
+            // stop the chart from rendering this piece
+            color: "none",
+            decal: {
+              symbol: "none",
+            },
+          },
+          label: {
+            show: false,
+          },
         },
-      },
-      label: {
-        overflow: "none",
-        show: true,
-        //指示线消失
-        // position: 'top',
-
-        fontSize: fontSizeSwitch(0.15),
-        //展示每个点的对应数值，这里必须是{c}才能显示数据
-        formatter: "{b}:{c} 吨",
-        //修改标签上的字体颜色
-        color: "#fff",
-      },
+      ],
     },
   ],
 };
@@ -2871,9 +3058,9 @@ const create_category_data = () => {
   let chartDom = document.getElementById("large_pie");
   //初始化图表
   category_chart = echarts.init(chartDom);
-  category_chart.on("click", (params) => {
-    console.log("params:" + params.data.name);
-  });
+  // category_chart.on("click", (params) => {
+  //   console.log("params:" + params.data.name);
+  // });
 
   //绘制图表
   category_chart.setOption(categoryOption);
@@ -2957,6 +3144,7 @@ let small_chart = null;
 
 //图表的基础模板
 let smallOption = {
+  color: ["#2f89cf"],
   tooltip: {
     trigger: "axis",
     axisPointer: {
@@ -2964,10 +3152,10 @@ let smallOption = {
     },
   },
   grid: {
-    left: "3%",
-    right: "4%",
-    bottom: "0%",
-    top: "25%",
+    left: "0%",
+    top: "10px",
+    right: "0%",
+    bottom: "4%",
     containLabel: true,
   },
   xAxis: [
@@ -2982,9 +3170,12 @@ let smallOption = {
         fontSize: fontSizeSwitch(0.15),
         show: true,
         textStyle: {
-          color: "#fff",
+          color: "rgba(255,255,255,0.8)",
           margin: 15,
         },
+      },
+      axisLine: {
+        show: false,
       },
     },
   ],
@@ -2998,9 +3189,14 @@ let smallOption = {
         //y轴线的颜色以及宽度
         show: false,
         lineStyle: {
-          color: "#fff",
-          width: 1,
-          type: "solid",
+          color: "rgba(255,255,255,0.8)",
+          width: 2,
+          // type: "solid",
+        },
+      },
+      splitLine: {
+        lineStyle: {
+          color: "rgba(255,255,255,0.1)",
         },
       },
     },
@@ -3010,6 +3206,10 @@ let smallOption = {
       name: "当天垃圾净重总量",
       //设置图表类型是折线图
       type: "bar",
+      barWidth: "35%",
+      itemStyle: {
+        barBorderRadius: 5,
+      },
       //  barMaxHeight:200,
       data: [
         { value: 0, name: "红花堰" },
@@ -3024,16 +3224,16 @@ let smallOption = {
           shadowColor: "rgba(0, 0, 0, 0.5)",
         },
       },
-      label: {
-        overflow: "none",
-        show: true,
-        // position: 'top',
-        fontSize: fontSizeSwitch(0.12),
-        //展示每个点的对应数值，这里必须是{c}才能显示数据
-        formatter: "{b}:{c} 吨",
-        //修改标签上的字体颜色
-        color: "#fff",
-      },
+      // label: {
+      //   overflow: "none",
+      //   show: true,
+      //   // position: 'top',
+      //   fontSize: fontSizeSwitch(0.12),
+      //   //展示每个点的对应数值，这里必须是{c}才能显示数据
+      //   formatter: "{b}:{c} 吨",
+      //   //修改标签上的字体颜色
+      //   color: "#fff",
+      // },
     },
   ],
 };
@@ -3201,6 +3401,645 @@ const create_small_data = () => {
 
 // ===========================================================================================================
 
+//===============================================================================================================
+// ======================================================================================================sunny
+/**
+ * 左下第三个图：展示金牛区大站和小站的垃圾总量之和（一周）
+ */
+
+const site_name_yAxis = ref([]);
+// const site_name_date = ref([]);
+var xAxis = 0;
+// var today_time = moment().format("YYYY-MM-DD");
+
+// site_name_date.value[0] = moment().add(-4, "d").format("YYYY-MM-DD");
+// site_name_date.value[1] = moment().add(-3, "d").format("YYYY-MM-DD");
+// site_name_date.value[2] = moment().add(-2, "d").format("YYYY-MM-DD");
+// site_name_date.value[3] = moment().add(-1, "d").format("YYYY-MM-DD");
+// site_name_date.value[4] = today_time;
+
+xAxis = getDateList(6, 24 * 60 * 60 * 1000);
+console.log("xAxis" + xAxis);
+var site_name_date = xAxis.toString().split(",");
+console.log("xAxis_arry" + site_name_date[0]);
+
+function getDateList(count, long) {
+  var time = new Date().setMinutes(0);
+  time = time - 6 * 24 * 60 * 60 * 1000;
+  var categoryData = [];
+  for (var i = 0; i <= count; i++) {
+    categoryData.push(moment(time).format("MM-DD"));
+    time += long;
+  }
+  return categoryData;
+}
+//调整字体大小
+
+//定义total
+const total_tow = ref(7);
+//全局定义图表
+let tow_chart = null;
+
+//图表的基础模板
+let towOption = {
+  color: ["#00f2f1", "#ed3f35"],
+  tooltip: {
+    trigger: "axis",
+  },
+  legend: {
+    data: ["大站垃圾总量", "小站垃圾总量"],
+    textStyle: {
+      color: "#4c9bfd",
+    },
+    right: "10%",
+  },
+  grid: {
+    top: "20%",
+    left: "3%",
+    right: "4%",
+    bottom: "3%",
+    show: true,
+    borderColor: "#012f4a",
+    containLabel: true,
+  },
+
+  xAxis: {
+    type: "category",
+    boundaryGap: false,
+    data: xAxis,
+    axisTick: {
+      show: false, //去除刻度线
+    },
+    axisLabel: {
+      color: "#4c9bfd", //文本颜色
+    },
+    axisLine: {
+      show: false, //去除轴线
+    },
+  },
+  yAxis: {
+    type: "value",
+    axisTick: {
+      show: false, //去除刻度线
+    },
+    axisLabel: {
+      color: "#4c9bfd", //文本颜色
+    },
+    axisLine: {
+      show: false, //去除轴线
+    },
+    splitLine: {
+      lineStyle: {
+        color: "#012f4a",
+      },
+    },
+  },
+  series: [
+    {
+      name: "大站垃圾总量",
+      type: "line",
+      stack: "Total",
+      data: [
+        { value: 0, name: "红花堰" },
+        { value: 0, name: "五块石" },
+        { value: 0, name: "五里墩" },
+        { value: 0, name: "其他小站" },
+        { value: 0, name: "其他小站" },
+        { value: 0, name: "其他小站" },
+        { value: 0, name: "其他小站" },
+      ],
+      smooth: true,
+    },
+    // {
+    //   name: '小站垃圾总量',
+    //   type: 'line',
+    //   stack: 'Total',
+    //   data: [
+    //             { value: 0, name: "红花堰" },
+    //     { value: 0, name: "五块石" },
+    //     { value: 0, name: "五里墩" },
+    //     { value: 0, name: "其他小站" },
+    //     { value: 0, name: "其他小站" },
+    //     { value: 0, name: "其他小站" },
+    //     { value: 0, name: "其他小站" },
+    //   ],
+    //    smooth:true
+    // },
+  ],
+};
+var site_name_sum = ref(0);
+var site_name_sum1 = ref(0);
+const getStationsTotal = (start, end, site_name, pageNum, pageSize, date) => {
+  axios({
+    url:
+      "/api/dump-record/dump_car/" +
+      start +
+      "/" +
+      end +
+      "/" +
+      site_name +
+      "/" +
+      pageNum +
+      "/" +
+      pageSize,
+
+    method: "get",
+  }).then(function (resp) {
+    if (resp.status == 200) {
+      var data = resp.data.data.records;
+      site_name_sum.value = 0;
+      for (let i = 0; i < data.length; i++) {
+        site_name_sum.value = data[i].totalWeight + site_name_sum.value;
+      }
+
+      site_name_sum.value =
+        Math.floor((site_name_sum.value / 1000) * 100) / 100;
+      towOption.series[0].data[date].value = Number(
+        site_name_sum.value.toFixed(0)
+      );
+
+      console.log("总总哦在那个" + towOption.series[0].data[date].value);
+      tow_chart.setOption(towOption);
+    }
+
+    //     axios({
+    //   url:
+    //     "/api/dump-record/dump_car/" +
+    //     start +
+    //     "/" +
+    //     end +
+    //     "/" +
+    //     "all" +
+    //     "/" +
+    //     pageNum +
+    //     "/" +
+    //     pageSize,
+
+    //   method: "get",
+    // }).then(function (resp) {
+    //   if (resp.status == 200) {
+    //     var data = resp.data.data.records;
+    //     site_name_sum1.value = 0;
+    //     for (let i = 0; i < data.length; i++) {
+    //       site_name_sum1.value = data[i].totalWeight + site_name_sum1.value;
+    //     }
+
+    //     site_name_sum1.value =
+    //       Math.floor((site_name_sum1.value / 1000) * 100) / 100;
+
+    //     towOption.series[1].data[date].value = Number(site_name_sum.value.toFixed(0));
+    //     console.log("多少啦"+ Number(site_name_sum.value.toFixed(0)))
+
+    //     towOption.series[0].data[date].value = Number(site_name_sum1.value.toFixed(0));
+    //     console.log("总总哦在那个" + towOption.series[1].data[date].value)
+
+    //   }
+
+    // });
+    //  tow_chart.setOption(towOption);
+  });
+};
+
+// const recent_days_total = (site_name_date) => {
+//   // console.log("时间" + site_name_date[date]);
+//   for (var date = 0; date < 7; date++) {
+//     getStationsTotal(
+//       site_name_date[date],
+//       site_name_date[date],
+//       "all",
+//       1,
+//       10000,
+//       date
+//     );
+//   }
+// };
+/**
+ * 获取后端数据，并动态展示在图表上
+ */
+const create_tow_data = () => {
+  let chartDom = document.getElementById("tow_pie");
+  //初始化图表
+  tow_chart = echarts.init(chartDom);
+
+  //绘制图表
+  tow_chart.setOption(towOption);
+  window.addEventListener("resize", tow_chart.resize);
+  let honghuayan = 0;
+  let wukuaishi = 0;
+  let wulidun = 0;
+  let xihua = 0;
+  let hongxing = 0;
+
+  // console.log("时间" + site_name_date[1]);
+  // recent_days_total(site_name_date);
+  for (var date = 0; date < 7; date++) {
+    console.log("时间" + site_name_date[date]);
+    getStationsTotal(
+      moment().format("YYYY") + "-" + site_name_date[date],
+      moment().format("YYYY") + "-" + site_name_date[date],
+      "all",
+      1,
+      10000,
+      date
+    );
+  }
+
+  // tow_chart.setOption(towOption);
+
+  //   getQuery(
+  //     "红星",
+  //     "transporter",
+  //     new Date(time - 6 * 24 * 60 * 60 * 1000).getFullYear() +
+  //       "-" +
+  //       (new Date(time - 6 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+  //       "-" +
+  //       new Date(time - 6 * 24 * 60 * 60 * 1000).getDate(),
+  //     new Date(time - 5 * 24 * 60 * 60 * 1000).getFullYear() +
+  //       "-" +
+  //       (new Date(time - 5 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+  //       "-" +
+  //       new Date(time - 5 * 24 * 60 * 60 * 1000).getDate(),
+
+  //     1,
+  //     10000
+  //   ).then(function (resp) {
+  //     total_tow.value = 0;
+  //     for (let i = 0; i < resp.length; i++) {
+  //       total_tow.value = resp[i].netWeight + total_tow.value;
+  //     }
+  //     total_tow.value = Math.floor((total_tow.value / 1000) * 100) / 100;
+  //     //更改图表上对应位置的数据
+  //     towOption.xAxis[0].data[0].value=moment().add(-4, "d").format("YYYY-MM-DD");
+  //     towOption.series[0].data[0].value = Number(total_tow.value.toFixed(0));
+  //     honghuayan = Number(total_tow.value.toFixed(0));
+  //     // console.log(towOption.series[0].data[0].value+"第一个")
+  //     //更新页面上的图表
+  //     // tow_chart.setOption(towOption);
+  //         getQuery(
+  //     "西华",
+  //     "transporter",
+  //     new Date(time - 6 * 24 * 60 * 60 * 1000).getFullYear() +
+  //       "-" +
+  //       (new Date(time - 6 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+  //       "-" +
+  //       new Date(time - 6 * 24 * 60 * 60 * 1000).getDate(),
+  //     new Date(time - 5 * 24 * 60 * 60 * 1000).getFullYear() +
+  //       "-" +
+  //       (new Date(time - 5 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+  //       "-" +
+  //       new Date(time - 5 * 24 * 60 * 60 * 1000).getDate(),
+
+  //     1,
+  //     10000
+  //   ).then(function (resp) {
+  //     total_tow.value = 0;
+  //     for (let i = 0; i < resp.length; i++) {
+  //       total_tow.value = resp[i].netWeight + total_tow.value;
+  //     }
+  //     total_tow.value = Math.floor((total_tow.value / 1000) * 100) / 100;
+  //     //更改图表上对应位置的数据
+  //     towOption.series[0].data[0].value = Number(total_tow.value.toFixed(0))+towOption.series[0].data[0].value ;
+  //     honghuayan = Number(total_tow.value.toFixed(0));
+  //     // console.log(towOption.series[0].data[0].value+"第一个")
+  //     //更新页面上的图表
+  //     // tow_chart.setOption(towOption);
+  //   });
+  //   });
+
+  //   getQuery(
+  //     "红星",
+  //     "transporter",
+  //     new Date(time - 5 * 24 * 60 * 60 * 1000).getFullYear() +
+  //       "-" +
+  //       (new Date(time - 5 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+  //       "-" +
+  //       new Date(time - 5 * 24 * 60 * 60 * 1000).getDate(),
+  //     new Date(time - 4 * 24 * 60 * 60 * 1000).getFullYear() +
+  //       "-" +
+  //       (new Date(time - 4 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+  //       "-" +
+  //       new Date(time - 4 * 24 * 60 * 60 * 1000).getDate(),
+
+  //     1,
+  //     10000
+  //   ).then(function (resp) {
+  //     total_tow.value = 0;
+  //     for (let i = 0; i < resp.length; i++) {
+  //       total_tow.value = resp[i].netWeight + total_tow.value;
+  //     }
+  //     total_tow.value = Math.floor((total_tow.value / 1000) * 100) / 100;
+  //     //更改图表上对应位置的数据
+  //     towOption.series[0].data[1].value = Number(total_tow.value.toFixed(0));
+  //     wukuaishi = Number(total_tow.value.toFixed(0));
+  //     //更新页面上的图表
+  //     // tow_chart.setOption(towOption);
+  //         getQuery(
+  //     "西华",
+  //     "transporter",
+  //     new Date(time - 5 * 24 * 60 * 60 * 1000).getFullYear() +
+  //       "-" +
+  //       (new Date(time - 5 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+  //       "-" +
+  //       new Date(time - 5 * 24 * 60 * 60 * 1000).getDate(),
+  //     new Date(time - 4 * 24 * 60 * 60 * 1000).getFullYear() +
+  //       "-" +
+  //       (new Date(time - 4 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+  //       "-" +
+  //       new Date(time - 4 * 24 * 60 * 60 * 1000).getDate(),
+
+  //     1,
+  //     10000
+  //   ).then(function (resp) {
+  //     total_tow.value = 0;
+  //     for (let i = 0; i < resp.length; i++) {
+  //       total_tow.value = resp[i].netWeight + total_tow.value;
+  //     }
+  //     total_tow.value = Math.floor((total_tow.value / 1000) * 100) / 100;
+  //     //更改图表上对应位置的数据
+  //     towOption.series[0].data[1].value = Number(total_tow.value.toFixed(0))+towOption.series[0].data[1].value;
+  //     wukuaishi = Number(total_tow.value.toFixed(0));
+  //     //更新页面上的图表
+  //     // tow_chart.setOption(towOption);
+  //   });
+  //   });
+
+  //   getQuery(
+  //     "红星",
+  //     "transporter",
+  //     new Date(time - 4 * 24 * 60 * 60 * 1000).getFullYear() +
+  //       "-" +
+  //       (new Date(time - 4 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+  //       "-" +
+  //       new Date(time - 4 * 24 * 60 * 60 * 1000).getDate(),
+  //     new Date(time - 3 * 24 * 60 * 60 * 1000).getFullYear() +
+  //       "-" +
+  //       (new Date(time - 3 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+  //       "-" +
+  //       new Date(time - 3 * 24 * 60 * 60 * 1000).getDate(),
+  //     1,
+  //     10000
+  //   ).then(function (resp) {
+  //     total_tow.value = 0;
+  //     for (let i = 0; i < resp.length; i++) {
+  //       total_tow.value = resp[i].netWeight + total_tow.value;
+  //     }
+  //     total_tow.value = Math.floor((total_tow.value / 1000) * 100) / 100;
+  //     //更改图表上对应位置的数据
+  //     towOption.series[0].data[2].value = Number(total_tow.value.toFixed(0));
+  //     wulidun = Number(total_tow.value.toFixed(0));
+  //     //更新页面上的图表
+  //     // tow_chart.setOption(towOption);
+  //         getQuery(
+  //     "西华",
+  //     "transporter",
+  //     new Date(time - 4 * 24 * 60 * 60 * 1000).getFullYear() +
+  //       "-" +
+  //       (new Date(time - 4 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+  //       "-" +
+  //       new Date(time - 4 * 24 * 60 * 60 * 1000).getDate(),
+  //     new Date(time - 3 * 24 * 60 * 60 * 1000).getFullYear() +
+  //       "-" +
+  //       (new Date(time - 3 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+  //       "-" +
+  //       new Date(time - 3 * 24 * 60 * 60 * 1000).getDate(),
+  //     1,
+  //     10000
+  //   ).then(function (resp) {
+  //     total_tow.value = 0;
+  //     for (let i = 0; i < resp.length; i++) {
+  //       total_tow.value = resp[i].netWeight + total_tow.value;
+  //     }
+  //     total_tow.value = Math.floor((total_tow.value / 1000) * 100) / 100;
+  //     //更改图表上对应位置的数据
+  //     towOption.series[0].data[2].value = Number(total_tow.value.toFixed(0))+towOption.series[0].data[2].value ;
+  //     wulidun = Number(total_tow.value.toFixed(0));
+  //     //更新页面上的图表
+  //     // tow_chart.setOption(towOption);
+  //   });
+  //   });
+
+  //   getQuery(
+  //     "红星",
+  //     "transporter",
+  //     new Date(time - 3 * 24 * 60 * 60 * 1000).getFullYear() +
+  //       "-" +
+  //       (new Date(time - 3 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+  //       "-" +
+  //       new Date(time - 3 * 24 * 60 * 60 * 1000).getDate(),
+  //     new Date(time - 2 * 24 * 60 * 60 * 1000).getFullYear() +
+  //       "-" +
+  //       (new Date(time - 2 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+  //       "-" +
+  //       new Date(time - 2 * 24 * 60 * 60 * 1000).getDate(),
+  //     1,
+  //     10000
+  //   ).then(function (resp) {
+  //     total_tow.value = 0;
+  //     for (let i = 0; i < resp.length; i++) {
+  //       total_tow.value = resp[i].netWeight + total_tow.value;
+  //     }
+  //     total_tow.value = Math.floor((total_tow.value / 1000) * 100) / 100;
+  //     //更改图表上对应位置的数据
+  //     towOption.series[0].data[3].value = Number(total_tow.value.toFixed(0));
+  //     hongxing = Number(total_tow.value.toFixed(0));
+
+  //           getQuery(
+  //       "西华",
+  //       "transporter",
+  //     new Date(time - 3 * 24 * 60 * 60 * 1000).getFullYear() +
+  //       "-" +
+  //       (new Date(time - 3 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+  //       "-" +
+  //       new Date(time - 3 * 24 * 60 * 60 * 1000).getDate(),
+  //     new Date(time - 2 * 24 * 60 * 60 * 1000).getFullYear() +
+  //       "-" +
+  //       (new Date(time - 2 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+  //       "-" +
+  //       new Date(time - 2 * 24 * 60 * 60 * 1000).getDate(),
+  //       1,
+  //       10000
+  //     ).then(function (resp) {
+  //       total_tow.value = 0;
+  //       for (let i = 0; i < resp.length; i++) {
+  //         total_tow.value = resp[i].netWeight + total_tow.value;
+  //       }
+  //       total_tow.value = Math.floor((total_tow.value / 1000) * 100) / 100;
+  //       xihua = Number(total_tow.value.toFixed(0));
+  //       // console.log(xihua)
+  //       //更改图表上对应位置的数据
+  // towOption.series[0].data[3].value = Number(total_tow.value.toFixed(0))+towOption.series[0].data[3].value;
+  //       // console.log(wukuaishi+"墩")
+  //       // tow_chart.setOption(towOption);
+  //     });
+  //   });
+
+  //     getQuery(
+  //     "红星",
+  //     "transporter",
+  //     new Date(time - 2 * 24 * 60 * 60 * 1000).getFullYear() +
+  //       "-" +
+  //       (new Date(time - 2 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+  //       "-" +
+  //       new Date(time - 2 * 24 * 60 * 60 * 1000).getDate(),
+  //     new Date(time - 1 * 24 * 60 * 60 * 1000).getFullYear() +
+  //       "-" +
+  //       (new Date(time - 1 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+  //       "-" +
+  //       new Date(time - 1 * 24 * 60 * 60 * 1000).getDate(),
+  //     1,
+  //     10000
+  //   ).then(function (resp) {
+  //     total_tow.value = 0;
+  //     for (let i = 0; i < resp.length; i++) {
+  //       total_tow.value = resp[i].netWeight + total_tow.value;
+  //     }
+  //     total_tow.value = Math.floor((total_tow.value / 1000) * 100) / 100;
+  //     //更改图表上对应位置的数据
+  //     towOption.series[0].data[4].value = Number(total_tow.value.toFixed(0));
+  //     hongxing = Number(total_tow.value.toFixed(0));
+
+  //           getQuery(
+  //       "西华",
+  //       "transporter",
+  //     new Date(time - 2 * 24 * 60 * 60 * 1000).getFullYear() +
+  //       "-" +
+  //       (new Date(time - 2 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+  //       "-" +
+  //       new Date(time - 2 * 24 * 60 * 60 * 1000).getDate(),
+  //     new Date(time - 1 * 24 * 60 * 60 * 1000).getFullYear() +
+  //       "-" +
+  //       (new Date(time - 1 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+  //       "-" +
+  //       new Date(time - 1 * 24 * 60 * 60 * 1000).getDate(),
+  //       1,
+  //       10000
+  //     ).then(function (resp) {
+  //       total_tow.value = 0;
+  //       for (let i = 0; i < resp.length; i++) {
+  //         total_tow.value = resp[i].netWeight + total_tow.value;
+  //       }
+  //       total_tow.value = Math.floor((total_tow.value / 1000) * 100) / 100;
+  //       xihua = Number(total_tow.value.toFixed(0));
+  //       // console.log(xihua)
+  //       //更改图表上对应位置的数据
+  // towOption.series[0].data[4].value = Number(total_tow.value.toFixed(0))+towOption.series[0].data[4].value;
+  //       // console.log(wukuaishi+"墩")
+  //       // tow_chart.setOption(towOption);
+  //     });
+  //   });
+
+  //       getQuery(
+  //     "红星",
+  //     "transporter",
+  //     new Date(time - 1 * 24 * 60 * 60 * 1000).getFullYear() +
+  //       "-" +
+  //       (new Date(time - 1 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+  //       "-" +
+  //       new Date(time - 1 * 24 * 60 * 60 * 1000).getDate(),
+  //     new Date(time).getFullYear() +
+  //       "-" +
+  //       (new Date(time).getMonth() + 1) +
+  //       "-" +
+  //       new Date(time ).getDate(),
+  //     1,
+  //     10000
+  //   ).then(function (resp) {
+  //     total_tow.value = 0;
+  //     for (let i = 0; i < resp.length; i++) {
+  //       total_tow.value = resp[i].netWeight + total_tow.value;
+  //     }
+  //     total_tow.value = Math.floor((total_tow.value / 1000) * 100) / 100;
+  //     //更改图表上对应位置的数据
+  //     towOption.series[0].data[5].value = Number(total_tow.value.toFixed(0));
+  //     hongxing = Number(total_tow.value.toFixed(0));
+
+  //           getQuery(
+  //       "西华",
+  //       "transporter",
+  //     new Date(time - 1 * 24 * 60 * 60 * 1000).getFullYear() +
+  //       "-" +
+  //       (new Date(time - 1 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+  //       "-" +
+  //       new Date(time - 1 * 24 * 60 * 60 * 1000).getDate(),
+  //     new Date(time).getFullYear() +
+  //       "-" +
+  //       (new Date(time).getMonth() + 1) +
+  //       "-" +
+  //       new Date(time ).getDate(),
+  //       1,
+  //       10000
+  //     ).then(function (resp) {
+  //       total_tow.value = 0;
+  //       for (let i = 0; i < resp.length; i++) {
+  //         total_tow.value = resp[i].netWeight + total_tow.value;
+  //       }
+  //       total_tow.value = Math.floor((total_tow.value / 1000) * 100) / 100;
+  //       xihua = Number(total_tow.value.toFixed(0));
+  //       // console.log(xihua)
+  //       //更改图表上对应位置的数据
+  // towOption.series[0].data[5].value = Number(total_tow.value.toFixed(0))+towOption.series[0].data[5].value;
+  //       // console.log(wukuaishi+"墩")
+  //       // tow_chart.setOption(towOption);
+  //     });
+  //   });
+
+  //       getQuery(
+  //     "红星",
+  //     "transporter",
+  //     new Date(time ).getFullYear() +
+  //       "-" +
+  //       (new Date(time).getMonth() + 1) +
+  //       "-" +
+  //       new Date(time +1 * 24 * 60 * 60 * 1000).getDate(),
+  //     new Date(time +1* 24 * 60 * 60 * 1000).getFullYear() +
+  //       "-" +
+  //       (new Date(time+1 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+  //       "-" +
+  //       new Date(time +1 * 24 * 60 * 60 * 1000).getDate(),
+  //     1,
+  //     10000
+  //   ).then(function (resp) {
+  //     total_tow.value = 0;
+  //     for (let i = 0; i < resp.length; i++) {
+  //       total_tow.value = resp[i].netWeight + total_tow.value;
+  //     }
+  //     total_tow.value = Math.floor((total_tow.value / 1000) * 100) / 100;
+  //     //更改图表上对应位置的数据
+  //     towOption.series[0].data[6].value = Number(total_tow.value.toFixed(0));
+  //     hongxing = Number(total_tow.value.toFixed(0));
+
+  //           getQuery(
+  //       "西华",
+  //       "transporter",
+  //     new Date(time ).getFullYear() +
+  //       "-" +
+  //       (new Date(time).getMonth() + 1) +
+  //       "-" +
+  //       new Date(time +1 * 24 * 60 * 60 * 1000).getDate(),
+  //     new Date(time +1* 24 * 60 * 60 * 1000).getFullYear() +
+  //       "-" +
+  //       (new Date(time+1 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+  //       "-" +
+  //       new Date(time +1 * 24 * 60 * 60 * 1000).getDate(),
+  //       1,
+  //       10000
+  //     ).then(function (resp) {
+  //       total_tow.value = 0;
+  //       for (let i = 0; i < resp.length; i++) {
+  //         total_tow.value = resp[i].netWeight + total_tow.value;
+  //       }
+  //       total_tow.value = Math.floor((total_tow.value / 1000) * 100) / 100;
+  //       xihua = Number(total_tow.value.toFixed(0));
+  //       // console.log(xihua)
+  //       //更改图表上对应位置的数据
+  // towOption.series[0].data[6].value = Number(total_tow.value.toFixed(0))+towOption.series[0].data[6].value;
+  //       // console.log(wukuaishi+"墩")
+  //       tow_chart.setOption(towOption);
+  //     });
+  //   });
+};
+//======================================================================================================
+
 // ======================================================================================================sunny
 /**
  * 右上图：展示仁和星牛最近4个小时内活动车辆数，以及未活动车辆数
@@ -3215,14 +4054,19 @@ let renhe_chart = null;
 
 //图表的基础模板
 let renheOption = {
+  color: ["#41C9CE", "#DC8D75"],
   tooltip: {
     trigger: "item",
   },
-  grid: {
-    left: "3%",
-    right: "4%",
-    bottom: "3%",
-    containLabel: true,
+  legend: {
+    bottom: "2%",
+    left: "center",
+    selectedMode: false,
+
+    textStyle: {
+      color: "rgba(255,255,255,0.8)",
+      fontSize: "12",
+    },
   },
 
   series: [
@@ -3230,29 +4074,49 @@ let renheOption = {
       name: "仁和星牛车辆",
       //设置图表类型是折线图
       type: "pie",
-      radius: "50%",
-      color: ["#f9c956", "#75bedc"],
+      radius: ["35%", "65%"],
+      center: ["50%", "40%"],
+
+      startAngle: 180,
+      label: {
+        show: false,
+        position: "center",
+        formatter(param) {
+          // correct the percentage
+          return param.name + " (" + param.percent + "%)";
+        },
+        color: "#fff",
+      },
+      emphasis: {
+        label: {
+          show: true,
+          fontSize: 20,
+          fontWeight: "bold",
+        },
+      },
+      itemStyle: {
+        borderRadius: 5,
+        borderColor: "#fff",
+        borderWidth: 2,
+      },
       data: [
         { value: 0, name: "在用" },
         { value: 0, name: "停用" },
-      ],
-      emphasis: {
-        itemStyle: {
-          shadowBlur: 10,
-          shadowOffsetX: 0,
-          shadowColor: "rgba(0, 0, 0, 0.5)",
+        {
+          // make an record to fill the bottom 50%
+
+          itemStyle: {
+            // stop the chart from rendering this piece
+            color: "none",
+            decal: {
+              symbol: "none",
+            },
+          },
+          label: {
+            show: false,
+          },
         },
-      },
-      label: {
-        overflow: "none",
-        show: true,
-        // position: 'top',
-        fontSize: fontSizeSwitch(0.15),
-        //展示每个点的对应数值，这里必须是{c}才能显示数据
-        formatter: "{b}:{c} 辆 \n 占比：{d}%",
-        //修改标签上的字体颜色
-        color: "#fff",
-      },
+      ],
     },
   ],
 };
@@ -3265,10 +4129,10 @@ const create_renhe_data = () => {
   //初始化图表
   renhe_chart = echarts.init(chartDom);
 
-  renhe_chart.on("click", (params) => {
-    console.log("params:" + params.data.name);
-    renheVisible.value = true;
-  });
+  // renhe_chart.on("click", (params) => {
+  //   console.log("params:" + params.data.name);
+  //   renheVisible.value = true;
+  // });
 
   //绘制图表
   renhe_chart.setOption(renheOption);
@@ -3317,47 +4181,73 @@ function trim(ele) {
 //定义total
 const total2 = ref(2);
 //全局定义图表
-let tianfu_chart = null;
+// let tianfu_chart = null;
 
 //图表的基础模板
 let tianfuOption = {
+  color: ["#41C9CE", "#DC8D75"],
   tooltip: {
     trigger: "item",
   },
-  grid: {
-    left: "3%",
-    right: "4%",
-    bottom: "3%",
-    containLabel: true,
+  legend: {
+    bottom: "2%",
+    left: "center",
+    selectedMode: false,
+
+    textStyle: {
+      color: "rgba(255,255,255,0.8)",
+      fontSize: "12",
+    },
   },
-  color: ["#41C9CE", "#DC8D75"],
+
   series: [
     {
       name: "天府环境车辆",
       //设置图表类型是折线图
       type: "pie",
-      radius: "50%",
+      radius: ["35%", "65%"],
+      center: ["50%", "40%"],
+
+      startAngle: 180,
+      label: {
+        show: false,
+        position: "center",
+        formatter(param) {
+          // correct the percentage
+          return param.name + " (" + param.percent + "%)";
+        },
+        color: "#fff",
+      },
+      emphasis: {
+        label: {
+          show: true,
+          fontSize: 20,
+          fontWeight: "bold",
+        },
+      },
+      itemStyle: {
+        borderRadius: 5,
+        borderColor: "#fff",
+        borderWidth: 2,
+      },
       data: [
         { value: 0, name: "在用" },
         { value: 0, name: "停用" },
-      ],
-      emphasis: {
-        itemStyle: {
-          shadowBlur: 10,
-          shadowOffsetX: 0,
-          shadowColor: "rgba(0, 0, 0, 0.5)",
+        {
+          // make an record to fill the bottom 50%
+
+          itemStyle: {
+            // stop the chart from rendering this piece
+            color: "none",
+            decal: {
+              symbol: "none",
+            },
+          },
+          label: {
+            show: false,
+          },
         },
-      },
-      label: {
-        overflow: "none",
-        show: true,
-        // position: 'top',
-        fontSize: fontSizeSwitch(0.15),
-        //展示每个点的对应数值，这里必须是{c}才能显示数据
-        formatter: "{b}:{c} 辆 \n 占比：{d}%",
-        //修改标签上的字体颜色
-        color: "#fff",
-      },
+      ],
     },
   ],
 };
@@ -3368,12 +4258,12 @@ let tianfuOption = {
 const create_tianfu_data = () => {
   let chartDom = document.getElementById("tianfu_pie");
   //初始化图表
-  tianfu_chart = echarts.init(chartDom);
+  let tianfu_chart = echarts.init(chartDom);
 
-  tianfu_chart.on("click", (params) => {
-    console.log("params:" + params.data.name);
-    tianfuVisible.value = true;
-  });
+  // tianfu_chart.on("click", (params) => {
+  //   console.log("params:" + params.data.name);
+  //   tianfuVisible.value = true;
+  // });
 
   //绘制图表
   tianfu_chart.setOption(tianfuOption);
@@ -3410,12 +4300,20 @@ const create_tianfu_data = () => {
 //Dom挂载完毕，可以拿到组件渲染后的 DOM节点，展示图表
 onMounted(() => {
   create_small_data();
+  create_tow_data();
   create_category_data();
 
   create_renhe_data();
-  create_tianfu_data();
+
 });
+function handleClick() {
+//  create_renhe_data(); 
+  create_tianfu_data();
+   
+}
+
 setInterval(create_small_data, 60000);
+setInterval(create_tow_data, 60000);
 setInterval(create_category_data, 60000);
 setInterval(create_renhe_data, 60000);
 setInterval(create_tianfu_data, 60000);
@@ -3431,6 +4329,11 @@ onBeforeUnmount(() => {
     small_chart.dispose();
     small_chart = null;
   }
+  window.removeEventListener("resize", tow_chart.resize);
+  if (tow_chart) {
+    tow_chart.dispose();
+    tow_chart = null;
+  }
   window.removeEventListener("resize", category_chart.resize);
   if (category_chart) {
     category_chart.dispose();
@@ -3441,21 +4344,201 @@ onBeforeUnmount(() => {
     renhe_chart.dispose();
     renhe_chart = null;
   }
-  window.removeEventListener("resize", tianfu_chart.resize);
-  if (tianfu_chart) {
-    tianfu_chart.dispose();
-    tianfu_chart = null;
-  }
+  // window.removeEventListener("resize", tianfu_chart.resize);
+  // if (tianfu_chart) {
+  //   tianfu_chart.dispose();
+  //   tianfu_chart = null;
+  // }
 });
 
 // ===========================================================================================================
 </script>
 
 <style scoped src="@/assets/css/subsys.css"></style>
-<style scoped>
-.mapDiv {
+<style lang="scss" scoped>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+@font-face {
+  font-family: electronicFont;
+  src: url("@/assets/font/DS-DIGIT.TTF");
+}
+.mainDiv {
+  display: flex;
+  min-width: 1024px;
+  /* max-width: 1920px; */
   width: 100%;
-  height: 100%;
+  margin: 0 auto;
+  padding: 0.125rem 0.125rem 0;
+}
+
+/* .mainDiv div{
+  width:12.8rem;
+} */
+.columns:nth-child(1) {
+  flex: 3;
+  /* width:2.5rem; */
+}
+.columns:nth-child(2) {
+  flex: 6;
+  margin: 0 0.125rem 0.125rem;
+  /* width:1000px; */
+}
+.columns:nth-child(3) {
+  flex: 3;
+  /* width:2.5rem; */
+}
+.panel {
+  position: relative;
+  height: 3.875rem;
+  padding: 0 0.1875rem 0.5rem;
+  border: 1px solid rgb(25, 196, 139, 0.17);
+  margin-bottom: 0.1875rem;
+
+  background: url("@/assets/line.png") rgba(222, 222, 222, 0.06);
+}
+.panel::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  border-left: 2px solid #02a6b5;
+  border-top: 2px solid #02a6b5;
+  content: "";
+}
+
+.panel::after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid #02a6b5;
+  border-top: 2px solid #02a6b5;
+  content: "";
+}
+.panel_footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+
+.panel_footer::before {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  border-left: 2px solid #02a6b5;
+  border-bottom: 2px solid #02a6b5;
+  content: "";
+}
+
+.panel_footer::after {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid #02a6b5;
+  border-bottom: 2px solid #02a6b5;
+  content: "";
+}
+.panel h2 {
+  height: 0.6rem;
+  color: #fff;
+  line-height: 0.6rem;
+  text-align: center;
+  font-size: 0.25rem;
+  font-weight: 400;
+}
+.panel .chart {
+  height: 3rem;
+  /* background-color:pink; */
+}
+.no {
+  background: rgba(101, 132, 226, 0.1);
+  padding: 0.1875rem;
+  margin-bottom: 10px;
+}
+.no-hd {
+  position: relative;
+  border: 1px solid rgb(25, 186, 139, 0.17);
+}
+.no-hd::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  content: "";
+  width: 30px;
+  height: 10px;
+  border-top: 2px solid #02a6b5;
+  border-left: 2px solid #02a6b5;
+}
+
+.no-hd::after {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  content: "";
+  width: 30px;
+  height: 10px;
+  border-bottom: 2px solid #02a6b5;
+  border-right: 2px solid #02a6b5;
+}
+.no-hd ul {
+  display: flex;
+}
+.no-hd ul li {
+  position: relative;
+  flex: 1;
+  line-height: 1rem;
+  font-size: 0.5rem;
+  color: #ffeb7b;
+  text-align: center;
+  font-family: "electronicFont";
+}
+.no-hd ul li::after {
+  position: absolute;
+  top: 25%;
+  right: 0;
+  height: 50%;
+  content: "";
+  width: 1px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.no-hd ul li:nth-child(5)::after {
+  position: absolute;
+  top: 25%;
+  right: 0;
+  height: 50%;
+  width: 0;
+  background: rgba(255, 255, 255, 0.2);
+}
+.no-bd ul {
+  display: flex;
+}
+.no-bd ul li {
+  flex: 1;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.2rem;
+  height: 0.5rem;
+  line-height: 0.5rem;
+  padding-top: 0.125rem;
+}
+li {
+  list-style-type: none;
+}
+.mapDiv {
+  margin: 0 auto;
+  width: 100%;
+  height: 10.125rem;
 }
 
 .closeIcon {
@@ -3464,9 +4547,9 @@ onBeforeUnmount(() => {
 
 .text-week {
   margin-left: 20px;
-  font-size: large;
+  font-size: 0.25rem;
   color: #fff;
-  line-height: 60px;
+  line-height: 1rem;
   width: 100%;
 }
 .text-warning {
@@ -3479,7 +4562,7 @@ onBeforeUnmount(() => {
 
 .text-title {
   margin-left: 20px;
-  font-size: 30px;
+  font-size: 0.4rem;
   color: #fff;
   line-height: 30px;
   width: 30%;
@@ -3498,7 +4581,7 @@ onBeforeUnmount(() => {
 }
 
 .buttonToData {
-  font-size: large;
+  font-size: 0.25rem;
   color: #fff;
 }
 
@@ -3519,9 +4602,9 @@ onBeforeUnmount(() => {
 
 .router {
   padding: 15px;
-  font-size: 25px;
+  font-size: 0.3125rem;
   margin-left: 10px;
-  margin-top: -3px;
+  margin-top: -0.1rem;
   white-space: nowrap;
   letter-spacing: 3px;
 }
@@ -3613,74 +4696,239 @@ onBeforeUnmount(() => {
 }
 
 /*======================================================= sunny */
-.chart {
-  height: 76vh;
+/* .chart { */
+/* height: 76vh;
   width: 27vw;
 
   opacity: 0.9;
-  color: white;
-  /* background:blanchedalmond; */
-}
+  color: white; */
+/* background:blanchedalmond; */
+/* } */
 
 #large_pie {
-  /* padding-left: 2vw; */
-  height: 22vw;
+  height: 3rem;
   width: 100%;
-  margin-top: -7vh;
+  /* margin-top: -7vh; */
   opacity: 1;
 }
 
 #small_pie {
   /* padding-left: 0vw; */
-  height: 100%;
+  height: 3rem;
   width: 100%;
-  margin-top: -7vh;
+  /* margin-top: -7vh; */
+  opacity: 1;
+}
+
+#tow_pie {
+  /* padding-left: 0vw; */
+  height: 3rem;
+  width: 100%;
+  /* margin-top: -7vh; */
   opacity: 1;
 }
 
 #renhe_pie {
   /* padding-left: 0vw; */
-  height: 22vw;
+  height: 3rem;
   width: 100%;
-  margin-top: -7vh;
+  /* margin-top: -7vh; */
   opacity: 1;
 }
 
 #tianfu_pie {
   /* padding-left: 0vw; */
-  height: 22vw;
+  height: 3rem;
   width: 100%;
-  margin-top: -7vh;
+  /* margin-top: -7vh; */
   opacity: 1;
+
 }
+
 /* ============================================================= */
-       #dotClass{
-            width: 25px;
-            height: 25px;
-            margin-top: 2.2vh;
-            background-color: red;
-            border-radius:50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-        }
-        #lamp{
-            width: 25px;
-            height: 25px;
-            animation-name: imageAnim;
-            animation-duration: 0.5s;
-            animation-iteration-count: infinite;
-            animation-direction: alternate;
-            animation-timing-function: ease;
-            animation-play-state: running;
-            background-image: radial-gradient(yellow,red);
-        }
-        @keyframes imageAnim{
-            0% {opacity: 0.8;}
-            80% {opacity: 0.5;}
-            100% {opacity: 0;}
-        }
+#dotClass {
+  width: 25px;
+  height: 25px;
+  margin-top: 2.2vh;
+  background-color: #11e1b0;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+#lamp {
+  width: 25px;
+  height: 25px;
+  animation-name: imageAnim;
+  animation-duration: 0.5s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  animation-timing-function: ease;
+  animation-play-state: running;
+  background-image: radial-gradient(yellow, red);
+}
+@keyframes imageAnim {
+  0% {
+    opacity: 0.8;
+  }
+  80% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 0;
+  }
+}
 
+.panels {
+  position: relative;
+  height: 12rem;
+  padding: 0 0.1875rem 0.5rem;
+  border: 1px solid rgb(25, 196, 139, 0.17);
+  margin-bottom: 0.1875rem;
 
+  background: url("@/assets/line.png") rgba(222, 222, 222, 0.06);
+}
+.panels::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  border-left: 2px solid #02a6b5;
+  border-top: 2px solid #02a6b5;
+  content: "";
+}
+
+.panels::after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid #02a6b5;
+  border-top: 2px solid #02a6b5;
+  content: "";
+}
+.panels_footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+
+.panels_footer::before {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  border-left: 2px solid #02a6b5;
+  border-bottom: 2px solid #02a6b5;
+  content: "";
+}
+
+.panels_footer::after {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid #02a6b5;
+  border-bottom: 2px solid #02a6b5;
+  content: "";
+}
+.panels h2 {
+  height: 0.6rem;
+  color: #fff;
+  line-height: 0.6rem;
+  text-align: center;
+  font-size: 0.25rem;
+  font-weight: 400;
+}
+.panels .chart {
+  height: 3rem;
+  /* background-color:pink; */
+}
+
+::v-deep .panels .el-table thead tr th.is-leaf {
+  border: 0px solid #ebeef5;
+  border-right: none;
+}
+
+::v-deep .panels .el-table {
+  border: 0;
+  th,
+  tr,
+  td {
+    border: 0;
+  }
+  &::before {
+    height: 0px;
+  }
+  &::after {
+    width: 0;
+  }
+  .el-table__fixed:before {
+    height: 0;
+  }
+}
+
+::v-deep .panels .el-table,
+.el-table__expanded-cell {
+  background-color: transparent;
+  color: white;
+}
+
+::v-deep .panels .el-table tr {
+  background-color: transparent !important;
+}
+
+::v-deep .panels .el-table tbody tr:hover > td {
+  background-color: rgba($color: #03487b, $alpha: 0.5) !important;
+}
+
+::v-deep .panels .el-table–enable-row-transition .el-table__body td,
+.el-table .cell {
+  background-color: transparent;
+}
+
+.el-table {
+  --el-table-border-color: transparent;
+}
+
+.panels .titles {
+  color: #7999d4;
+  font-size: 19px;
+  font-weight: 440;
+  padding: 10px;
+  //箭头图表颜色
+
+  // .icon-xiangyoujiantou{
+  //   color: #A0C0F6;
+  //   margin:0 5px 0 -3px;
+  //   font-weight:540;
+  // }
+}
+::v-deep .el-tabs__content {
+  overflow: visible;
+}
+::v-deep .el-tabs__item {
+  color: white;
+}
+::v-deep .el-tabs__item.is-active {
+  color: #15cbf3;
+}
+::v-deep .el-icon-arrow-left {
+  color: white;
+}
+::v-deep .el-icon-arrow-right {
+  color: white;
+}
+::v-deep .el-tabs__nav-wrap::after {
+  height: 0;
+}
+::v-deep .el-tabs__active-bar {
+  background-color: #15cbf3;
+}
 </style>

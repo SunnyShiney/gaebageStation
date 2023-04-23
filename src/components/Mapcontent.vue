@@ -28,8 +28,6 @@
   </div> -->
 
   <div class="content-mid">
-    <!-- <div class="card text-white bg-primary mb-3 person-box ">
-      <div class="card-body"> -->
     <h5
       class="card-title"
       style="font-size: 22px; padding: 5px; text-align: center"
@@ -39,12 +37,11 @@
       </li>
       <li>红星垃圾站今日数据：垃圾净重{{ total_hongxing.toFixed(2) }}吨</li>
       <li>西华垃圾站今日数据：垃圾净重{{ total_xihua.toFixed(2) }}吨</li>
-      <li>垃圾渗滤液今日流量：{{ today_flow.toFixed(2) }}方   </li>
-      <li>垃圾渗滤液累计流量：{{ Number(cumulative_flow).toFixed(2) }}方</li>
-      
+      <li>垃圾渗滤液今日流量：{{ today_flow.toFixed(2) }}方</li>
+      <li>
+        垃圾渗滤液本月累计流量：{{ Number(cumulative_flow).toFixed(2) }}方
+      </li>
     </h5>
-    <!-- </div>
-    </div> -->
   </div>
   <!-- <div class=" content-r">
     <div class="container">
@@ -74,6 +71,8 @@ import { ScrollBoard, DigitalFlop } from "@kjgl77/datav-vue3";
 import { BorderBox6 as DvBorderBox6 } from "@kjgl77/datav-vue3";
 import { BorderBox7 as DvBorderBox7 } from "@kjgl77/datav-vue3";
 import { getPage, getQuery, getFlows } from "@/api/content.js";
+import moment from "moment";
+import axios from "axios";
 
 import Charts from "@jiaminghi/charts";
 var time = new Date().getTime();
@@ -146,33 +145,35 @@ yAxis_hongxing.value.splice(0, yAxis_hongxing.length);
 yAxis_xihua.value.splice(0, yAxis_xihua.length);
 
 var scroll_data_szcg_all = [];
-function refreshData() {
-  total_jinniu.value = 0;
-  getQuery("红星", "transporter", today, tomorrow, 1, 10000).then(function (
-    resp
-  ) {
-    total_hongxing.value = 0;
-    for (let i = 0; i < resp.length; i++) {
-      total_hongxing.value = resp[i].netWeight + total_hongxing.value;
-    }
-    total_hongxing.value =
-      Math.floor((total_hongxing.value / 1000) * 100) / 100;
-    total_jinniu.value = total_hongxing.value + total_jinniu.value;
-  });
-  getQuery("西华", "transporter", today, tomorrow, 1, 10000).then(function (
-    resp
-  ) {
-    total_xihua.value = 0;
-    for (let i = 0; i < resp.length; i++) {
-      total_xihua.value = resp[i].netWeight + total_xihua.value;
-    }
-    total_xihua.value = Math.floor((total_xihua.value / 1000) * 100) / 100;
-    total_jinniu.value = total_xihua.value + total_jinniu.value;
+// function refreshData() {
+//   total_jinniu.value = 0;
+  
+//   getQuery("红星", "transporter", today, tomorrow, 1, 10000).then(function (
+//     resp
+//   ) {
+   
+//     total_hongxing.value = 0;
+//     for (let i = 0; i < resp.length; i++) {
+//       total_hongxing.value = resp[i].netWeight + total_hongxing.value;
+//     }
+//     total_hongxing.value =
+//       Math.floor((total_hongxing.value / 1000) * 100) / 100;
+//     total_jinniu.value = total_hongxing.value + total_jinniu.value;
+//   });
+//   getQuery("西华", "transporter", today, tomorrow, 1, 10000).then(function (
+//     resp
+//   ) {
+//     total_xihua.value = 0;
+//     for (let i = 0; i < resp.length; i++) {
+//       total_xihua.value = resp[i].netWeight + total_xihua.value;
+//     }
+//     total_xihua.value = Math.floor((total_xihua.value / 1000) * 100) / 100;
+//     total_jinniu.value = total_xihua.value + total_jinniu.value;
 
-    total_jinniu.value = Math.floor(total_jinniu.value * 100) / 100;
-  });
-}
-setInterval(refreshData, 60000);
+//     total_jinniu.value = Math.floor(total_jinniu.value * 100) / 100;
+//   });
+// }
+// setInterval(refreshData, 60000);
 
 // ===========================================================================渗透液流量统计
 const today_flow = ref(0);
@@ -193,18 +194,59 @@ const cumulative_flow = ref(0);
 //   });
 // };
 // setInterval(getCarWarning, 60000)
+
+const getSiteNameList = (pageNum, start, end, pageSize) => {
+  axios({
+    url:
+      "http://101.37.246.72:8084/shenlvye/getPeriodRecordByPage?pageNum=" +
+      pageNum +
+      "&start=" +
+      start +
+      "&end=" +
+      end +
+      "&pageSize=" +
+      pageSize,
+    method: "get",
+  }).then(function (resp) {
+    if (resp.status == 200) {
+      var data = resp.data.data.records;
+
+      console.log("data:" + data.length);
+
+      var total = 0;
+
+        total = total + today_flow.value;
+ 
+      console.log("total:" + total);
+      for (var key in data) {
+        console.log("data[key].flow:" + data[key].flow);
+        total = total + Number(data[key].flow);
+      }
+      cumulative_flow.value = Number(total);
+    }
+  });
+};
 // ==================================================================================
 
 onBeforeMount(() => {
-  getFlows().then(function (resp) {
+    getFlows().then(function (resp) {
     // var data = resp.data.data;
     // console.log("resp.message:" + resp.data.message)
     //  carData.value = data;
     today_flow.value = resp.今日流量;
-    cumulative_flow.value = resp.累计流量;
-    console.log("today_flow:" + resp.累计流量);
+    // cumulative_flow.value = resp.累计流量;
+    // console.log("today_flow:" + resp.累计流量);
   });
+  var start = moment().startOf("month").format("YYYY-MM-DD");
+  var end = moment().format("YYYY-MM-DD");
 
+  console.log("end:" + end);
+  //统计一个月的总量
+  getSiteNameList(1, start + "T23:59:00", end + "T23:59:00", 1000);
+
+
+
+ 
   getQuery("红星", "transporter", today, tomorrow, 1, 10000).then(function (
     resp
   ) {
@@ -229,157 +271,7 @@ onBeforeMount(() => {
     total_jinniu.value = Math.floor(total_jinniu.value * 100) / 100;
     total_jinniu_fixed.value = total_jinniu.value.toFixed(2);
   });
-  // for (let i = 0; i < 23; i++) {
-  //   getQuery('红星', 'transporter',
-  //     today + 'T' + key_map[i] + '%3A00%3A00',
-  //     today + 'T' + key_map[i + 1] + '%3A00%3A00',
-  //     1, 10000).then(function (resp) {
-
-  //       for (let i = 0; i < resp.length; i++) {
-  //         current = resp[i].netWeight + current
-  //       }
-  //       current = Math.floor((current / 1000) * 100) / 100
-  //       period_total += current
-  //       console.log(period_total, i)
-
-  //     })
-  // }
-  // getQuery('红星', 'transporter',
-  //   today + 'T00%3A00%3A00',
-  //   today + 'T04%3A00%3A00',
-  //   1, 10000).then(function (resp) {
-  //     yAxis_hongxing.value.splice(0, 6)
-
-  //     for (let i = 0; i < resp.length; i++) {
-  //       period_data.zero_four = resp[i].netWeight + period_data.zero_four
-  //     }
-  //     period_data.zero_four = Math.floor((period_data.zero_four / 1000) * 100) / 100
-
-  //     yAxis_hongxing.value.splice(0, 0, period_data.zero_four)
-
-  //   })
-  // getQuery('红星', 'transporter',
-  //   today + 'T04%3A00%3A00',
-  //   today + 'T08%3A00%3A00',
-  //   1, 10000).then(function (resp) {
-
-  //     for (let i = 0; i < resp.length; i++) {
-  //       period_data.four_eight = resp[i].netWeight + period_data.four_eight
-  //     }
-  //     period_data.four_eight = Math.floor((period_data.four_eight / 1000) * 100) / 100
-
-  //     yAxis_hongxing.value.splice(1, 0, period_data.four_eight)
-
-  //   })
-  // getQuery('红星', 'transporter',
-  //   today + 'T08%3A00%3A00',
-  //   today + 'T12%3A00%3A00',
-  //   1, 10000).then(function (resp) {
-  //     for (let i = 0; i < resp.length; i++) {
-  //       period_data.eight_twelve = resp[i].netWeight + period_data.eight_twelve
-  //     }
-  //     period_data.eight_twelve = Math.floor((period_data.eight_twelve / 1000) * 100) / 100
-  //     yAxis_hongxing.value.splice(2, 0, period_data.eight_twelve)
-  //   })
-  // getQuery('红星', 'transporter',
-  //   today + 'T12%3A00%3A00',
-  //   today + 'T16%3A00%3A00',
-  //   1, 10000).then(function (resp) {
-  //     for (let i = 0; i < resp.length; i++) {
-  //       period_data.twelve_sixteen = resp[i].netWeight + period_data.twelve_sixteen
-  //     }
-  //     period_data.twelve_sixteen = Math.floor((period_data.twelve_sixteen / 1000) * 100) / 100
-
-  //     yAxis_hongxing.value.splice(3, 0, period_data.twelve_sixteen)
-
-  //   })
-  // getQuery('红星', 'transporter',
-  //   today + 'T16%3A00%3A00',
-  //   today + 'T20%3A00%3A00',
-  //   1, 10000).then(function (resp) {
-  //     for (let i = 0; i < resp.length; i++) {
-  //       period_data.sixteen_twenty = resp[i].netWeight + period_data.sixteen_twenty
-  //     }
-  //     period_data.sixteen_twenty = Math.floor((period_data.sixteen_twenty / 1000) * 100) / 100
-
-  //     yAxis_hongxing.value.splice(4, 0, period_data.sixteen_twenty)
-
-  //   })
-  // getQuery('红星', 'transporter',
-  //   today + 'T20%3A00%3A00',
-  //   today + 'T24%3A00%3A00',
-  //   1, 10000).then(function (resp) {
-  //     for (let i = 0; i < resp.length; i++) {
-  //       period_data.twenty_zero = resp[i].netWeight + period_data.twenty_zero
-  //     }
-  //     period_data.twenty_zero = Math.floor((period_data.twenty_zero / 1000) * 100) / 100
-
-  //     yAxis_hongxing.value.splice(5, 0, period_data.twenty_zero)
-
-  //   })
-  // getQuery('西华', 'transporter',
-  //   today + 'T00%3A00%3A00',
-  //   today + 'T04%3A00%3A00',
-  //   1, 10000).then(function (resp) {
-  //     yAxis_xihua.value.splice(0, 6)
-
-  //     yAxis_xihua.value.splice(0, yAxis_xihua.length)
-  //     for (let i = 0; i < resp.length; i++) {
-  //       period_data_xihua.zero_four = resp[i].netWeight + period_data_xihua.zero_four
-  //     }
-  //     period_data_xihua.zero_four = Math.floor((period_data_xihua.zero_four / 1000) * 100) / 100
-  //     yAxis_xihua.value.splice(0, 0, period_data_xihua.zero_four)
-  //   })
-  // getQuery('西华', 'transporter',
-  //   today + 'T04%3A00%3A00',
-  //   today + 'T08%3A00%3A00',
-  //   1, 10000).then(function (resp) {
-  //     for (let i = 0; i < resp.length; i++) {
-  //       period_data_xihua.four_eight = resp[i].netWeight + period_data_xihua.four_eight
-  //     }
-  //     period_data_xihua.four_eight = Math.floor((period_data_xihua.four_eight / 1000) * 100) / 100
-  //     yAxis_xihua.value.splice(1, 0, period_data_xihua.four_eight)
-  //   })
-  // getQuery('西华', 'transporter',
-  //   today + 'T08%3A00%3A00',
-  //   today + 'T12%3A00%3A00',
-  //   1, 10000).then(function (resp) {
-  //     for (let i = 0; i < resp.length; i++) {
-  //       period_data_xihua.eight_twelve = resp[i].netWeight + period_data_xihua.eight_twelve
-  //     }
-  //     period_data_xihua.eight_twelve = Math.floor((period_data_xihua.eight_twelve / 1000) * 100) / 100
-  //     yAxis_xihua.value.splice(2, 0, period_data_xihua.eight_twelve)
-  //   })
-  // getQuery('西华', 'transporter',
-  //   today + 'T12%3A00%3A00',
-  //   today + 'T16%3A00%3A00',
-  //   1, 10000).then(function (resp) {
-  //     for (let i = 0; i < resp.length; i++) {
-  //       period_data_xihua.twelve_sixteen = resp[i].netWeight + period_data_xihua.twelve_sixteen
-  //     }
-  //     period_data_xihua.twelve_sixteen = Math.floor((period_data_xihua.twelve_sixteen / 1000) * 100) / 100
-  //     yAxis_xihua.value.splice(3, 0, period_data_xihua.twelve_sixteen)
-  //   })
-  // getQuery('西华', 'transporter',
-  //   today + 'T16%3A00%3A00',
-  //   today + 'T20%3A00%3A00',
-  //   1, 10000).then(function (resp) {
-  //     for (let i = 0; i < resp.length; i++) {
-  //       period_data_xihua.sixteen_twenty = resp[i].netWeight + period_data_xihua.sixteen_twenty
-  //     }
-  //     period_data_xihua.sixteen_twenty = Math.floor((period_data_xihua.sixteen_twenty / 1000) * 100) / 100
-  //     yAxis_xihua.value.splice(4, 0, period_data_xihua.sixteen_twenty)
-  //   })
-  // getQuery('西华', 'transporter',
-  //   today + 'T20%3A00%3A00',
-  //   today + 'T24%3A00%3A00',
-  //   1, 10000).then(function (resp) {
-  //     for (let i = 0; i < resp.length; i++) {
-  //       period_data_xihua.sixteen_twenty = resp[i].netWeight + period_data_xihua.sixteen_twenty
-  //     }
-  //     period_data_xihua.sixteen_twenty = Math.floor((period_data_xihua.sixteen_twenty / 1000) * 100) / 100
-  //     yAxis_xihua.value.splice(5, 0, period_data_xihua.twenty_zero)
-  //   })
+ 
 });
 
 const config_ggzp = reactive({
@@ -547,8 +439,7 @@ const config_xihua = reactive({
   height: 150px;
 }
 
-.content-mid {
-  /* left: 36vw; */
+/* .content-mid {
   width: 100%;
   height: 12vh;
   background-color: black;
@@ -560,7 +451,7 @@ const config_xihua = reactive({
   opacity: 1;
   color: white;
   margin: auto;
-}
+} */
 .card-title {
   width: 50%;
   margin: auto;

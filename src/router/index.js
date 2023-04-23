@@ -8,6 +8,8 @@ import CarRecord from '@/views/content/components/CarRecord.vue'
 import CarWarning from '@/views/content/components/CarWarning.vue'
 import OsmoticFluid from '@/views/content/components/OsmoticFluid.vue'
 import CarDetailInfo from '@/views/content/components/CarDetailInfo.vue'
+import Hongxing from '@/views/content/components/Hongxing.vue'
+import AlarmEvent from '@/views/content/components/AlarmEvent.vue'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.min.js'
 //2.配置路由映射
@@ -37,6 +39,10 @@ const routes = [
         meta: { requestAuth: false },
         children: [
                     {
+                name: 'alarmEvent', path: 'alarmEvent', component: AlarmEvent,
+                meta: { requestAuth: false },
+            },
+             {
                 name: 'carRecord', path: 'carRecord', component: CarRecord,
                 meta: { requestAuth: false },
             },
@@ -54,11 +60,17 @@ const routes = [
                 path: 'jinniu',//子组件的path不以/开头
                 component: () => import('@/views/content/components/Jinniu.vue')
             },
+                        {
+
+                name: 'smallstations',
+                path: 'smallstations',//子组件的path不以/开头
+                component: () => import('@/views/content/components/SmallStations.vue')
+            },
             {
 
                 name: 'hongxing',
                 path: 'hongxing',//子组件的path不以/开头
-                component: () => import('@/views/content/components/Hongxing.vue')
+                component:Hongxing
             },
             {
                 name: 'xihua',
