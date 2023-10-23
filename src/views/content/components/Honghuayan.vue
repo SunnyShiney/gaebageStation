@@ -91,7 +91,7 @@
           </div> -->
         </div>
         <div class="data-view" style="width: 100%">
-          <div class="card-Left" style="width: 40%">
+          <div class="card-Left" style="width: 40%;display: inline-block;">
             <h5 class="card-title" style="font-size: 25px; padding: 5px">
               垃圾站当前报警
             </h5>
@@ -111,15 +111,15 @@
             />
           </div>
           <!-- ================================================================ sunny ========================================================sunny -->
-          <div class="card-Right" style="width: 60%">
+          <div class="card-Right" style="width: 60%;display: inline-block;">
             <h5 class="card-title" style="font-size: 25px; padding: 5px">
               过去一周各时段垃圾净重平均值统计
             </h5>
-            <div id="avgTime_Lines"></div>
-            <!-- <dv-charts
+            <!-- <div id="avgTime_Lines"></div> -->
+            <dv-charts
               :option="avgTime_Line"
               style="width: 95%; height: 39vh; margin: auto; padding-top: 4vh"
-            /> -->
+            />
           </div>
 
           <!-- ===================================================================================================================================== -->
@@ -174,17 +174,17 @@
           </el-table-column>
           <el-table-column
             property="netWeight"
-            label="垃圾净重/kg"
+            label="垃圾净重（kg）"
             width="150"
           />
           <el-table-column
             property="grossWeight"
-            label="垃圾毛重/kg"
+            label="垃圾毛重（kg）"
             width="150"
           />
           <el-table-column
             property="tareWeight"
-            label="垃圾皮重/kg"
+            label="垃圾皮重（kg）"
             width="150"
           />
           <el-table-column
@@ -303,12 +303,12 @@
           <el-table-column property="frequency" label="运输次数" width="150" />
           <el-table-column
             property="totalWeight"
-            label="运输总量/kg"
+            label="运输总量（kg）"
             width="150"
           />
           <el-table-column
             property="avgWeight"
-            label="单次平均运输量/kg"
+            label="单次平均运输量（kg）"
             width="200"
           />
 
@@ -607,8 +607,8 @@ const car_exportExcel = () => {
     "站点名称",
     "车牌号",
     "运输次数",
-    "单次平均运输量/kg",
-    "运输总量/kg",
+    "单次平均运输量（kg）",
+    "运输总量（kg）",
   ]; //表头中文名
 
   exportExcel(
@@ -1474,205 +1474,205 @@ const handleEdit = (index, row) => {
   console.log(index, row.carNumber);
 };
 // ======================================================================================================sunny
-const fontSizeSwitch = (res) => {
-  let clientWidth =
-    window.innerWidth ||
-    document.documentElement.clientWidth ||
-    document.body.clientWidth
-  if (!clientWidth) return
-  let fontSize = 100 * (clientWidth / 1707)
-  return res * fontSize
-}
-
-let category_chart = null
-let categoryOption = {
-  // 绘制图表
-  // title: {
-  //   text: 'ECharts 入门示例',
-  // },
-  tooltip: {
-    trigger: 'axis',
-    axisPointer: {
-      type: 'shadow',
-    },
-  },
-  grid: {
-    left: '1%',
-    right: '10%',
-    bottom: '0%',
-    containLabel: true,
-  },
-
-  xAxis: {
-    data: ['0-4点', '4-8点', '8-12点', '12-16点', '16-20点', '20-24点'],
-
-    axisTick: {
-      alignWithLabel: true,
-    },
-    axisLabel: {
-      interval: 0,
-      
-    },
-  },
-  yAxis: {
-    name: '垃圾净重',
-    //设置数轴显示内容的类型是数值
-    type: 'value',
-    //从0开始，刻度之间间隔10
-    min: 0,
-    interval: 10,
-    //显示竖轴的边框线
-    show: true,
-    axisLine: { show: true },
-    //显示刻度
-    axisTick: { show: true },
-    axisLabel: {
-      // fontSize: fontSizeSwitch(0.14),
-    },
-  },
-  //图表上显示不同颜色的折线表示什么意义，必须与下面series中name的名字对应才能显示出来！
-  // legend: {
-  //   data: ['一', '二','三','四','五','六','七'],
-  // },
-  //鼠标浮动在图表上会有具体内容展示
-  tooltip: {
-    trigger: 'axis',
-  },
-  series: [
-    {
-      //设置图表类型是折线图
-      name: '垃圾净重量平均值',
-      type: 'line',
-      data: [
-        { value: 0 },
-        { value: 0 },
-        { value: 0 },
-        { value: 0 },
-        { value: 0 },
-        { value: 0 },
-      ],
-      label: {
-        show: true,
-        position: 'top',
-        // fontSize: fontSizeSwitch(0.1),
-        formatter: '{c} 吨',
-      },
-      smooth:true,
-    },
-  ],
-}
-const create_category_data = () => {
-  let chartDom = document.getElementById('avgTime_Lines')
-  category_chart = echarts.init(chartDom)
-
-  category_chart.setOption(categoryOption)
-  window.addEventListener('resize', category_chart.resize)
-  console.log(categoryOption.series[0].data[0].value)
-  getQuery(
-    '红花堰',
-    'transporter',
-    new Date(time - 7 * 24 * 60 * 60 * 1000).getFullYear() +
-      '-' +
-      (new Date(time - 7 * 24 * 60 * 60 * 1000).getMonth() + 1) +
-      '-' +
-      new Date(time - 7 * 24 * 60 * 60 * 1000).getDate(),
-    new Date(time).getFullYear() +
-      '-' +
-      (new Date(time).getMonth() + 1) +
-      '-' +
-      new Date(time).getDate(),
-    1,
-    10000
-  ).then(function (resp) {
-    total.value = 0
-    for (let i = 0; i < resp.length; i++) {
-      let index = resp[i].exactDate.indexOf('T')
-      let result = Number(resp[i].exactDate.substr(index + 1, 2))
-      if (0 <= result && result < 4) {
-        total.value = resp[i].netWeight + total.value
-      }
-    }
-    total.value = Math.floor((total.value / 1000) * 100) / 100 / 7
-    categoryOption.series[0].data[0].value = Number(total.value.toFixed(0))
-    category_chart.setOption(categoryOption)
-
-    total.value = 0
-    for (let i = 0; i < resp.length; i++) {
-      let index = resp[i].exactDate.indexOf('T')
-      let result = Number(resp[i].exactDate.substr(index + 1, 2))
-      if (4 <= result && result < 8) {
-        total.value = resp[i].netWeight + total.value
-      }
-    }
-    total.value = Math.floor((total.value / 1000) * 100) / 100 / 7
-    categoryOption.series[0].data[1].value = Number(total.value.toFixed(0))
-    category_chart.setOption(categoryOption)
-
-    total.value = 0
-    for (let i = 0; i < resp.length; i++) {
-      let index = resp[i].exactDate.indexOf('T')
-      let result = Number(resp[i].exactDate.substr(index + 1, 2))
-      if (8 <= result && result < 12) {
-        total.value = resp[i].netWeight + total.value
-      }
-    }
-    total.value = Math.floor((total.value / 1000) * 100) / 100 / 7
-    categoryOption.series[0].data[2].value = Number(total.value.toFixed(0))
-    category_chart.setOption(categoryOption)
-
-    total.value = 0
-    for (let i = 0; i < resp.length; i++) {
-      let index = resp[i].exactDate.indexOf('T')
-      let result = Number(resp[i].exactDate.substr(index + 1, 2))
-      if (12 <= result && result < 16) {
-        total.value = resp[i].netWeight + total.value
-      }
-    }
-    total.value = Math.floor((total.value / 1000) * 100) / 100 / 7
-    categoryOption.series[0].data[3].value = Number(total.value.toFixed(0))
-    category_chart.setOption(categoryOption)
-
-    total.value = 0
-    for (let i = 0; i < resp.length; i++) {
-      let index = resp[i].exactDate.indexOf('T')
-      let result = Number(resp[i].exactDate.substr(index + 1, 2))
-      if (16 <= result && result < 20) {
-        total.value = resp[i].netWeight + total.value
-      }
-    }
-    total.value = Math.floor((total.value / 1000) * 100) / 100 / 7
-    categoryOption.series[0].data[4].value = Number(total.value.toFixed(0))
-    category_chart.setOption(categoryOption)
-
-    total.value = 0
-    for (let i = 0; i < resp.length; i++) {
-      let index = resp[i].exactDate.indexOf('T')
-      let result = Number(resp[i].exactDate.substr(index + 1, 2))
-      if (20 <= result && result < 24) {
-        total.value = resp[i].netWeight + total.value
-      }
-    }
-    total.value = Math.floor((total.value / 1000) * 100) / 100 / 7
-    categoryOption.series[0].data[5].value = Number(total.value.toFixed(0))
-    category_chart.setOption(categoryOption)
-  })
-}
-
-// const ageGenderRequest = () => {
-
+// const fontSizeSwitch = (res) => {
+//   let clientWidth =
+//     window.innerWidth ||
+//     document.documentElement.clientWidth ||
+//     document.body.clientWidth
+//   if (!clientWidth) return
+//   let fontSize = 100 * (clientWidth / 1707)
+//   return res * fontSize
 // }
 
-onMounted(() => {
-  create_category_data()
-})
+// let category_chart = null
+// let categoryOption = {
+//   // 绘制图表
+//   // title: {
+//   //   text: 'ECharts 入门示例',
+//   // },
+//   tooltip: {
+//     trigger: 'axis',
+//     axisPointer: {
+//       type: 'shadow',
+//     },
+//   },
+//   grid: {
+//     left: '1%',
+//     right: '10%',
+//     bottom: '0%',
+//     containLabel: true,
+//   },
 
-onBeforeUnmount(() => {
-  window.removeEventListener('resize', category_chart.resize)
-  if (category_chart) {
-    category_chart.dispose()
-    category_chart = null
-  }
-})
+//   xAxis: {
+//     data: ['0-4点', '4-8点', '8-12点', '12-16点', '16-20点', '20-24点'],
+
+//     axisTick: {
+//       alignWithLabel: true,
+//     },
+//     axisLabel: {
+//       interval: 0,
+      
+//     },
+//   },
+//   yAxis: {
+//     name: '垃圾净重',
+//     //设置数轴显示内容的类型是数值
+//     type: 'value',
+//     //从0开始，刻度之间间隔10
+//     min: 0,
+//     interval: 10,
+//     //显示竖轴的边框线
+//     show: true,
+//     axisLine: { show: true },
+//     //显示刻度
+//     axisTick: { show: true },
+//     axisLabel: {
+//       // fontSize: fontSizeSwitch(0.14),
+//     },
+//   },
+//   //图表上显示不同颜色的折线表示什么意义，必须与下面series中name的名字对应才能显示出来！
+//   // legend: {
+//   //   data: ['一', '二','三','四','五','六','七'],
+//   // },
+//   //鼠标浮动在图表上会有具体内容展示
+//   tooltip: {
+//     trigger: 'axis',
+//   },
+//   series: [
+//     {
+//       //设置图表类型是折线图
+//       name: '垃圾净重量平均值',
+//       type: 'line',
+//       data: [
+//         { value: 0 },
+//         { value: 0 },
+//         { value: 0 },
+//         { value: 0 },
+//         { value: 0 },
+//         { value: 0 },
+//       ],
+//       label: {
+//         show: true,
+//         position: 'top',
+//         // fontSize: fontSizeSwitch(0.1),
+//         formatter: '{c} 吨',
+//       },
+//       smooth:true,
+//     },
+//   ],
+// }
+// const create_category_data = () => {
+//   let chartDom = document.getElementById('avgTime_Lines')
+//   category_chart = echarts.init(chartDom)
+
+//   category_chart.setOption(categoryOption)
+//   window.addEventListener('resize', category_chart.resize)
+//   console.log(categoryOption.series[0].data[0].value)
+//   getQuery(
+//     '红花堰',
+//     'transporter',
+//     new Date(time - 7 * 24 * 60 * 60 * 1000).getFullYear() +
+//       '-' +
+//       (new Date(time - 7 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+//       '-' +
+//       new Date(time - 7 * 24 * 60 * 60 * 1000).getDate(),
+//     new Date(time).getFullYear() +
+//       '-' +
+//       (new Date(time).getMonth() + 1) +
+//       '-' +
+//       new Date(time).getDate(),
+//     1,
+//     10000
+//   ).then(function (resp) {
+//     total.value = 0
+//     for (let i = 0; i < resp.length; i++) {
+//       let index = resp[i].exactDate.indexOf('T')
+//       let result = Number(resp[i].exactDate.substr(index + 1, 2))
+//       if (0 <= result && result < 4) {
+//         total.value = resp[i].netWeight + total.value
+//       }
+//     }
+//     total.value = Math.floor((total.value / 1000) * 100) / 100 / 7
+//     categoryOption.series[0].data[0].value = Number(total.value.toFixed(0))
+//     category_chart.setOption(categoryOption)
+
+//     total.value = 0
+//     for (let i = 0; i < resp.length; i++) {
+//       let index = resp[i].exactDate.indexOf('T')
+//       let result = Number(resp[i].exactDate.substr(index + 1, 2))
+//       if (4 <= result && result < 8) {
+//         total.value = resp[i].netWeight + total.value
+//       }
+//     }
+//     total.value = Math.floor((total.value / 1000) * 100) / 100 / 7
+//     categoryOption.series[0].data[1].value = Number(total.value.toFixed(0))
+//     category_chart.setOption(categoryOption)
+
+//     total.value = 0
+//     for (let i = 0; i < resp.length; i++) {
+//       let index = resp[i].exactDate.indexOf('T')
+//       let result = Number(resp[i].exactDate.substr(index + 1, 2))
+//       if (8 <= result && result < 12) {
+//         total.value = resp[i].netWeight + total.value
+//       }
+//     }
+//     total.value = Math.floor((total.value / 1000) * 100) / 100 / 7
+//     categoryOption.series[0].data[2].value = Number(total.value.toFixed(0))
+//     category_chart.setOption(categoryOption)
+
+//     total.value = 0
+//     for (let i = 0; i < resp.length; i++) {
+//       let index = resp[i].exactDate.indexOf('T')
+//       let result = Number(resp[i].exactDate.substr(index + 1, 2))
+//       if (12 <= result && result < 16) {
+//         total.value = resp[i].netWeight + total.value
+//       }
+//     }
+//     total.value = Math.floor((total.value / 1000) * 100) / 100 / 7
+//     categoryOption.series[0].data[3].value = Number(total.value.toFixed(0))
+//     category_chart.setOption(categoryOption)
+
+//     total.value = 0
+//     for (let i = 0; i < resp.length; i++) {
+//       let index = resp[i].exactDate.indexOf('T')
+//       let result = Number(resp[i].exactDate.substr(index + 1, 2))
+//       if (16 <= result && result < 20) {
+//         total.value = resp[i].netWeight + total.value
+//       }
+//     }
+//     total.value = Math.floor((total.value / 1000) * 100) / 100 / 7
+//     categoryOption.series[0].data[4].value = Number(total.value.toFixed(0))
+//     category_chart.setOption(categoryOption)
+
+//     total.value = 0
+//     for (let i = 0; i < resp.length; i++) {
+//       let index = resp[i].exactDate.indexOf('T')
+//       let result = Number(resp[i].exactDate.substr(index + 1, 2))
+//       if (20 <= result && result < 24) {
+//         total.value = resp[i].netWeight + total.value
+//       }
+//     }
+//     total.value = Math.floor((total.value / 1000) * 100) / 100 / 7
+//     categoryOption.series[0].data[5].value = Number(total.value.toFixed(0))
+//     category_chart.setOption(categoryOption)
+//   })
+// }
+
+// // const ageGenderRequest = () => {
+
+// // }
+
+// onMounted(() => {
+//   create_category_data()
+// })
+
+// onBeforeUnmount(() => {
+//   window.removeEventListener('resize', category_chart.resize)
+//   if (category_chart) {
+//     category_chart.dispose()
+//     category_chart = null
+//   }
+// })
 
 // ===========================================================================================================
 </script>
@@ -1691,7 +1691,7 @@ onBeforeUnmount(() => {
   width: 10%;
   display:inline-block
 } */
-#avgTime_Lines {
+#avgTime_Line {
   /* padding-left:2vw; */
   height: 22vw;
   /* width:50%; */

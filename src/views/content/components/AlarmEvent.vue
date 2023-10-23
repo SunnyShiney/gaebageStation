@@ -30,12 +30,12 @@
         </el-table-column>
         <el-table-column
           property="todayAmount"
-          label="过去4小时内运输垃圾总量/kg"
+          label="过去4小时内运输垃圾总量（kg）"
           width="300"
         />
         <el-table-column
           property="predictAmount"
-          label="运输垃圾预测量/kg"
+          label="运输垃圾预测量（kg）"
           width="250"
         />
 

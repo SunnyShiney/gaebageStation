@@ -25,7 +25,7 @@
             <div
               style="text-align: center; font-size: x-large; font-weight: bold"
             >
-              事故原因：{{ cause }}
+              <!-- 事故原因：{{ cause }} -->
             </div>
             <el-table
               :data="defaultList"
@@ -167,7 +167,7 @@ const fault_details = () => {
 
 const changeColor = () => {
   axios({
-    url: "/api/dump-record/check_status",
+    url: "/api/alarm/check_status",
 
     method: "get",
   }).then(function (resp) {

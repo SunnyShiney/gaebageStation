@@ -89,7 +89,7 @@
           </div> -->
         </div>
         <div class="data-view" style="width: 100%">
-          <div class="card-Left" style="width: 40%">
+          <div class="card-Left" style="width: 40%; display: inline-block">
             <h5 class="card-title" style="font-size: 25px; padding: 5px">
               垃圾站当前报警
             </h5>
@@ -118,9 +118,9 @@
                 <el-table :data="data" :size="large" width="100%">
                     <el-table-column property="exactDate" label="处理时间" width="200px" />
                     <el-table-column property="carNumber" label="承运车辆" width="150" />
-                    <el-table-column property="netWeight" label="垃圾净重/kg" width="200" />
-                    <el-table-column property="grossWeight" label="垃圾毛重/kg" width="200" />
-                    <el-table-column property="tareWeight" label="垃圾皮重/kg" width="200" />
+                    <el-table-column property="netWeight" label="垃圾净重（kg）" width="200" />
+                    <el-table-column property="grossWeight" label="垃圾毛重（kg）" width="200" />
+                    <el-table-column property="tareWeight" label="垃圾皮重（kg）" width="200" />
                     <el-table-column property="transporter" label="承运单位" width="300" />
 
 
@@ -128,7 +128,7 @@
                 </el-table> -->
           </div>
           <!-- ================================================================ sunny ========================================================sunny -->
-          <div class="card-Right" style="width: 60%">
+          <div class="card-Right" style="width: 60%; display: inline-block">
             <h5 class="card-title" style="font-size: 25px; padding: 5px">
               过去一周各时段垃圾净重平均值统计
             </h5>
@@ -246,12 +246,12 @@
           <el-table-column property="frequency" label="运输次数" width="150" />
           <el-table-column
             property="totalWeight"
-            label="运输总量/kg"
+            label="运输总量（kg）"
             width="150"
           />
           <el-table-column
             property="avgWeight"
-            label="单次平均运输量/kg"
+            label="单次平均运输量（kg）"
             width="200"
           />
 
@@ -405,7 +405,7 @@ const getAllSiteCar = (site_name) => {
     }
   });
 };
-getAllSiteCar("all");
+getAllSiteCar("small_stations");
 //=============================================================
 const car_transport_option = [
   {
@@ -451,7 +451,7 @@ end = transport_today;
 var transport_start = transport_today;
 console.log("transport_start" + transport_start);
 const search_car_transport = () => {
-  var carNumber = "all";
+  var carNumber = "small_stations";
   console.log("扯皮爱好：" + queryCarNum.value);
   if (
     queryCarNum.value != "全部所有站点" &&
@@ -513,7 +513,7 @@ const search_car_transport = () => {
 
     // car_transport_select_way.value = "";
   }
-  getTransportList(start, end, "all", 1, 10000, carNumber);
+  getTransportList(start, end, "small_stations", 1, 10000, carNumber);
   if (
     queryCarNum.value == "全部所有站点" ||
     queryCarNum.value == "全部" ||
@@ -553,7 +553,7 @@ const getTransportList = (
       data_total.splice(0, data_total.length);
       var data = resp.data.data.records;
 
-      if (carNumber == "all") {
+      if (carNumber == "small_stations") {
         for (var car in data) {
           if (data[car].siteName == "红星") {
             var currentCar = {
@@ -649,7 +649,14 @@ const getTransportList = (
   });
 };
 
-getTransportList(transport_start, transport_start, "all", 1, 10000, "all");
+getTransportList(
+  transport_start,
+  transport_start,
+  "small_stations",
+  1,
+  10000,
+  "small_stations"
+);
 
 const getTransport = (pageNum) => {
   // 当前页
@@ -662,8 +669,8 @@ const car_exportExcel = () => {
     "站点名称",
     "车牌号",
     "运输次数",
-    "单次平均运输量/kg",
-    "运输总量/kg",
+    "单次平均运输量（kg）",
+    "运输总量（kg）",
   ]; //表头中文名
 
   exportExcel(
@@ -794,7 +801,7 @@ const search_site_name = () => {
         getSiteNameList(
           site_name_date.value[i],
           site_name_date.value[i],
-          "all",
+          "small_stations",
           1,
           10000,
           i
@@ -814,7 +821,7 @@ const search_site_name = () => {
         getSiteNameList(
           site_name_date.value[i],
           site_name_date.value[i],
-          "all",
+          "small_stations",
           1,
           10000,
           i
@@ -840,7 +847,7 @@ const search_site_name = () => {
         }
 
         //统计一个月的总量
-        getSiteNameList(start, end, "all", 1, 10000, date);
+        getSiteNameList(start, end, "small_stations", 1, 10000, date);
         //图标x轴标签展示月份
         site_name_date.value[date] = moment(start)
           .startOf("month")
@@ -882,7 +889,6 @@ const getSiteNameList = (start, end, site_name, pageNum, pageSize, date) => {
 
       site_name_yAxis.value[date] = Number(site_name_sum.value.toFixed(0));
     }
-
   });
 };
 const recent_days_total = (site_name_date) => {
@@ -890,7 +896,7 @@ const recent_days_total = (site_name_date) => {
     getSiteNameList(
       site_name_date.value[date],
       site_name_date.value[date],
-      "all",
+      "small_stations",
       1,
       10000,
       date
@@ -955,7 +961,7 @@ const junk_exportExcel = () => {
     }
   }
 
-  getJunkForm(junk_export_start, junk_export_end, "all");
+  getJunkForm(junk_export_start, junk_export_end, "small_stations");
 };
 
 //===============================================================================================================
@@ -1315,7 +1321,7 @@ onBeforeMount(() => {
 
     yAxis_week.value[0] = yAxis_week.value[0] + total_xihua.value;
   });
-    getQuery(
+  getQuery(
     "五里墩",
     "transporter",
     new Date(time - 6 * 24 * 60 * 60 * 1000).getFullYear() +
@@ -1391,7 +1397,7 @@ onBeforeMount(() => {
     total_xihua.value = Math.floor((total_xihua.value / 1000) * 100) / 100;
     yAxis_week.value[1] = yAxis_week.value[1] + total_xihua.value;
   });
-    getQuery(
+  getQuery(
     "五里墩",
     "transporter",
     new Date(time - 5 * 24 * 60 * 60 * 1000).getFullYear() +
@@ -1465,7 +1471,7 @@ onBeforeMount(() => {
     total_xihua.value = Math.floor((total_xihua.value / 1000) * 100) / 100;
     yAxis_week.value[2] = yAxis_week.value[2] + total_xihua.value;
   });
- getQuery(
+  getQuery(
     "五里墩",
     "transporter",
     new Date(time - 4 * 24 * 60 * 60 * 1000).getFullYear() +
@@ -1539,7 +1545,7 @@ onBeforeMount(() => {
     total_xihua.value = Math.floor((total_xihua.value / 1000) * 100) / 100;
     yAxis_week.value[3] = yAxis_week.value[3] + total_xihua.value;
   });
-    getQuery(
+  getQuery(
     "五里墩",
     "transporter",
     new Date(time - 3 * 24 * 60 * 60 * 1000).getFullYear() +
@@ -1612,9 +1618,8 @@ onBeforeMount(() => {
     }
     total_xihua.value = Math.floor((total_xihua.value / 1000) * 100) / 100;
     yAxis_week.value[4] = yAxis_week.value[4] + total_xihua.value;
-
   });
-    getQuery(
+  getQuery(
     "五里墩",
     "transporter",
     new Date(time - 2 * 24 * 60 * 60 * 1000).getFullYear() +
@@ -1690,7 +1695,7 @@ onBeforeMount(() => {
     yAxis_week.value[5] = yAxis_week.value[5] + total_hongxing.value;
   });
 
-    getQuery(
+  getQuery(
     "五里墩",
     "transporter",
     new Date(time - 1 * 24 * 60 * 60 * 1000).getFullYear() +
@@ -1717,7 +1722,6 @@ onBeforeMount(() => {
       (Math.floor(yAxis_week.value[5] * 100) / 100).toFixed(0)
     );
   });
-
 
   getQuery("红花堰", "transporter", today, tomorrow, 1, 10000).then(function (
     resp
@@ -1750,7 +1754,7 @@ onBeforeMount(() => {
     // yAxis_alert.value[1] = yAxis_week.value[6];
   });
 
-    getQuery("五里墩", "transporter", today, tomorrow, 1, 10000).then(function (
+  getQuery("五里墩", "transporter", today, tomorrow, 1, 10000).then(function (
     resp
   ) {
     for (let i = 0; i < resp.length; i++) {
@@ -1764,9 +1768,9 @@ onBeforeMount(() => {
     total.value = yAxis_week.value[6];
     yAxis_alert.value[1] = yAxis_week.value[6];
   });
-//   getQuery("红星", "transporter", today, tomorrow, 1, 10).then(function (resp) {
-//     data.value = resp;
-//   });
+  //   getQuery("红星", "transporter", today, tomorrow, 1, 10).then(function (resp) {
+  //     data.value = resp;
+  //   });
 
   // 计算报警信息
   var total_avg = 0;
@@ -1790,61 +1794,59 @@ onBeforeMount(() => {
         new Date(time - i * 24 * 60 * 60 * 1000).getMinutes() +
         ":" +
         new Date(time - i * 24 * 60 * 60 * 1000).getSeconds());
-    getQuery("红花堰", "transporter", cal_day, cal_time, 1, 10000).then(function (
-      resp
-    ) {
-      for (let i = 0; i < resp.length; i++) {
-        month_total.value = resp[i].netWeight + month_total.value;
-      }
-      getQuery("五块石", "transporter", cal_day, cal_time, 1, 10000).then(
-        function (resp) {
-          for (let i = 0; i < resp.length; i++) {
-            month_total.value = resp[i].netWeight + month_total.value;
-              }
-                getQuery("五里墩", "transporter", cal_day, cal_time, 1, 10000).then(
-        function (resp) {
-          for (let i = 0; i < resp.length; i++) {
-            month_total.value = resp[i].netWeight + month_total.value;
-              }
-               if (count == 6) {
-            yAxis_alert.value[0] =
-              (month_total.value / 1000 / 6).toFixed(0) * 1;
-            var alert_status = Math.abs(
-              yAxis_alert.value[0] - yAxis_week.value[6]
-            );
-
-            // console.log(Number((yAxis_alert.value[0] * 0.15).toFixed(0)))
-            if (alert_status <= Number(yAxis_alert.value[0] * 0.2)) {
-              alert_tag.value.type = "success";
-              alert_tag.value.name = "正常";
-            } else if (alert_status > Number(yAxis_alert.value[0] * 0.2)) {
-              var alert_status_signed =
-                yAxis_alert.value[0] - yAxis_week.value[6];
-              console.log(alert_status_signed > 0);
-
-              if (alert_status_signed > 0) {
-                alert_tag.value.name = "低于预测值的20%";
-                alert_tag.value.type = "danger";
-              } else {
-                alert_tag.value.name = "超过预测值的20%";
-                alert_tag.value.type = "danger";
-              }
+    getQuery("红花堰", "transporter", cal_day, cal_time, 1, 10000).then(
+      function (resp) {
+        for (let i = 0; i < resp.length; i++) {
+          month_total.value = resp[i].netWeight + month_total.value;
+        }
+        getQuery("五块石", "transporter", cal_day, cal_time, 1, 10000).then(
+          function (resp) {
+            for (let i = 0; i < resp.length; i++) {
+              month_total.value = resp[i].netWeight + month_total.value;
             }
-            // else if (alert_status > Number((yAxis_alert.value[0] * 0.3).toFixed(0))) {
-            //     alert_tag.value.name = '警告，与预估值相差大于' + yAxis_alert.value[0] * 0.3 + '吨,目前相差' + alert_status + '吨'
-            //     alert_tag.value.type = 'danger'
-            // }
+            getQuery("五里墩", "transporter", cal_day, cal_time, 1, 10000).then(
+              function (resp) {
+                for (let i = 0; i < resp.length; i++) {
+                  month_total.value = resp[i].netWeight + month_total.value;
+                }
+                if (count == 6) {
+                  yAxis_alert.value[0] =
+                    (month_total.value / 1000 / 6).toFixed(0) * 1;
+                  var alert_status = Math.abs(
+                    yAxis_alert.value[0] - yAxis_week.value[6]
+                  );
+
+                  // console.log(Number((yAxis_alert.value[0] * 0.15).toFixed(0)))
+                  if (alert_status <= Number(yAxis_alert.value[0] * 0.2)) {
+                    alert_tag.value.type = "success";
+                    alert_tag.value.name = "正常";
+                  } else if (
+                    alert_status > Number(yAxis_alert.value[0] * 0.2)
+                  ) {
+                    var alert_status_signed =
+                      yAxis_alert.value[0] - yAxis_week.value[6];
+                    console.log(alert_status_signed > 0);
+
+                    if (alert_status_signed > 0) {
+                      alert_tag.value.name = "低于预测值的20%";
+                      alert_tag.value.type = "danger";
+                    } else {
+                      alert_tag.value.name = "超过预测值的20%";
+                      alert_tag.value.type = "danger";
+                    }
+                  }
+                  // else if (alert_status > Number((yAxis_alert.value[0] * 0.3).toFixed(0))) {
+                  //     alert_tag.value.name = '警告，与预估值相差大于' + yAxis_alert.value[0] * 0.3 + '吨,目前相差' + alert_status + '吨'
+                  //     alert_tag.value.type = 'danger'
+                  // }
+                }
+              }
+            );
           }
-       
-        }
-      );
-       
-        }
-      );
-    });
+        );
+      }
+    );
   }
-
-
 
   /**
    * 先调用getQuery统计西华的不同时段垃圾净重量平均值，并绘制到图表上
@@ -1932,7 +1934,7 @@ onBeforeMount(() => {
     total.value = Math.floor((total.value / 1000) * 100) / 100 / 7;
     yAxis_line.value[5] = Number(total.value.toFixed(0));
   });
-getQuery(
+  getQuery(
     "五块石",
     "transporter",
     new Date(time - 6 * 24 * 60 * 60 * 1000).getFullYear() +
@@ -1962,7 +1964,6 @@ getQuery(
       Math.floor((total.value / 1000) * 100) / 100 / 7 +
       categoryOption.series[0].data[0].value;
     categoryOption.series[0].data[0].value = Number(total.value.toFixed(0));
-  
 
     total.value = 0;
     for (let i = 0; i < resp.length; i++) {
@@ -1976,7 +1977,6 @@ getQuery(
       Math.floor((total.value / 1000) * 100) / 100 / 7 +
       categoryOption.series[0].data[1].value;
     categoryOption.series[0].data[1].value = Number(total.value.toFixed(0));
-   
 
     total.value = 0;
     for (let i = 0; i < resp.length; i++) {
@@ -1990,7 +1990,6 @@ getQuery(
       Math.floor((total.value / 1000) * 100) / 100 / 7 +
       categoryOption.series[0].data[2].value;
     categoryOption.series[0].data[2].value = Number(total.value.toFixed(0));
-   
 
     total.value = 0;
     for (let i = 0; i < resp.length; i++) {
@@ -2004,7 +2003,6 @@ getQuery(
       Math.floor((total.value / 1000) * 100) / 100 / 7 +
       categoryOption.series[0].data[3].value;
     categoryOption.series[0].data[3].value = Number(total.value.toFixed(0));
-  
 
     total.value = 0;
     for (let i = 0; i < resp.length; i++) {
@@ -2018,7 +2016,6 @@ getQuery(
       Math.floor((total.value / 1000) * 100) / 100 / 7 +
       categoryOption.series[0].data[4].value;
     categoryOption.series[0].data[4].value = Number(total.value.toFixed(0));
-   
 
     total.value = 0;
     for (let i = 0; i < resp.length; i++) {
@@ -2032,9 +2029,8 @@ getQuery(
       Math.floor((total.value / 1000) * 100) / 100 / 7 +
       categoryOption.series[0].data[5].value;
     categoryOption.series[0].data[5].value = Number(total.value.toFixed(0));
- 
   });
-  
+
   getQuery(
     "五里墩",
     "transporter",
@@ -2296,7 +2292,6 @@ const config_today = reactive({
     },
   ],
 });
-
 
 // ===========================================================================================================
 </script>

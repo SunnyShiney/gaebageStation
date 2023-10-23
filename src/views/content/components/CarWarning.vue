@@ -7,9 +7,6 @@
     </el-header>
     <el-main>
       <div class="car-transport-header" style="margin-top: 0vh">
-        <!-- <h5 class="card-title" style="font-size: 25px; padding: 5px">
-          车辆运载垃圾量：高于20%
-        </h5> -->
         <div class="car-transport-header-search" style="margin-top: 10px">
           <el-select
             v-model="queryCarNum"
@@ -57,24 +54,16 @@
         <el-table-column property="day" label="时间" width="200px" />
         <el-table-column property="siteName" label="站点" width="150" />
         <el-table-column property="carNumber" label="承运车辆" width="150">
-          <!-- <template #default="scope">
-            <el-button
-              size="medium"
-              type="primary"
-              link
-              @click="handleEdit(scope.$index, scope.row)"
-              >{{ scope.row.carNumber }}
-            </el-button>
-          </template> -->
+
         </el-table-column>
         <el-table-column
           property="todayAmount"
-          label="过去4小时内运输垃圾总量/kg"
+          label="过去4小时内运输垃圾总量（kg）"
           width="300"
         />
         <el-table-column
           property="predictAmount"
-          label="运输垃圾预测量/kg"
+          label="运输垃圾预测量（kg）"
           width="250"
         />
 
@@ -114,12 +103,12 @@
         </el-table-column>
         <el-table-column
           property="todayAmount"
-          label="过去4小时内运输垃圾总量/kg"
+          label="过去4小时内运输垃圾总量（kg）"
           width="300"
         />
         <el-table-column
           property="predictAmount"
-          label="运输垃圾预测量/kg"
+          label="运输垃圾预测量（kg）"
           width="250"
         />
 
@@ -483,6 +472,9 @@ const tableRowClassName = (row) => {
     return "rowstyle";
   }
 };
+
+
+
 </script>
 <style>
 .el-table .rowstyle {

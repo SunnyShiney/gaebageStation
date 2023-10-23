@@ -6,7 +6,7 @@
       style="
         height: 1.25rem;
         background-image: url(/images/head_bg.png);
-        background-size: 100% 100%; ;
+        background-size: 100% 100%;
       "
       :icon="null"
     >
@@ -32,7 +32,7 @@
             <div
               style="text-align: center; font-size: x-large; font-weight: bold"
             >
-              事故原因：{{ cause }}
+              <!-- 事故原因：{{ cause }} -->
             </div>
             <el-table
               :data="defaultList"
@@ -129,20 +129,20 @@
         <div class="no">
           <div class="no-hd">
             <ul>
-              <li>{{ total_jinniu.toFixed(2) }}</li>
-              <li>{{ total_hongxing.toFixed(2) }}</li>
-              <li>{{ total_xihua.toFixed(2) }}</li>
-              <li>{{ today_flow.toFixed(2) }}</li>
+              <li>{{ Number(total_jinniu).toFixed(2) }}</li>
+              <li>{{ Number(total_hongxing).toFixed(2) }}</li>
+              <li>{{ Number(total_xihua).toFixed(2) }}</li>
+              <li>{{ Number(today_flow).toFixed(2) }}</li>
               <li>{{ Number(cumulative_flow).toFixed(2) }}</li>
             </ul>
           </div>
           <div class="no-bd">
             <ul>
-              <li>金牛区垃圾净重 /吨</li>
-              <li>红星站垃圾净重 /吨</li>
-              <li>西华站垃圾净重 /吨</li>
-              <li>垃圾渗滤液流量 /方</li>
-              <li>渗滤液本月流量 /方</li>
+              <li>金牛区垃圾净重（吨）</li>
+              <li>红星站垃圾净重（吨）</li>
+              <li>西华站垃圾净重（吨）</li>
+              <li>垃圾渗滤液流量（方）</li>
+              <li>渗滤液本月流量（方）</li>
             </ul>
           </div>
         </div>
@@ -180,27 +180,27 @@
             ></tdt-polygon>
             <tdt-marker
               :position="station_hongxing.position"
-              @click="station(1)"
+              @click="hongxingVisible = true"
               :icon="station_hongxing.icon"
             >
             </tdt-marker>
             <tdt-marker
               :position="station_xihua.position"
-              @click="station(2)"
+              @click="xihuaVisible = true"
               :icon="station_xihua.icon"
             >
             </tdt-marker>
             <tdt-marker
               :position="station_honghuayan.position"
-              @click="station(5)"
+              @click="honghuayanVisible = true"
             ></tdt-marker>
             <tdt-marker
               :position="station_wulidun.position"
-              @click="station(4)"
+              @click="wulidunVisible = true"
             ></tdt-marker>
             <tdt-marker
               :position="station_wukuaishi.position"
-              @click="station(3)"
+              @click="wukuaishiVisible = true"
             ></tdt-marker>
             <tdt-marker
               :position="station_xibeiqiao.position"
@@ -313,6 +313,7 @@
               <Honghuayan style="width: 100%" />
             </el-dialog>
             <el-dialog v-model="wulidunVisible" title="五里墩垃圾站今日数据">
+              
               <Wulidun style="width: 100%" />
             </el-dialog>
             <el-dialog v-model="wukuaishiVisible" title="五块石垃圾站今日数据">
@@ -521,13 +522,13 @@
             :stretch="false"
             style="
               color: white;
-            
+
               width: 100%;
               caret-color: transparent;
               margin-top: -0.7rem;
             "
           >
-            <el-tab-pane label="仁和星牛车辆" name="first" >
+            <el-tab-pane label="仁和星牛车辆" name="first">
               <div id="renhe_pie"></div>
 
               <div class="titles">
@@ -564,7 +565,7 @@
               </div>
             </el-tab-pane>
             <el-tab-pane label="天府环境车辆" name="second" :lazy="true">
-                <div id="tianfu_pie"></div>
+              <div id="tianfu_pie"></div>
               <div class="titles">
                 <i class="iconfont icon-doubleright" aria-hidden="true"></i>
                 车辆使用情况
@@ -603,8 +604,6 @@
 
           <div class="panels_footer"></div>
         </div>
-
-
       </div>
     </div>
   </body>
@@ -647,7 +646,7 @@ import CarRecord from "@/views/content/components/CarRecord.vue";
 import { getCars } from "@/api/content";
 import { getCarGps, getAllGps } from "@/api/content";
 import { getCarsLocation } from "@/api/home";
-import { getFlows } from "@/api/content.js";
+import { getFlows, getFlows_xihua } from "@/api/content.js";
 
 import moment from "moment";
 const xihuaVisible = ref(false);
@@ -735,6 +734,7 @@ function refreshData() {
 setInterval(refreshData, 60000);
 
 const getSiteNameList = (pageNum, start, end, pageSize) => {
+  var total = 0;
   axios({
     url:
       "http://101.37.246.72:8084/shenlvye/getPeriodRecordByPage?pageNum=" +
@@ -752,8 +752,6 @@ const getSiteNameList = (pageNum, start, end, pageSize) => {
 
       console.log("data:" + data.length);
 
-      var total = 0;
-
       total = total + today_flow.value;
 
       console.log("total:" + total);
@@ -761,6 +759,32 @@ const getSiteNameList = (pageNum, start, end, pageSize) => {
         console.log("data[key].flow:" + data[key].flow);
         total = total + Number(data[key].flow);
       }
+
+      //       axios({
+      //   url:
+      //     "http://101.37.246.72:8084/shenlvye/getPeriodRecordByPage/xihua?pageNum=" +
+      //     pageNum +
+      //     "&start=" +
+      //     start +
+      //     "&end=" +
+      //     end +
+      //     "&pageSize=" +
+      //     pageSize,
+      //   method: "get",
+      // }).then(function (resp) {
+      //   if (resp.status == 200) {
+      //     var data = resp.data.data.records;
+
+      //     console.log("data:" + data.length);
+
+      //     console.log("total:" + total);
+      //     for (var key in data) {
+      //       console.log("data[key].flow:" + 0);
+      //       total = total + Number(0);
+      //     }
+
+      //   }
+      // });
       cumulative_flow.value = Number(total);
     }
   });
@@ -768,12 +792,11 @@ const getSiteNameList = (pageNum, start, end, pageSize) => {
 
 onBeforeMount(() => {
   getFlows().then(function (resp) {
-    // var data = resp.data.data;
-    // console.log("resp.message:" + resp.data.message)
-    //  carData.value = data;
     today_flow.value = resp.今日流量;
-    // cumulative_flow.value = resp.累计流量;
-    // console.log("today_flow:" + resp.累计流量);
+    getFlows_xihua().then(function (data) {
+      today_flow.value = today_flow.value + data.今日流量;
+    });
+    console.log("jisdfjs" + today_flow.value);
   });
   var start = moment().startOf("month").format("YYYY-MM-DD");
   var end = moment().format("YYYY-MM-DD");
@@ -825,7 +848,7 @@ const fault_details = () => {
 
 const changeColor = () => {
   axios({
-    url: "/api/dump-record/check_status",
+    url: "/api/alarm/check_status",
 
     method: "get",
   }).then(function (resp) {
@@ -839,9 +862,9 @@ const changeColor = () => {
       };
       defaultList.push(default_site);
     }
-    if (defaultList.length == 5) {
-      cause.value = "数据采集服务器断开！";
-    }
+    // if (defaultList.length == 5) {
+    //   cause.value = "数据采集服务器断开！";
+    // }
     console.log("data.length:" + defaultList.length);
     // 出现事故
     if (defaultList.length != 0) {
@@ -1058,10 +1081,10 @@ const handleEdit = (index, row) => {
   router.push({ name: "cardetailinfo", query: { carNumber: carNumber } });
   console.log(index, carNumber);
 };
-const station= (station_name) => {
+const station = (station_name) => {
   var station = station_name;
-  router.push({ name: "hongxing", query: {station:station} });
-}
+  router.push({ name: "hongxing", query: { station: station } });
+};
 
 onMounted(() => {
   if (window.screen.width > 2000 && window.devicePixelRatio == 1) {
@@ -2992,6 +3015,10 @@ let category_chart = null;
 let categoryOption = {
   tooltip: {
     trigger: "item",
+      formatter: function (params) {
+      // 在 tooltip 中添加多行文本，包括标题和数值
+      return "当天垃圾净重总量 <br>" + params.name + "   " + params.value + "吨";
+    },
   },
   legend: {
     bottom: "2%",
@@ -3030,7 +3057,7 @@ let categoryOption = {
         },
       },
       data: [
-        { value: 0, name: "红星" },
+        { value: 0, name: "红星"},
         { value: 0, name: "西华" },
         {
           // make an record to fill the bottom 50%
@@ -3043,7 +3070,7 @@ let categoryOption = {
             },
           },
           label: {
-            show: false,
+            show:false,
           },
         },
       ],
@@ -3093,7 +3120,7 @@ const create_category_data = () => {
     }
     total.value = Math.floor((total.value / 1000) * 100) / 100;
     //更改图表上对应位置的数据
-    categoryOption.series[0].data[0].value = Number(total.value.toFixed(0));
+    categoryOption.series[0].data[0].value = total.value.toFixed(2);
     //更新页面上的图表
     category_chart.setOption(categoryOption);
   });
@@ -3119,7 +3146,7 @@ const create_category_data = () => {
     }
     total.value = Math.floor((total.value / 1000) * 100) / 100;
     //更改图表上对应位置的数据
-    categoryOption.series[0].data[1].value = Number(total.value.toFixed(0));
+    categoryOption.series[0].data[1].value = total.value.toFixed(2);
     //更新页面上的图表
     category_chart.setOption(categoryOption);
   });
@@ -3149,6 +3176,16 @@ let smallOption = {
     trigger: "axis",
     axisPointer: {
       type: "shadow",
+    },
+        formatter: function (params) {
+      // 获取横坐标的内容
+      let xAxisLabel = params[0].axisValue;
+      
+      // 获取数据项的数值
+      let dataValue = params[0].value;
+
+      // 构建 tooltip 内容并换行显示
+      return xAxisLabel + "<br>当天垃圾净重总量 " + dataValue + "吨";
     },
   },
   grid: {
@@ -3278,8 +3315,8 @@ const create_small_data = () => {
     }
     total0.value = Math.floor((total0.value / 1000) * 100) / 100;
     //更改图表上对应位置的数据
-    smallOption.series[0].data[0].value = Number(total0.value.toFixed(0));
-    honghuayan = Number(total0.value.toFixed(0));
+    smallOption.series[0].data[0].value = total0.value.toFixed(2);
+    honghuayan = total0.value.toFixed(2);
     // console.log(smallOption.series[0].data[0].value+"第一个")
     //更新页面上的图表
     // small_chart.setOption(smallOption);
@@ -3307,8 +3344,8 @@ const create_small_data = () => {
     }
     total0.value = Math.floor((total0.value / 1000) * 100) / 100;
     //更改图表上对应位置的数据
-    smallOption.series[0].data[1].value = Number(total0.value.toFixed(0));
-    wukuaishi = Number(total0.value.toFixed(0));
+    smallOption.series[0].data[1].value = total0.value.toFixed(2);
+    wukuaishi = total0.value.toFixed(2);
     //更新页面上的图表
     // small_chart.setOption(smallOption);
   });
@@ -3334,8 +3371,8 @@ const create_small_data = () => {
     }
     total0.value = Math.floor((total0.value / 1000) * 100) / 100;
     //更改图表上对应位置的数据
-    smallOption.series[0].data[2].value = Number(total0.value.toFixed(0));
-    wulidun = Number(total0.value.toFixed(0));
+    smallOption.series[0].data[2].value = total0.value.toFixed(2);
+    wulidun = total0.value.toFixed(2);
     //更新页面上的图表
     // small_chart.setOption(smallOption);
   });
@@ -3361,8 +3398,8 @@ const create_small_data = () => {
     }
     total0.value = Math.floor((total0.value / 1000) * 100) / 100;
     //更改图表上对应位置的数据
-    smallOption.series[0].data[3].value = Number(total0.value.toFixed(0));
-    hongxing = Number(total0.value.toFixed(0));
+    smallOption.series[0].data[3].value = total0.value.toFixed(2);
+    hongxing = total0.value.toFixed(2);
     getQuery(
       "西华",
       "transporter",
@@ -3384,7 +3421,7 @@ const create_small_data = () => {
         total0.value = resp[i].netWeight + total0.value;
       }
       total0.value = Math.floor((total0.value / 1000) * 100) / 100;
-      xihua = Number(total0.value.toFixed(0));
+      xihua = total0.value.toFixed(2);
       // console.log(xihua)
       //更改图表上对应位置的数据
       smallOption.series[0].data[3].value =
@@ -3445,6 +3482,16 @@ let towOption = {
   color: ["#00f2f1", "#ed3f35"],
   tooltip: {
     trigger: "axis",
+        formatter: function (params) {
+      // 获取横坐标的内容
+      let xAxisLabel = params[0].axisValue;
+      
+      // 获取数据项的数值
+      let dataValue = params[0].value;
+
+      // 构建 tooltip 内容并换行显示
+      return xAxisLabel + "<br>大站垃圾总量 " + dataValue + "吨";
+    },
   },
   legend: {
     data: ["大站垃圾总量", "小站垃圾总量"],
@@ -3554,9 +3601,7 @@ const getStationsTotal = (start, end, site_name, pageNum, pageSize, date) => {
 
       site_name_sum.value =
         Math.floor((site_name_sum.value / 1000) * 100) / 100;
-      towOption.series[0].data[date].value = Number(
-        site_name_sum.value.toFixed(0)
-      );
+      towOption.series[0].data[date].value = site_name_sum.value.toFixed(2);
 
       console.log("总总哦在那个" + towOption.series[0].data[date].value);
       tow_chart.setOption(towOption);
@@ -3637,7 +3682,7 @@ const create_tow_data = () => {
     getStationsTotal(
       moment().format("YYYY") + "-" + site_name_date[date],
       moment().format("YYYY") + "-" + site_name_date[date],
-      "all",
+      "big_stations",
       1,
       10000,
       date
@@ -4057,6 +4102,10 @@ let renheOption = {
   color: ["#41C9CE", "#DC8D75"],
   tooltip: {
     trigger: "item",
+          formatter: function (params) {
+      // 在 tooltip 中添加多行文本，包括标题和数值
+      return "仁和星牛车辆 <br>" + params.name + "   " + params.value + "辆";
+    },
   },
   legend: {
     bottom: "2%",
@@ -4188,6 +4237,10 @@ let tianfuOption = {
   color: ["#41C9CE", "#DC8D75"],
   tooltip: {
     trigger: "item",
+          formatter: function (params) {
+      // 在 tooltip 中添加多行文本，包括标题和数值
+      return "天府环境车辆 <br>" + params.name + "   " + params.value + "辆";
+    },
   },
   legend: {
     bottom: "2%",
@@ -4304,12 +4357,12 @@ onMounted(() => {
   create_category_data();
 
   create_renhe_data();
-
+  // create_tianfu_data();
 });
 function handleClick() {
-//  create_renhe_data(); 
-  create_tianfu_data();
-   
+  setTimeout(() => {
+    create_tianfu_data();
+  }, 2);
 }
 
 setInterval(create_small_data, 60000);
@@ -4742,7 +4795,6 @@ li {
   width: 100%;
   /* margin-top: -7vh; */
   opacity: 1;
-
 }
 
 /* ============================================================= */
@@ -4910,25 +4962,25 @@ li {
   //   font-weight:540;
   // }
 }
-::v-deep .el-tabs__content {
+.panels ::v-deep .el-tabs__content {
   overflow: visible;
 }
-::v-deep .el-tabs__item {
+.panels ::v-deep .el-tabs__item {
   color: white;
 }
-::v-deep .el-tabs__item.is-active {
+.panels ::v-deep .el-tabs__item.is-active {
   color: #15cbf3;
 }
-::v-deep .el-icon-arrow-left {
+.panels ::v-deep .el-icon-arrow-left {
   color: white;
 }
-::v-deep .el-icon-arrow-right {
+.panels ::v-deep .el-icon-arrow-right {
   color: white;
 }
-::v-deep .el-tabs__nav-wrap::after {
+.panels ::v-deep .el-tabs__nav-wrap::after {
   height: 0;
 }
-::v-deep .el-tabs__active-bar {
+.panels ::v-deep .el-tabs__active-bar {
   background-color: #15cbf3;
 }
 </style>

@@ -235,7 +235,7 @@ onBeforeMount(() => {
     //  carData.value = data;
     today_flow.value = resp.今日流量;
     // cumulative_flow.value = resp.累计流量;
-    // console.log("today_flow:" + resp.累计流量);
+    console.log("today_flow:" + resp.今日流量);
   });
   var start = moment().startOf("month").format("YYYY-MM-DD");
   var end = moment().format("YYYY-MM-DD");

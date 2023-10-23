@@ -15,7 +15,7 @@ import 'bootstrap/dist/js/bootstrap.min.js'
 //2.配置路由映射
 const routes = [
     {
-        path: '/', component: Login,
+        path: '/', component: Home,
         meta: { requestAuth: false }
     },
     {

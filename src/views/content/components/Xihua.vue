@@ -90,7 +90,7 @@
       </div> -->
 
       <div class="data-view" style="width: 100%">
-        <div class="card-Left" style="width: 40%">
+        <div class="card-Left" style="width: 40%;display: inline-block;">
           <h5 class="card-title" style="font-size: 25px; padding: 5px">
             垃圾站当前报警
           </h5>
@@ -111,16 +111,16 @@
           />
         </div>
         <!-- ================================================================ sunny ========================================================sunny -->
-        <div class="card-Right" style="width: 60%">
+        <div class="card-Right" style="width: 60%;display: inline-block;">
           <h5 class="card-title" style="font-size: 25px; padding: 5px">
             过去一周各时段垃圾净重平均值统计
           </h5>
 
-          <div id="avgTime_Lines"></div>
-          <!-- <dv-charts
+          <!-- <div id="avgTime_Lines"></div> -->
+          <dv-charts
             :option="avgTime_Line"
             style="width: 95%; height: 39vh; margin: auto; padding-top: 4vh"
-          /> -->
+          />
         </div>
 
         <!-- ===================================================================================================================================== -->
@@ -175,17 +175,17 @@
           </el-table-column>
           <el-table-column
             property="netWeight"
-            label="垃圾净重/kg"
+            label="垃圾净重（kg）"
             width="150"
           />
           <el-table-column
             property="grossWeight"
-            label="垃圾毛重/kg"
+            label="垃圾毛重（kg）"
             width="150"
           />
           <el-table-column
             property="tareWeight"
-            label="垃圾皮重/kg"
+            label="垃圾皮重（kg）"
             width="150"
           />
           <el-table-column
@@ -304,12 +304,12 @@
           <el-table-column property="frequency" label="运输次数" width="150" />
           <el-table-column
             property="totalWeight"
-            label="运输总量/kg"
+            label="运输总量（kg）"
             width="150"
           />
           <el-table-column
             property="avgWeight"
-            label="单次平均运输量/kg"
+            label="单次平均运输量（kg）"
             width="200"
           />
 
@@ -368,17 +368,17 @@
           </el-table-column>
           <el-table-column
             property="netWeight"
-            label="垃圾净重/kg"
+            label="垃圾净重（kg）"
             width="150"
           />
           <el-table-column
             property="grossWeight"
-            label="垃圾毛重/kg"
+            label="垃圾毛重（kg）"
             width="150"
           />
           <el-table-column
             property="tareWeight"
-            label="垃圾皮重/kg"
+            label="垃圾皮重（kg）"
             width="150"
           />
           <el-table-column
@@ -499,12 +499,12 @@
           <el-table-column property="frequency" label="运输次数" width="150" />
           <el-table-column
             property="totalWeight"
-            label="运输总量/kg"
+            label="运输总量（kg）"
             width="150"
           />
           <el-table-column
             property="avgWeight"
-            label="单次平均运输量/kg"
+            label="单次平均运输量（kg）"
             width="200"
           />
 
@@ -812,8 +812,8 @@ const car_exportExcel = () => {
     "站点名称",
     "车牌号",
     "运输次数",
-    "单次平均运输量/kg",
-    "运输总量/kg",
+    "单次平均运输量（kg）",
+    "运输总量（kg）",
   ]; //表头中文名
 
   exportExcel(
@@ -1248,31 +1248,31 @@ const config_alert = reactive({
 // =============================================================================sunny
 // 过去一周各时段垃圾净重平均值统计
 
-// const avgTime_Line = reactive({
-//   title: {
-//     text: "各时段垃圾平均净重",
-//   },
-//   xAxis: {
-//     name: "日期",
-//     data: ["0-4点", "4-8点", "8-12点", "12-16点", "16-20点", "20-24点"],
-//   },
-//   yAxis: {
-//     name: "垃圾净重",
-//     data: "value",
-//     min: 0,
-//     interval: 20,
-//   },
-//   series: [
-//     {
-//       data: yAxis_line,
-//       type: "line",
-//       label: {
-//         show: true,
-//         formatter: "{value} 吨",
-//       },
-//     },
-//   ],
-// });
+const avgTime_Line = reactive({
+  title: {
+    text: "各时段垃圾平均净重",
+  },
+  xAxis: {
+    name: "日期",
+    data: ["0-4点", "4-8点", "8-12点", "12-16点", "16-20点", "20-24点"],
+  },
+  yAxis: {
+    name: "垃圾净重",
+    data: "value",
+    min: 0,
+    interval: 20,
+  },
+  series: [
+    {
+      data: yAxis_line,
+      type: "line",
+      label: {
+        show: true,
+        formatter: "{value} 吨",
+      },
+    },
+  ],
+});
 // =====================================================================================
 
 onBeforeMount(() => {
@@ -1794,122 +1794,122 @@ let categoryOption = {
 /**
  * 获取后端数据，并动态展示在图表上
  */
-const create_category_data = () => {
-  let chartDom = document.getElementById("avgTime_Lines");
-  //初始化图表
-  category_chart = echarts.init(chartDom);
+// const create_category_data = () => {
+//   let chartDom = document.getElementById("avgTime_Lines");
+//   //初始化图表
+//   category_chart = echarts.init(chartDom);
 
-  //绘制图表
-  category_chart.setOption(categoryOption);
-  window.addEventListener("resize", category_chart.resize);
+//   //绘制图表
+//   category_chart.setOption(categoryOption);
+//   window.addEventListener("resize", category_chart.resize);
 
-  /**
-   * 通过接口获取后端数据
-   * 查找开始时间是七天前凌晨开始，到今天凌晨，一共七天，比如今天是2023.02.01，则从2023.01.25凌晨开始，2023.02.01凌晨结束，不算今天的
-   */
-  getQuery(
-    "西华",
-    "transporter",
-    new Date(time - 7 * 24 * 60 * 60 * 1000).getFullYear() +
-      "-" +
-      (new Date(time - 7 * 24 * 60 * 60 * 1000).getMonth() + 1) +
-      "-" +
-      new Date(time - 7 * 24 * 60 * 60 * 1000).getDate(),
-    new Date(time).getFullYear() +
-      "-" +
-      (new Date(time).getMonth() + 1) +
-      "-" +
-      new Date(time).getDate(),
-    1,
-    10000
-  ).then(function (resp) {
-    total.value = 0;
-    for (let i = 0; i < resp.length; i++) {
-      //截取后台数据中的处理时间的几点，比如2023-02-01T03:20:41  截取字符串03并转换成数值3，表示3点
-      let index = resp[i].exactDate.indexOf("T");
-      let result = Number(resp[i].exactDate.substr(index + 1, 2));
-      if (0 <= result && result < 4) {
-        //满足00：00-04：00之间的垃圾求净重量的总量
-        total.value = resp[i].netWeight + total.value;
-      }
-    }
-    //七天的平均值
-    total.value = Math.floor((total.value / 1000) * 100) / 100 / 7;
-    //更改图表上对应位置的数据
-    categoryOption.series[0].data[0].value = Number(total.value.toFixed(0));
-    //更新页面上的图表
-    category_chart.setOption(categoryOption);
+//   /**
+//    * 通过接口获取后端数据
+//    * 查找开始时间是七天前凌晨开始，到今天凌晨，一共七天，比如今天是2023.02.01，则从2023.01.25凌晨开始，2023.02.01凌晨结束，不算今天的
+//    */
+//   getQuery(
+//     "西华",
+//     "transporter",
+//     new Date(time - 7 * 24 * 60 * 60 * 1000).getFullYear() +
+//       "-" +
+//       (new Date(time - 7 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+//       "-" +
+//       new Date(time - 7 * 24 * 60 * 60 * 1000).getDate(),
+//     new Date(time).getFullYear() +
+//       "-" +
+//       (new Date(time).getMonth() + 1) +
+//       "-" +
+//       new Date(time).getDate(),
+//     1,
+//     10000
+//   ).then(function (resp) {
+//     total.value = 0;
+//     for (let i = 0; i < resp.length; i++) {
+//       //截取后台数据中的处理时间的几点，比如2023-02-01T03:20:41  截取字符串03并转换成数值3，表示3点
+//       let index = resp[i].exactDate.indexOf("T");
+//       let result = Number(resp[i].exactDate.substr(index + 1, 2));
+//       if (0 <= result && result < 4) {
+//         //满足00：00-04：00之间的垃圾求净重量的总量
+//         total.value = resp[i].netWeight + total.value;
+//       }
+//     }
+//     //七天的平均值
+//     total.value = Math.floor((total.value / 1000) * 100) / 100 / 7;
+//     //更改图表上对应位置的数据
+//     categoryOption.series[0].data[0].value = Number(total.value.toFixed(0));
+//     //更新页面上的图表
+//     category_chart.setOption(categoryOption);
 
-    //满足00：40-08：00之间的垃圾求净重量的总量
-    total.value = 0;
-    for (let i = 0; i < resp.length; i++) {
-      let index = resp[i].exactDate.indexOf("T");
-      let result = Number(resp[i].exactDate.substr(index + 1, 2));
-      if (4 <= result && result < 8) {
-        total.value = resp[i].netWeight + total.value;
-      }
-    }
-    total.value = Math.floor((total.value / 1000) * 100) / 100 / 7;
-    categoryOption.series[0].data[1].value = Number(total.value.toFixed(0));
-    category_chart.setOption(categoryOption);
+//     //满足00：40-08：00之间的垃圾求净重量的总量
+//     total.value = 0;
+//     for (let i = 0; i < resp.length; i++) {
+//       let index = resp[i].exactDate.indexOf("T");
+//       let result = Number(resp[i].exactDate.substr(index + 1, 2));
+//       if (4 <= result && result < 8) {
+//         total.value = resp[i].netWeight + total.value;
+//       }
+//     }
+//     total.value = Math.floor((total.value / 1000) * 100) / 100 / 7;
+//     categoryOption.series[0].data[1].value = Number(total.value.toFixed(0));
+//     category_chart.setOption(categoryOption);
 
-    //满足08：00-12：00之间的垃圾求净重量的总量
-    total.value = 0;
-    for (let i = 0; i < resp.length; i++) {
-      let index = resp[i].exactDate.indexOf("T");
-      let result = Number(resp[i].exactDate.substr(index + 1, 2));
-      if (8 <= result && result < 12) {
-        total.value = resp[i].netWeight + total.value;
-      }
-    }
-    total.value = Math.floor((total.value / 1000) * 100) / 100 / 7;
-    categoryOption.series[0].data[2].value = Number(total.value.toFixed(0));
-    category_chart.setOption(categoryOption);
+//     //满足08：00-12：00之间的垃圾求净重量的总量
+//     total.value = 0;
+//     for (let i = 0; i < resp.length; i++) {
+//       let index = resp[i].exactDate.indexOf("T");
+//       let result = Number(resp[i].exactDate.substr(index + 1, 2));
+//       if (8 <= result && result < 12) {
+//         total.value = resp[i].netWeight + total.value;
+//       }
+//     }
+//     total.value = Math.floor((total.value / 1000) * 100) / 100 / 7;
+//     categoryOption.series[0].data[2].value = Number(total.value.toFixed(0));
+//     category_chart.setOption(categoryOption);
 
-    //满足12：00-16：00之间的垃圾求净重量的总量
-    total.value = 0;
-    for (let i = 0; i < resp.length; i++) {
-      let index = resp[i].exactDate.indexOf("T");
-      let result = Number(resp[i].exactDate.substr(index + 1, 2));
-      if (12 <= result && result < 16) {
-        total.value = resp[i].netWeight + total.value;
-      }
-    }
-    total.value = Math.floor((total.value / 1000) * 100) / 100 / 7;
-    categoryOption.series[0].data[3].value = Number(total.value.toFixed(0));
-    category_chart.setOption(categoryOption);
+//     //满足12：00-16：00之间的垃圾求净重量的总量
+//     total.value = 0;
+//     for (let i = 0; i < resp.length; i++) {
+//       let index = resp[i].exactDate.indexOf("T");
+//       let result = Number(resp[i].exactDate.substr(index + 1, 2));
+//       if (12 <= result && result < 16) {
+//         total.value = resp[i].netWeight + total.value;
+//       }
+//     }
+//     total.value = Math.floor((total.value / 1000) * 100) / 100 / 7;
+//     categoryOption.series[0].data[3].value = Number(total.value.toFixed(0));
+//     category_chart.setOption(categoryOption);
 
-    //满足16：00-20：00之间的垃圾求净重量的总量
-    total.value = 0;
-    for (let i = 0; i < resp.length; i++) {
-      let index = resp[i].exactDate.indexOf("T");
-      let result = Number(resp[i].exactDate.substr(index + 1, 2));
-      if (16 <= result && result < 20) {
-        total.value = resp[i].netWeight + total.value;
-      }
-    }
-    total.value = Math.floor((total.value / 1000) * 100) / 100 / 7;
-    categoryOption.series[0].data[4].value = Number(total.value.toFixed(0));
-    category_chart.setOption(categoryOption);
+//     //满足16：00-20：00之间的垃圾求净重量的总量
+//     total.value = 0;
+//     for (let i = 0; i < resp.length; i++) {
+//       let index = resp[i].exactDate.indexOf("T");
+//       let result = Number(resp[i].exactDate.substr(index + 1, 2));
+//       if (16 <= result && result < 20) {
+//         total.value = resp[i].netWeight + total.value;
+//       }
+//     }
+//     total.value = Math.floor((total.value / 1000) * 100) / 100 / 7;
+//     categoryOption.series[0].data[4].value = Number(total.value.toFixed(0));
+//     category_chart.setOption(categoryOption);
 
-    //满足20：00-24：00之间的垃圾求净重量的总量
-    total.value = 0;
-    for (let i = 0; i < resp.length; i++) {
-      let index = resp[i].exactDate.indexOf("T");
-      let result = Number(resp[i].exactDate.substr(index + 1, 2));
-      if (20 <= result && result < 24) {
-        total.value = resp[i].netWeight + total.value;
-      }
-    }
-    total.value = Math.floor((total.value / 1000) * 100) / 100 / 7;
-    categoryOption.series[0].data[5].value = Number(total.value.toFixed(0));
-    category_chart.setOption(categoryOption);
-  });
-};
+//     //满足20：00-24：00之间的垃圾求净重量的总量
+//     total.value = 0;
+//     for (let i = 0; i < resp.length; i++) {
+//       let index = resp[i].exactDate.indexOf("T");
+//       let result = Number(resp[i].exactDate.substr(index + 1, 2));
+//       if (20 <= result && result < 24) {
+//         total.value = resp[i].netWeight + total.value;
+//       }
+//     }
+//     total.value = Math.floor((total.value / 1000) * 100) / 100 / 7;
+//     categoryOption.series[0].data[5].value = Number(total.value.toFixed(0));
+//     category_chart.setOption(categoryOption);
+//   });
+// };
 
-onMounted(() => {
-  create_category_data();
-});
+// onMounted(() => {
+//   create_category_data();
+// });
 // const ageGenderRequest = () => {
 
 // }
@@ -1931,12 +1931,12 @@ onMounted(() => {
   margin-top: 10px;
 }
 
-#avgTime_Lines {
-  height: 5rem;
-  width: 100%;
-  /* margin-top: -7vh; */
-  opacity: 1;
-}
+// #avgTime_Line {
+//   height: 5rem;
+//   width: 100%;
+//   /* margin-top: -7vh; */
+//   opacity: 1;
+// }
 
 ::v-deep .el-tabs__item{
   font-size:0.3rem;

@@ -16,40 +16,53 @@
         id="#vcfResult"
         :row-class-name="tableRowClassName"
       >
+        <el-table-column property="station_name" label="站点" width="80" />
         <el-table-column
           property="Chemical_oxygen_demand"
-          label="化学需氧量"
+          label="化学需氧量（mg/L）"
+          width="200"
+        />
+        <el-table-column
+          property="Ammonia_nitrogen"
+          label="氨氮（mg/L）"
           width="150"
         />
-        <el-table-column property="Ammonia_nitrogen" label="氨氮" width="120" />
-        <el-table-column property="Total_phosphorus" label="总磷" width="120" />
-        <el-table-column property="PH_value" label="PH" width="120">
+        <el-table-column
+          property="Total_phosphorus"
+          label="总磷（mg/L）"
+          width="120"
+        />
+        <el-table-column property="PH_value" label="PH" width="80">
         </el-table-column>
         <el-table-column
           property="Suspended_solids"
-          label="悬浮物"
-          width="120"
+          label="悬浮物（mg/L）"
+          width="150"
         />
         <el-table-column
           property="water_temperature"
-          label="水温"
-          width="120"
+          label="水温（℃）"
+          width="110"
         />
-        <el-table-column property="Today_flow" label="今日流量" width="150" />
+        <el-table-column
+          property="Today_flow"
+          label="今日流量（方）"
+          width="130"
+        />
         <el-table-column
           property="Cumulative_flow"
-          label="累计流量"
+          label="累计流量（方）"
           width="150"
         />
         <el-table-column
           property="Instantaneous_flow"
-          label="瞬时流量"
-          width="150"
+          label="瞬时流量（方）"
+          width="140"
         />
         <el-table-column
           property="Biochemical_oxygen_demand"
-          label="生化需氧量"
-          width="120"
+          label="生化需氧量（mg/L）"
+          width="170"
         />
       </el-table>
       <!-- <div class="float-end" style="margin-top: 10px">
@@ -255,8 +268,7 @@ const search_site_name = () => {
             10,
             i
           );
-        }
-        else if (site_name_date.value[i] == moment().format("YYYY-MM-DD")) {
+        } else if (site_name_date.value[i] == moment().format("YYYY-MM-DD")) {
           site_name_yAxis.value[i] = today_flow.value;
         }
       }
@@ -435,6 +447,7 @@ const getCarWarning = () => {
       //  carData.value = data;
       data_total.splice(0, data_total.length);
       var currentCar = {
+        station_name: "红星",
         Chemical_oxygen_demand: data.化学需氧量,
         Ammonia_nitrogen: data.氨氮,
         Total_phosphorus: data.总磷,
@@ -448,6 +461,48 @@ const getCarWarning = () => {
         Today_flow: data.今日流量,
       };
       data_total.push(currentCar);
+
+      axios({
+        // url: "http://101.37.246.72:8084/shenlvye/getRecordByStation?station=xihua",
+        url: "http://101.37.246.72:8084/shenlvye/getRecord",
+        method: "get",
+      }).then(function (resp) {
+        if (resp.status == 200) {
+          var data = resp.data.data;
+
+          var xihua_data = {
+            station_name: "西华",
+            Chemical_oxygen_demand: "无",
+            Ammonia_nitrogen: "无",
+            Total_phosphorus: "无",
+            PH_value: "无",
+            Suspended_solids: "无",
+            water_temperature: "无",
+
+            Cumulative_flow: "0.000",
+            Instantaneous_flow: "0.000",
+            Biochemical_oxygen_demand: "无",
+            Today_flow: "0",
+          };
+          data_total.push(xihua_data);
+
+          var national_data = {
+            station_name: "国家标准",
+            Chemical_oxygen_demand: "< 500",
+            Ammonia_nitrogen: "< 45",
+            Total_phosphorus: "< 8",
+            PH_value: "6.5-9.5",
+            Suspended_solids: "< 400",
+            water_temperature: "< 40",
+
+            Cumulative_flow: "无",
+            Instantaneous_flow: "无",
+            Biochemical_oxygen_demand: "< 350",
+            Today_flow: "无",
+          };
+          data_total.push(national_data);
+        }
+      });
     }
   });
 };

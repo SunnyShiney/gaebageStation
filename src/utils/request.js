@@ -11,18 +11,18 @@ service.interceptors.response.use(
             //使用response.data获取原始返回数据
             return response.data.data
         }else{
-            ElMessage.error({
-                showClose: true,
-                message: '访问后台服务器出现问题'
-            })
+            // ElMessage.error({
+            //     showClose: true,
+            //     message: '访问后台服务器出现问题'
+            // })
             Promise.reject()
         }
     },
     error => {
-        ElMessage.error({
-            showClose: true,
-            message: '访问后台服务器出现问题'
-        })
+        // ElMessage.error({
+        //     showClose: true,
+        //     message: '访问后台服务器出现问题'
+        // })
         return Promise.reject(error);
     }
 )

@@ -76,3 +76,10 @@ export function getFlows() {
         method: 'get'
     })
 }
+
+export function getFlows_xihua() {
+        return request({
+        url: 'http://101.37.246.72:8084/shenlvye/getRecordByStation?station=xihua',
+        method: 'get'
+    })
+}
