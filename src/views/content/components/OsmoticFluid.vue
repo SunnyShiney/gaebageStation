@@ -56,8 +56,8 @@
         />
         <el-table-column
           property="Instantaneous_flow"
-          label="瞬时流量（方）"
-          width="140"
+          label="瞬时流量（升/秒）"
+          width="180"
         />
         <el-table-column
           property="Biochemical_oxygen_demand"
@@ -122,13 +122,13 @@
             size="large"
             @change="search_site_name"
           />
-          <!-- <el-button
+          <el-button
             type="primary"
             size="large"
             style="margin-left: 10px"
-            @click="car_exportExcel"
+            @click="junk_exportExcel"
             >打印报表</el-button
-          > -->
+          >
           <dv-charts
             :option="site_name_total"
             style="width: 95%; height: 40vh; margin: auto"
@@ -189,7 +189,7 @@ const site_name_option = [
 // 禁选今天以后的日期以及没有数据的
 const disabledDate = (time) => {
   return (
-    time.getTime() < new Date("2023-3-12").getTime() ||
+    time.getTime() < new Date("2023-12-24").getTime() ||
     time.getTime() > new Date().getTime()
   );
 };
@@ -263,8 +263,8 @@ const search_site_name = () => {
           getSiteNameList(
             1,
             moment(site_name_date.value[i]).add(-1, "d").format("YYYY-MM-DD") +
-              "T23:59:00",
-            site_name_date.value[i] + "T23:59:00",
+              "T23:59:59",
+            site_name_date.value[i] + "T23:59:59",
             10,
             i
           );
@@ -289,7 +289,7 @@ const search_site_name = () => {
         }
         console.log("end:" + end);
         //统计一个月的总量
-        getSiteNameList(1, start + "T23:59:00", end + "T23:59:00", 1000, date);
+        getSiteNameList(1, start + "T23:59:59", end + "T23:59:59", 1000, date);
         //图标x轴标签展示月份
         site_name_date.value[date] = moment(start)
           .startOf("month")
@@ -304,7 +304,7 @@ const search_site_name = () => {
 const getSiteNameList = (pageNum, start, end, pageSize, date) => {
   axios({
     url:
-      "http://101.37.246.72:8084/shenlvye/getPeriodRecordByPage?pageNum=" +
+      "/OsmoticFluid/shenlvye/getPeriodRecordByPage?pageNum=" +
       pageNum +
       "&start=" +
       start +
@@ -345,16 +345,16 @@ const recent_days_total = (site_name_date) => {
       getSiteNameList(
         1,
         moment(site_name_date.value[date]).add("-1", "d").format("YYYY-MM-DD") +
-          "T23:59:00",
-        site_name_date.value[date] + "T23:59:00",
+          "T23:59:59",
+        site_name_date.value[date] + "T23:59:59",
         10,
         date
       );
     } else {
       getSiteNameList(
         1,
-        site_name_date.value[date - 1] + "T23:59:00",
-        site_name_date.value[date] + "T23:59:00",
+        site_name_date.value[date - 1] + "T23:59:59",
+        site_name_date.value[date] + "T23:59:59",
         10,
         date
       );
@@ -362,7 +362,7 @@ const recent_days_total = (site_name_date) => {
   }
 
   axios({
-    url: "http://101.37.246.72:8084/shenlvye/getRecord",
+    url: "/OsmoticFluid/shenlvye/getRecordTowStation",
     method: "get",
   }).then(function (resp) {
     if (resp.status == 200) {
@@ -438,7 +438,7 @@ function exportExcel(json, name, titleArr, sheetName) {
 
 const getCarWarning = () => {
   axios({
-    url: "http://101.37.246.72:8084/shenlvye/getRecord",
+    url: "/OsmoticFluid/shenlvye/getRecordByStation?station=hongxing",
     method: "get",
   }).then(function (resp) {
     if (resp.status == 200) {
@@ -464,7 +464,7 @@ const getCarWarning = () => {
 
       axios({
         // url: "http://101.37.246.72:8084/shenlvye/getRecordByStation?station=xihua",
-        url: "http://101.37.246.72:8084/shenlvye/getRecord",
+        url: "/OsmoticFluid/shenlvye/getRecordByStation?station=xihua",
         method: "get",
       }).then(function (resp) {
         if (resp.status == 200) {
@@ -472,17 +472,17 @@ const getCarWarning = () => {
 
           var xihua_data = {
             station_name: "西华",
-            Chemical_oxygen_demand: "无",
-            Ammonia_nitrogen: "无",
-            Total_phosphorus: "无",
-            PH_value: "无",
-            Suspended_solids: "无",
-            water_temperature: "无",
+            Chemical_oxygen_demand: data.化学需氧量,
+            Ammonia_nitrogen: data.氨氮,
+            Total_phosphorus: data.总磷,
+            PH_value: data.PH,
+            Suspended_solids: data.悬浮物,
+            water_temperature: data.水温,
 
-            Cumulative_flow: "0.000",
-            Instantaneous_flow: "0.000",
-            Biochemical_oxygen_demand: "无",
-            Today_flow: "0",
+            Cumulative_flow: data.累计流量,
+            Instantaneous_flow: data.瞬时流量,
+            Biochemical_oxygen_demand: data.生化需氧量,
+            Today_flow: data.今日流量,
           };
           data_total.push(xihua_data);
 
@@ -508,5 +508,68 @@ const getCarWarning = () => {
 };
 
 getCarWarning();
+
+const getJunkForm = (start, end) => {
+  axios({
+    url:
+      "/OsmoticFluid/shenlvye/getShenlvyeTwoSitesExcel",
+
+    method: "get",
+    params: {
+      start: start,
+      end:end,
+    },
+    // 下载后台文件：请求头部一定要加上responseType:'blob'
+    responseType: "blob",
+  }).then(function (res) {
+    if (res.status == 200) {
+      console.log("成功了！");
+      // 生成blob对象 定义下载格式
+      let blob = new Blob([res.data], { type: res.type });
+      // 获取文件名
+      let filename = res.headers["content-disposition"];
+      filename = decodeURIComponent(filename.split("filename=")[1]);
+      // 创建 a标签 执行下载
+      let downloadElement = document.createElement("a");
+      let href = window.URL.createObjectURL(blob); //创建下载的链接
+      downloadElement.href = href;
+      downloadElement.download = filename; //下载后文件名
+      document.body.appendChild(downloadElement); // 项目插入a元素
+      downloadElement.click(); //点击下载
+      document.body.removeChild(downloadElement); //下载完成移除元素
+      window.URL.revokeObjectURL(href); //释放blob对象
+    }
+  });
+};
+
+var junk_export_start = moment().add(-4, "d").format("YYYY-MM-DD");
+var junk_export_end = today_time;
+
+// 导出垃圾报表
+const junk_exportExcel = () => {
+  if (
+    site_name_select_value.value[0] != null &&
+    site_name_select_value.value[1] != null
+  ) {
+    if (site_name_select_way.value == "day") {
+      junk_export_start = moment(site_name_select_value.value[0]).format(
+        "YYYY-MM-DD"
+      );
+      junk_export_end = moment(site_name_select_value.value[1]).format(
+        "YYYY-MM-DD"
+      );
+    }
+    if (site_name_select_way.value == "month") {
+      junk_export_start = moment(site_name_select_value.value[0])
+        .startOf("month")
+        .format("YYYY-MM-DD");
+      junk_export_end = moment(site_name_select_value.value[1])
+        .endOf("month")
+        .format("YYYY-MM-DD");
+    }
+  }
+
+  getJunkForm(junk_export_start, junk_export_end);
+};
 </script>
 <style></style>

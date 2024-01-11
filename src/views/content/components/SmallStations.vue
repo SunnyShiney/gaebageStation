@@ -342,7 +342,7 @@ const disabledDate = (time) => {
 // 车牌号列表
 const getAllSiteCar = (site_name) => {
   axios({
-    url: "/api/car-by-site/" + site_name,
+    url: "/api/car-by-site/all",
     method: "get",
   }).then(function (resp) {
     if (resp.status == 200) {
@@ -385,6 +385,51 @@ const getAllSiteCar = (site_name) => {
       }
       for (var i = 0; i < carData.value.length; i++) {
         if (carData.value[i].siteName == "五块石") {
+          var car = {
+            carNumber: carData.value[i].carNumber,
+            sitename: " " + carData.value[i].siteName,
+          };
+          carListRenhe.value.push(car);
+        }
+      }
+      for (var i = 0; i < carData.value.length; i++) {
+        if (carData.value[i].siteName == "五里墩") {
+          var car = {
+            carNumber: carData.value[i].carNumber,
+            sitename: " " + carData.value[i].siteName,
+          };
+          carListRenhe.value.push(car);
+        }
+      }
+      for (var i = 0; i < carData.value.length; i++) {
+        if (carData.value[i].siteName == "泉水") {
+          var car = {
+            carNumber: carData.value[i].carNumber,
+            sitename: " " + carData.value[i].siteName,
+          };
+          carListRenhe.value.push(car);
+        }
+      }
+      for (var i = 0; i < carData.value.length; i++) {
+        if (carData.value[i].siteName == "营门口") {
+          var car = {
+            carNumber: carData.value[i].carNumber,
+            sitename: " " + carData.value[i].siteName,
+          };
+          carListRenhe.value.push(car);
+        }
+      }
+      for (var i = 0; i < carData.value.length; i++) {
+        if (carData.value[i].siteName == "金泉") {
+          var car = {
+            carNumber: carData.value[i].carNumber,
+            sitename: " " + carData.value[i].siteName,
+          };
+          carListRenhe.value.push(car);
+        }
+      }
+      for (var i = 0; i < carData.value.length; i++) {
+        if (carData.value[i].siteName == "西北桥") {
           var car = {
             carNumber: carData.value[i].carNumber,
             sitename: " " + carData.value[i].siteName,
@@ -608,6 +653,71 @@ const getTransportList = (
         }
         for (var car in data) {
           if (data[car].siteName == "五里墩") {
+            var currentCar = {
+              day: start + " 至 " + end,
+              siteName: data[car].siteName,
+              carNumber: data[car].carNumber,
+              frequency: data[car].frequency,
+              avgWeight: data[car].avgWeight,
+              totalWeight: data[car].totalWeight,
+            };
+            data_total.push(currentCar);
+          }
+        }
+        for (var car in data) {
+          if (data[car].siteName == "泉水") {
+            var currentCar = {
+              day: start + " 至 " + end,
+              siteName: data[car].siteName,
+              carNumber: data[car].carNumber,
+              frequency: data[car].frequency,
+              avgWeight: data[car].avgWeight,
+              totalWeight: data[car].totalWeight,
+            };
+            data_total.push(currentCar);
+          }
+        }
+        for (var car in data) {
+          if (data[car].siteName == "营门口") {
+            var currentCar = {
+              day: start + " 至 " + end,
+              siteName: data[car].siteName,
+              carNumber: data[car].carNumber,
+              frequency: data[car].frequency,
+              avgWeight: data[car].avgWeight,
+              totalWeight: data[car].totalWeight,
+            };
+            data_total.push(currentCar);
+          }
+        }
+        for (var car in data) {
+          if (data[car].siteName == "金泉") {
+            var currentCar = {
+              day: start + " 至 " + end,
+              siteName: data[car].siteName,
+              carNumber: data[car].carNumber,
+              frequency: data[car].frequency,
+              avgWeight: data[car].avgWeight,
+              totalWeight: data[car].totalWeight,
+            };
+            data_total.push(currentCar);
+          }
+        }
+        for (var car in data) {
+          if (data[car].siteName == "西北桥") {
+            var currentCar = {
+              day: start + " 至 " + end,
+              siteName: data[car].siteName,
+              carNumber: data[car].carNumber,
+              frequency: data[car].frequency,
+              avgWeight: data[car].avgWeight,
+              totalWeight: data[car].totalWeight,
+            };
+            data_total.push(currentCar);
+          }
+        }
+        for (var car in data) {
+          if (data[car].siteName == "黄忠") {
             var currentCar = {
               day: start + " 至 " + end,
               siteName: data[car].siteName,
@@ -1348,6 +1458,141 @@ onBeforeMount(() => {
       (Math.floor(yAxis_week.value[0] * 100) / 100).toFixed(0)
     );
   });
+  getQuery(
+    "泉水",
+    "transporter",
+    new Date(time - 6 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 6 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 6 * 24 * 60 * 60 * 1000).getDate(),
+    new Date(time - 5 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 5 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 5 * 24 * 60 * 60 * 1000).getDate(),
+    1,
+    10000
+  ).then(function (resp) {
+    total_xihua.value = 0;
+    for (let i = 0; i < resp.length; i++) {
+      total_xihua.value = resp[i].netWeight + total_xihua.value;
+    }
+    total_xihua.value = Math.floor((total_xihua.value / 1000) * 100) / 100;
+
+    yAxis_week.value[0] = yAxis_week.value[0] + total_xihua.value;
+    yAxis_week.value[0] = Number(
+      (Math.floor(yAxis_week.value[0] * 100) / 100).toFixed(0)
+    );
+  });
+  getQuery(
+    "营门口",
+    "transporter",
+    new Date(time - 6 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 6 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 6 * 24 * 60 * 60 * 1000).getDate(),
+    new Date(time - 5 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 5 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 5 * 24 * 60 * 60 * 1000).getDate(),
+    1,
+    10000
+  ).then(function (resp) {
+    total_xihua.value = 0;
+    for (let i = 0; i < resp.length; i++) {
+      total_xihua.value = resp[i].netWeight + total_xihua.value;
+    }
+    total_xihua.value = Math.floor((total_xihua.value / 1000) * 100) / 100;
+
+    yAxis_week.value[0] = yAxis_week.value[0] + total_xihua.value;
+    yAxis_week.value[0] = Number(
+      (Math.floor(yAxis_week.value[0] * 100) / 100).toFixed(0)
+    );
+  });
+  getQuery(
+    "金泉",
+    "transporter",
+    new Date(time - 6 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 6 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 6 * 24 * 60 * 60 * 1000).getDate(),
+    new Date(time - 5 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 5 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 5 * 24 * 60 * 60 * 1000).getDate(),
+    1,
+    10000
+  ).then(function (resp) {
+    total_xihua.value = 0;
+    for (let i = 0; i < resp.length; i++) {
+      total_xihua.value = resp[i].netWeight + total_xihua.value;
+    }
+    total_xihua.value = Math.floor((total_xihua.value / 1000) * 100) / 100;
+
+    yAxis_week.value[0] = yAxis_week.value[0] + total_xihua.value;
+    yAxis_week.value[0] = Number(
+      (Math.floor(yAxis_week.value[0] * 100) / 100).toFixed(0)
+    );
+  });
+  getQuery(
+    "西北桥",
+    "transporter",
+    new Date(time - 6 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 6 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 6 * 24 * 60 * 60 * 1000).getDate(),
+    new Date(time - 5 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 5 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 5 * 24 * 60 * 60 * 1000).getDate(),
+    1,
+    10000
+  ).then(function (resp) {
+    total_xihua.value = 0;
+    for (let i = 0; i < resp.length; i++) {
+      total_xihua.value = resp[i].netWeight + total_xihua.value;
+    }
+    total_xihua.value = Math.floor((total_xihua.value / 1000) * 100) / 100;
+
+    yAxis_week.value[0] = yAxis_week.value[0] + total_xihua.value;
+    yAxis_week.value[0] = Number(
+      (Math.floor(yAxis_week.value[0] * 100) / 100).toFixed(0)
+    );
+  });
+  getQuery(
+    "黄忠",
+    "transporter",
+    new Date(time - 6 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 6 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 6 * 24 * 60 * 60 * 1000).getDate(),
+    new Date(time - 5 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 5 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 5 * 24 * 60 * 60 * 1000).getDate(),
+    1,
+    10000
+  ).then(function (resp) {
+    total_xihua.value = 0;
+    for (let i = 0; i < resp.length; i++) {
+      total_xihua.value = resp[i].netWeight + total_xihua.value;
+    }
+    total_xihua.value = Math.floor((total_xihua.value / 1000) * 100) / 100;
+
+    yAxis_week.value[0] = yAxis_week.value[0] + total_xihua.value;
+    yAxis_week.value[0] = Number(
+      (Math.floor(yAxis_week.value[0] * 100) / 100).toFixed(0)
+    );
+  });
 
   getQuery(
     "红花堰",
@@ -1424,6 +1669,137 @@ onBeforeMount(() => {
     );
   });
   getQuery(
+    "泉水",
+    "transporter",
+    new Date(time - 5 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 5 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 5 * 24 * 60 * 60 * 1000).getDate(),
+    new Date(time - 4 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 4 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 4 * 24 * 60 * 60 * 1000).getDate(),
+    1,
+    10000
+  ).then(function (resp) {
+    total_xihua.value = 0;
+    for (let i = 0; i < resp.length; i++) {
+      total_xihua.value = resp[i].netWeight + total_xihua.value;
+    }
+    total_xihua.value = Math.floor((total_xihua.value / 1000) * 100) / 100;
+    yAxis_week.value[1] = yAxis_week.value[1] + total_xihua.value;
+    yAxis_week.value[1] = Number(
+      (Math.floor(yAxis_week.value[1] * 100) / 100).toFixed(0)
+    );
+  });
+  getQuery(
+    "营门口",
+    "transporter",
+    new Date(time - 5 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 5 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 5 * 24 * 60 * 60 * 1000).getDate(),
+    new Date(time - 4 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 4 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 4 * 24 * 60 * 60 * 1000).getDate(),
+    1,
+    10000
+  ).then(function (resp) {
+    total_xihua.value = 0;
+    for (let i = 0; i < resp.length; i++) {
+      total_xihua.value = resp[i].netWeight + total_xihua.value;
+    }
+    total_xihua.value = Math.floor((total_xihua.value / 1000) * 100) / 100;
+    yAxis_week.value[1] = yAxis_week.value[1] + total_xihua.value;
+    yAxis_week.value[1] = Number(
+      (Math.floor(yAxis_week.value[1] * 100) / 100).toFixed(0)
+    );
+  });
+  getQuery(
+    "金泉",
+    "transporter",
+    new Date(time - 5 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 5 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 5 * 24 * 60 * 60 * 1000).getDate(),
+    new Date(time - 4 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 4 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 4 * 24 * 60 * 60 * 1000).getDate(),
+    1,
+    10000
+  ).then(function (resp) {
+    total_xihua.value = 0;
+    for (let i = 0; i < resp.length; i++) {
+      total_xihua.value = resp[i].netWeight + total_xihua.value;
+    }
+    total_xihua.value = Math.floor((total_xihua.value / 1000) * 100) / 100;
+    yAxis_week.value[1] = yAxis_week.value[1] + total_xihua.value;
+    yAxis_week.value[1] = Number(
+      (Math.floor(yAxis_week.value[1] * 100) / 100).toFixed(0)
+    );
+  });
+  getQuery(
+    "西北桥",
+    "transporter",
+    new Date(time - 5 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 5 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 5 * 24 * 60 * 60 * 1000).getDate(),
+    new Date(time - 4 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 4 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 4 * 24 * 60 * 60 * 1000).getDate(),
+    1,
+    10000
+  ).then(function (resp) {
+    total_xihua.value = 0;
+    for (let i = 0; i < resp.length; i++) {
+      total_xihua.value = resp[i].netWeight + total_xihua.value;
+    }
+    total_xihua.value = Math.floor((total_xihua.value / 1000) * 100) / 100;
+    yAxis_week.value[1] = yAxis_week.value[1] + total_xihua.value;
+    yAxis_week.value[1] = Number(
+      (Math.floor(yAxis_week.value[1] * 100) / 100).toFixed(0)
+    );
+  });
+  getQuery(
+    "黄忠",
+    "transporter",
+    new Date(time - 5 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 5 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 5 * 24 * 60 * 60 * 1000).getDate(),
+    new Date(time - 4 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 4 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 4 * 24 * 60 * 60 * 1000).getDate(),
+    1,
+    10000
+  ).then(function (resp) {
+    total_xihua.value = 0;
+    for (let i = 0; i < resp.length; i++) {
+      total_xihua.value = resp[i].netWeight + total_xihua.value;
+    }
+    total_xihua.value = Math.floor((total_xihua.value / 1000) * 100) / 100;
+    yAxis_week.value[1] = yAxis_week.value[1] + total_xihua.value;
+    yAxis_week.value[1] = Number(
+      (Math.floor(yAxis_week.value[1] * 100) / 100).toFixed(0)
+    );
+  });
+
+  getQuery(
     "红花堰",
     "transporter",
     new Date(time - 4 * 24 * 60 * 60 * 1000).getFullYear() +
@@ -1473,6 +1849,136 @@ onBeforeMount(() => {
   });
   getQuery(
     "五里墩",
+    "transporter",
+    new Date(time - 4 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 4 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 4 * 24 * 60 * 60 * 1000).getDate(),
+    new Date(time - 3 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 3 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 3 * 24 * 60 * 60 * 1000).getDate(),
+    1,
+    10000
+  ).then(function (resp) {
+    total_xihua.value = 0;
+    for (let i = 0; i < resp.length; i++) {
+      total_xihua.value = resp[i].netWeight + total_xihua.value;
+    }
+    total_xihua.value = Math.floor((total_xihua.value / 1000) * 100) / 100;
+    yAxis_week.value[2] = yAxis_week.value[2] + total_xihua.value;
+    yAxis_week.value[2] = Number(
+      (Math.floor(yAxis_week.value[2] * 100) / 100).toFixed(0)
+    );
+  });
+  getQuery(
+    "泉水",
+    "transporter",
+    new Date(time - 4 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 4 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 4 * 24 * 60 * 60 * 1000).getDate(),
+    new Date(time - 3 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 3 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 3 * 24 * 60 * 60 * 1000).getDate(),
+    1,
+    10000
+  ).then(function (resp) {
+    total_xihua.value = 0;
+    for (let i = 0; i < resp.length; i++) {
+      total_xihua.value = resp[i].netWeight + total_xihua.value;
+    }
+    total_xihua.value = Math.floor((total_xihua.value / 1000) * 100) / 100;
+    yAxis_week.value[2] = yAxis_week.value[2] + total_xihua.value;
+    yAxis_week.value[2] = Number(
+      (Math.floor(yAxis_week.value[2] * 100) / 100).toFixed(0)
+    );
+  });
+  getQuery(
+    "营门口",
+    "transporter",
+    new Date(time - 4 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 4 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 4 * 24 * 60 * 60 * 1000).getDate(),
+    new Date(time - 3 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 3 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 3 * 24 * 60 * 60 * 1000).getDate(),
+    1,
+    10000
+  ).then(function (resp) {
+    total_xihua.value = 0;
+    for (let i = 0; i < resp.length; i++) {
+      total_xihua.value = resp[i].netWeight + total_xihua.value;
+    }
+    total_xihua.value = Math.floor((total_xihua.value / 1000) * 100) / 100;
+    yAxis_week.value[2] = yAxis_week.value[2] + total_xihua.value;
+    yAxis_week.value[2] = Number(
+      (Math.floor(yAxis_week.value[2] * 100) / 100).toFixed(0)
+    );
+  });
+  getQuery(
+    "金泉",
+    "transporter",
+    new Date(time - 4 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 4 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 4 * 24 * 60 * 60 * 1000).getDate(),
+    new Date(time - 3 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 3 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 3 * 24 * 60 * 60 * 1000).getDate(),
+    1,
+    10000
+  ).then(function (resp) {
+    total_xihua.value = 0;
+    for (let i = 0; i < resp.length; i++) {
+      total_xihua.value = resp[i].netWeight + total_xihua.value;
+    }
+    total_xihua.value = Math.floor((total_xihua.value / 1000) * 100) / 100;
+    yAxis_week.value[2] = yAxis_week.value[2] + total_xihua.value;
+    yAxis_week.value[2] = Number(
+      (Math.floor(yAxis_week.value[2] * 100) / 100).toFixed(0)
+    );
+  });
+  getQuery(
+    "西北桥",
+    "transporter",
+    new Date(time - 4 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 4 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 4 * 24 * 60 * 60 * 1000).getDate(),
+    new Date(time - 3 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 3 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 3 * 24 * 60 * 60 * 1000).getDate(),
+    1,
+    10000
+  ).then(function (resp) {
+    total_xihua.value = 0;
+    for (let i = 0; i < resp.length; i++) {
+      total_xihua.value = resp[i].netWeight + total_xihua.value;
+    }
+    total_xihua.value = Math.floor((total_xihua.value / 1000) * 100) / 100;
+    yAxis_week.value[2] = yAxis_week.value[2] + total_xihua.value;
+    yAxis_week.value[2] = Number(
+      (Math.floor(yAxis_week.value[2] * 100) / 100).toFixed(0)
+    );
+  });
+  getQuery(
+    "黄忠",
     "transporter",
     new Date(time - 4 * 24 * 60 * 60 * 1000).getFullYear() +
       "-" +
@@ -1572,6 +2078,137 @@ onBeforeMount(() => {
     );
   });
   getQuery(
+    "泉水",
+    "transporter",
+    new Date(time - 3 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 3 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 3 * 24 * 60 * 60 * 1000).getDate(),
+    new Date(time - 2 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 2 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 2 * 24 * 60 * 60 * 1000).getDate(),
+    1,
+    10000
+  ).then(function (resp) {
+    total_xihua.value = 0;
+    for (let i = 0; i < resp.length; i++) {
+      total_xihua.value = resp[i].netWeight + total_xihua.value;
+    }
+    total_xihua.value = Math.floor((total_xihua.value / 1000) * 100) / 100;
+    yAxis_week.value[3] = yAxis_week.value[3] + total_xihua.value;
+    yAxis_week.value[3] = Number(
+      (Math.floor(yAxis_week.value[3] * 100) / 100).toFixed(0)
+    );
+  });
+  getQuery(
+    "营门口",
+    "transporter",
+    new Date(time - 3 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 3 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 3 * 24 * 60 * 60 * 1000).getDate(),
+    new Date(time - 2 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 2 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 2 * 24 * 60 * 60 * 1000).getDate(),
+    1,
+    10000
+  ).then(function (resp) {
+    total_xihua.value = 0;
+    for (let i = 0; i < resp.length; i++) {
+      total_xihua.value = resp[i].netWeight + total_xihua.value;
+    }
+    total_xihua.value = Math.floor((total_xihua.value / 1000) * 100) / 100;
+    yAxis_week.value[3] = yAxis_week.value[3] + total_xihua.value;
+    yAxis_week.value[3] = Number(
+      (Math.floor(yAxis_week.value[3] * 100) / 100).toFixed(0)
+    );
+  });
+  getQuery(
+    "金泉",
+    "transporter",
+    new Date(time - 3 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 3 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 3 * 24 * 60 * 60 * 1000).getDate(),
+    new Date(time - 2 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 2 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 2 * 24 * 60 * 60 * 1000).getDate(),
+    1,
+    10000
+  ).then(function (resp) {
+    total_xihua.value = 0;
+    for (let i = 0; i < resp.length; i++) {
+      total_xihua.value = resp[i].netWeight + total_xihua.value;
+    }
+    total_xihua.value = Math.floor((total_xihua.value / 1000) * 100) / 100;
+    yAxis_week.value[3] = yAxis_week.value[3] + total_xihua.value;
+    yAxis_week.value[3] = Number(
+      (Math.floor(yAxis_week.value[3] * 100) / 100).toFixed(0)
+    );
+  });
+  getQuery(
+    "西北桥",
+    "transporter",
+    new Date(time - 3 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 3 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 3 * 24 * 60 * 60 * 1000).getDate(),
+    new Date(time - 2 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 2 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 2 * 24 * 60 * 60 * 1000).getDate(),
+    1,
+    10000
+  ).then(function (resp) {
+    total_xihua.value = 0;
+    for (let i = 0; i < resp.length; i++) {
+      total_xihua.value = resp[i].netWeight + total_xihua.value;
+    }
+    total_xihua.value = Math.floor((total_xihua.value / 1000) * 100) / 100;
+    yAxis_week.value[3] = yAxis_week.value[3] + total_xihua.value;
+    yAxis_week.value[3] = Number(
+      (Math.floor(yAxis_week.value[3] * 100) / 100).toFixed(0)
+    );
+  });
+  getQuery(
+    "黄忠",
+    "transporter",
+    new Date(time - 3 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 3 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 3 * 24 * 60 * 60 * 1000).getDate(),
+    new Date(time - 2 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 2 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 2 * 24 * 60 * 60 * 1000).getDate(),
+    1,
+    10000
+  ).then(function (resp) {
+    total_xihua.value = 0;
+    for (let i = 0; i < resp.length; i++) {
+      total_xihua.value = resp[i].netWeight + total_xihua.value;
+    }
+    total_xihua.value = Math.floor((total_xihua.value / 1000) * 100) / 100;
+    yAxis_week.value[3] = yAxis_week.value[3] + total_xihua.value;
+    yAxis_week.value[3] = Number(
+      (Math.floor(yAxis_week.value[3] * 100) / 100).toFixed(0)
+    );
+  });
+
+  getQuery(
     "红花堰",
     "transporter",
     new Date(time - 2 * 24 * 60 * 60 * 1000).getFullYear() +
@@ -1621,6 +2258,137 @@ onBeforeMount(() => {
   });
   getQuery(
     "五里墩",
+    "transporter",
+    new Date(time - 2 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 2 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 2 * 24 * 60 * 60 * 1000).getDate(),
+    new Date(time - 1 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 1 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 1 * 24 * 60 * 60 * 1000).getDate(),
+    1,
+    10000
+  ).then(function (resp) {
+    total_xihua.value = 0;
+    for (let i = 0; i < resp.length; i++) {
+      total_xihua.value = resp[i].netWeight + total_xihua.value;
+    }
+    total_xihua.value = Math.floor((total_xihua.value / 1000) * 100) / 100;
+    yAxis_week.value[4] = yAxis_week.value[4] + total_xihua.value;
+    yAxis_week.value[4] = Number(
+      (Math.floor(yAxis_week.value[4] * 100) / 100).toFixed(0)
+    );
+  });
+
+  getQuery(
+    "泉水",
+    "transporter",
+    new Date(time - 2 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 2 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 2 * 24 * 60 * 60 * 1000).getDate(),
+    new Date(time - 1 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 1 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 1 * 24 * 60 * 60 * 1000).getDate(),
+    1,
+    10000
+  ).then(function (resp) {
+    total_xihua.value = 0;
+    for (let i = 0; i < resp.length; i++) {
+      total_xihua.value = resp[i].netWeight + total_xihua.value;
+    }
+    total_xihua.value = Math.floor((total_xihua.value / 1000) * 100) / 100;
+    yAxis_week.value[4] = yAxis_week.value[4] + total_xihua.value;
+    yAxis_week.value[4] = Number(
+      (Math.floor(yAxis_week.value[4] * 100) / 100).toFixed(0)
+    );
+  });
+  getQuery(
+    "营门口",
+    "transporter",
+    new Date(time - 2 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 2 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 2 * 24 * 60 * 60 * 1000).getDate(),
+    new Date(time - 1 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 1 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 1 * 24 * 60 * 60 * 1000).getDate(),
+    1,
+    10000
+  ).then(function (resp) {
+    total_xihua.value = 0;
+    for (let i = 0; i < resp.length; i++) {
+      total_xihua.value = resp[i].netWeight + total_xihua.value;
+    }
+    total_xihua.value = Math.floor((total_xihua.value / 1000) * 100) / 100;
+    yAxis_week.value[4] = yAxis_week.value[4] + total_xihua.value;
+    yAxis_week.value[4] = Number(
+      (Math.floor(yAxis_week.value[4] * 100) / 100).toFixed(0)
+    );
+  });
+  getQuery(
+    "金泉",
+    "transporter",
+    new Date(time - 2 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 2 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 2 * 24 * 60 * 60 * 1000).getDate(),
+    new Date(time - 1 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 1 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 1 * 24 * 60 * 60 * 1000).getDate(),
+    1,
+    10000
+  ).then(function (resp) {
+    total_xihua.value = 0;
+    for (let i = 0; i < resp.length; i++) {
+      total_xihua.value = resp[i].netWeight + total_xihua.value;
+    }
+    total_xihua.value = Math.floor((total_xihua.value / 1000) * 100) / 100;
+    yAxis_week.value[4] = yAxis_week.value[4] + total_xihua.value;
+    yAxis_week.value[4] = Number(
+      (Math.floor(yAxis_week.value[4] * 100) / 100).toFixed(0)
+    );
+  });
+  getQuery(
+    "西北桥",
+    "transporter",
+    new Date(time - 2 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 2 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 2 * 24 * 60 * 60 * 1000).getDate(),
+    new Date(time - 1 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 1 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 1 * 24 * 60 * 60 * 1000).getDate(),
+    1,
+    10000
+  ).then(function (resp) {
+    total_xihua.value = 0;
+    for (let i = 0; i < resp.length; i++) {
+      total_xihua.value = resp[i].netWeight + total_xihua.value;
+    }
+    total_xihua.value = Math.floor((total_xihua.value / 1000) * 100) / 100;
+    yAxis_week.value[4] = yAxis_week.value[4] + total_xihua.value;
+    yAxis_week.value[4] = Number(
+      (Math.floor(yAxis_week.value[4] * 100) / 100).toFixed(0)
+    );
+  });
+  getQuery(
+    "黄忠",
     "transporter",
     new Date(time - 2 * 24 * 60 * 60 * 1000).getFullYear() +
       "-" +
@@ -1722,6 +2490,141 @@ onBeforeMount(() => {
       (Math.floor(yAxis_week.value[5] * 100) / 100).toFixed(0)
     );
   });
+  getQuery(
+    "泉水",
+    "transporter",
+    new Date(time - 1 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 1 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 1 * 24 * 60 * 60 * 1000).getDate(),
+    new Date(time).getFullYear() +
+      "-" +
+      (new Date(time).getMonth() + 1) +
+      "-" +
+      new Date(time).getDate(),
+    1,
+    10000
+  ).then(function (resp) {
+    total_hongxing.value = 0;
+    for (let i = 0; i < resp.length; i++) {
+      total_hongxing.value = resp[i].netWeight + total_hongxing.value;
+    }
+    total_hongxing.value =
+      Math.floor((total_hongxing.value / 1000) * 100) / 100;
+    yAxis_week.value[5] = yAxis_week.value[5] + total_hongxing.value;
+    yAxis_week.value[5] = Number(
+      (Math.floor(yAxis_week.value[5] * 100) / 100).toFixed(0)
+    );
+  });
+  getQuery(
+    "营门口",
+    "transporter",
+    new Date(time - 1 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 1 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 1 * 24 * 60 * 60 * 1000).getDate(),
+    new Date(time).getFullYear() +
+      "-" +
+      (new Date(time).getMonth() + 1) +
+      "-" +
+      new Date(time).getDate(),
+    1,
+    10000
+  ).then(function (resp) {
+    total_hongxing.value = 0;
+    for (let i = 0; i < resp.length; i++) {
+      total_hongxing.value = resp[i].netWeight + total_hongxing.value;
+    }
+    total_hongxing.value =
+      Math.floor((total_hongxing.value / 1000) * 100) / 100;
+    yAxis_week.value[5] = yAxis_week.value[5] + total_hongxing.value;
+    yAxis_week.value[5] = Number(
+      (Math.floor(yAxis_week.value[5] * 100) / 100).toFixed(0)
+    );
+  });
+  getQuery(
+    "金泉",
+    "transporter",
+    new Date(time - 1 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 1 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 1 * 24 * 60 * 60 * 1000).getDate(),
+    new Date(time).getFullYear() +
+      "-" +
+      (new Date(time).getMonth() + 1) +
+      "-" +
+      new Date(time).getDate(),
+    1,
+    10000
+  ).then(function (resp) {
+    total_hongxing.value = 0;
+    for (let i = 0; i < resp.length; i++) {
+      total_hongxing.value = resp[i].netWeight + total_hongxing.value;
+    }
+    total_hongxing.value =
+      Math.floor((total_hongxing.value / 1000) * 100) / 100;
+    yAxis_week.value[5] = yAxis_week.value[5] + total_hongxing.value;
+    yAxis_week.value[5] = Number(
+      (Math.floor(yAxis_week.value[5] * 100) / 100).toFixed(0)
+    );
+  });
+  getQuery(
+    "西北桥",
+    "transporter",
+    new Date(time - 1 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 1 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 1 * 24 * 60 * 60 * 1000).getDate(),
+    new Date(time).getFullYear() +
+      "-" +
+      (new Date(time).getMonth() + 1) +
+      "-" +
+      new Date(time).getDate(),
+    1,
+    10000
+  ).then(function (resp) {
+    total_hongxing.value = 0;
+    for (let i = 0; i < resp.length; i++) {
+      total_hongxing.value = resp[i].netWeight + total_hongxing.value;
+    }
+    total_hongxing.value =
+      Math.floor((total_hongxing.value / 1000) * 100) / 100;
+    yAxis_week.value[5] = yAxis_week.value[5] + total_hongxing.value;
+    yAxis_week.value[5] = Number(
+      (Math.floor(yAxis_week.value[5] * 100) / 100).toFixed(0)
+    );
+  });
+  getQuery(
+    "黄忠",
+    "transporter",
+    new Date(time - 1 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time - 1 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time - 1 * 24 * 60 * 60 * 1000).getDate(),
+    new Date(time).getFullYear() +
+      "-" +
+      (new Date(time).getMonth() + 1) +
+      "-" +
+      new Date(time).getDate(),
+    1,
+    10000
+  ).then(function (resp) {
+    total_hongxing.value = 0;
+    for (let i = 0; i < resp.length; i++) {
+      total_hongxing.value = resp[i].netWeight + total_hongxing.value;
+    }
+    total_hongxing.value =
+      Math.floor((total_hongxing.value / 1000) * 100) / 100;
+    yAxis_week.value[5] = yAxis_week.value[5] + total_hongxing.value;
+    yAxis_week.value[5] = Number(
+      (Math.floor(yAxis_week.value[5] * 100) / 100).toFixed(0)
+    );
+  });
 
   getQuery("红花堰", "transporter", today, tomorrow, 1, 10000).then(function (
     resp
@@ -1771,6 +2674,76 @@ onBeforeMount(() => {
   //   getQuery("红星", "transporter", today, tomorrow, 1, 10).then(function (resp) {
   //     data.value = resp;
   //   });
+  getQuery("泉水", "transporter", today, tomorrow, 1, 10000).then(function (
+    resp
+  ) {
+    for (let i = 0; i < resp.length; i++) {
+      total_xihua.value = resp[i].netWeight + total_xihua.value;
+    }
+    total_xihua.value = Math.floor((total_xihua.value / 1000) * 100) / 100;
+    yAxis_week.value[6] = yAxis_week.value[6] + total_xihua.value;
+    yAxis_week.value[6] = Number(
+      (Math.floor(yAxis_week.value[6] * 100) / 100).toFixed(0)
+    );
+    total.value = yAxis_week.value[6];
+    yAxis_alert.value[1] = yAxis_week.value[6];
+  });
+  getQuery("营门口", "transporter", today, tomorrow, 1, 10000).then(function (
+    resp
+  ) {
+    for (let i = 0; i < resp.length; i++) {
+      total_xihua.value = resp[i].netWeight + total_xihua.value;
+    }
+    total_xihua.value = Math.floor((total_xihua.value / 1000) * 100) / 100;
+    yAxis_week.value[6] = yAxis_week.value[6] + total_xihua.value;
+    yAxis_week.value[6] = Number(
+      (Math.floor(yAxis_week.value[6] * 100) / 100).toFixed(0)
+    );
+    total.value = yAxis_week.value[6];
+    yAxis_alert.value[1] = yAxis_week.value[6];
+  });
+  getQuery("金泉", "transporter", today, tomorrow, 1, 10000).then(function (
+    resp
+  ) {
+    for (let i = 0; i < resp.length; i++) {
+      total_xihua.value = resp[i].netWeight + total_xihua.value;
+    }
+    total_xihua.value = Math.floor((total_xihua.value / 1000) * 100) / 100;
+    yAxis_week.value[6] = yAxis_week.value[6] + total_xihua.value;
+    yAxis_week.value[6] = Number(
+      (Math.floor(yAxis_week.value[6] * 100) / 100).toFixed(0)
+    );
+    total.value = yAxis_week.value[6];
+    yAxis_alert.value[1] = yAxis_week.value[6];
+  });
+  getQuery("西北桥", "transporter", today, tomorrow, 1, 10000).then(function (
+    resp
+  ) {
+    for (let i = 0; i < resp.length; i++) {
+      total_xihua.value = resp[i].netWeight + total_xihua.value;
+    }
+    total_xihua.value = Math.floor((total_xihua.value / 1000) * 100) / 100;
+    yAxis_week.value[6] = yAxis_week.value[6] + total_xihua.value;
+    yAxis_week.value[6] = Number(
+      (Math.floor(yAxis_week.value[6] * 100) / 100).toFixed(0)
+    );
+    total.value = yAxis_week.value[6];
+    yAxis_alert.value[1] = yAxis_week.value[6];
+  });
+  getQuery("黄忠", "transporter", today, tomorrow, 1, 10000).then(function (
+    resp
+  ) {
+    for (let i = 0; i < resp.length; i++) {
+      total_xihua.value = resp[i].netWeight + total_xihua.value;
+    }
+    total_xihua.value = Math.floor((total_xihua.value / 1000) * 100) / 100;
+    yAxis_week.value[6] = yAxis_week.value[6] + total_xihua.value;
+    yAxis_week.value[6] = Number(
+      (Math.floor(yAxis_week.value[6] * 100) / 100).toFixed(0)
+    );
+    total.value = yAxis_week.value[6];
+    yAxis_alert.value[1] = yAxis_week.value[6];
+  });
 
   // 计算报警信息
   var total_avg = 0;
@@ -1809,37 +2782,103 @@ onBeforeMount(() => {
                 for (let i = 0; i < resp.length; i++) {
                   month_total.value = resp[i].netWeight + month_total.value;
                 }
-                if (count == 6) {
-                  yAxis_alert.value[0] =
-                    (month_total.value / 1000 / 6).toFixed(0) * 1;
-                  var alert_status = Math.abs(
-                    yAxis_alert.value[0] - yAxis_week.value[6]
-                  );
-
-                  // console.log(Number((yAxis_alert.value[0] * 0.15).toFixed(0)))
-                  if (alert_status <= Number(yAxis_alert.value[0] * 0.2)) {
-                    alert_tag.value.type = "success";
-                    alert_tag.value.name = "正常";
-                  } else if (
-                    alert_status > Number(yAxis_alert.value[0] * 0.2)
-                  ) {
-                    var alert_status_signed =
-                      yAxis_alert.value[0] - yAxis_week.value[6];
-                    console.log(alert_status_signed > 0);
-
-                    if (alert_status_signed > 0) {
-                      alert_tag.value.name = "低于预测值的20%";
-                      alert_tag.value.type = "danger";
-                    } else {
-                      alert_tag.value.name = "超过预测值的20%";
-                      alert_tag.value.type = "danger";
-                    }
+                getQuery(
+                  "西北桥",
+                  "transporter",
+                  cal_day,
+                  cal_time,
+                  1,
+                  10000
+                ).then(function (resp) {
+                  for (let i = 0; i < resp.length; i++) {
+                    month_total.value = resp[i].netWeight + month_total.value;
                   }
-                  // else if (alert_status > Number((yAxis_alert.value[0] * 0.3).toFixed(0))) {
-                  //     alert_tag.value.name = '警告，与预估值相差大于' + yAxis_alert.value[0] * 0.3 + '吨,目前相差' + alert_status + '吨'
-                  //     alert_tag.value.type = 'danger'
-                  // }
-                }
+                  getQuery(
+                    "金泉",
+                    "transporter",
+                    cal_day,
+                    cal_time,
+                    1,
+                    10000
+                  ).then(function (resp) {
+                    for (let i = 0; i < resp.length; i++) {
+                      month_total.value = resp[i].netWeight + month_total.value;
+                    }
+                    getQuery(
+                      "黄忠",
+                      "transporter",
+                      cal_day,
+                      cal_time,
+                      1,
+                      10000
+                    ).then(function (resp) {
+                      for (let i = 0; i < resp.length; i++) {
+                        month_total.value =
+                          resp[i].netWeight + month_total.value;
+                      }
+                      getQuery(
+                        "泉水",
+                        "transporter",
+                        cal_day,
+                        cal_time,
+                        1,
+                        10000
+                      ).then(function (resp) {
+                        for (let i = 0; i < resp.length; i++) {
+                          month_total.value =
+                            resp[i].netWeight + month_total.value;
+                        }
+
+                        getQuery(
+                          "营门口",
+                          "transporter",
+                          cal_day,
+                          cal_time,
+                          1,
+                          10000
+                        ).then(function (resp) {
+                          for (let i = 0; i < resp.length; i++) {
+                            month_total.value =
+                              resp[i].netWeight + month_total.value;
+                          }
+                          if (count == 6) {
+                            yAxis_alert.value[0] =
+                              (month_total.value / 1000 / 6).toFixed(0) * 1;
+                            var alert_status = Math.abs(
+                              yAxis_alert.value[0] - yAxis_week.value[6]
+                            );
+
+                            // console.log(Number((yAxis_alert.value[0] * 0.15).toFixed(0)))
+                            if (
+                              alert_status <= Number(yAxis_alert.value[0] * 0.2)
+                            ) {
+                              alert_tag.value.type = "success";
+                              alert_tag.value.name = "正常";
+                            } else if (
+                              alert_status > Number(yAxis_alert.value[0] * 0.2)
+                            ) {
+                              var alert_status_signed =
+                                yAxis_alert.value[0] - yAxis_week.value[6];
+                              console.log(alert_status_signed > 0);
+
+                              if (alert_status_signed > 0) {
+                                alert_tag.value.name = "低于预测值的20%";
+                                alert_tag.value.type = "danger";
+                              } else {
+                                alert_tag.value.name = "超过预测值的20%";
+                                alert_tag.value.type = "danger";
+                              }
+                            }
+                            // else if (alert_status > Number((yAxis_alert.value[0] * 0.3).toFixed(0))) {
+                            //     alert_tag.value.name = '警告，与预估值相差大于' + yAxis_alert.value[0] * 0.3 + '吨,目前相差' + alert_status + '吨'
+                            //     al);ert_tag.value.type = 'danger'
+                            // }
+                          }
+                        });
+                      });
+                    });
+                  });
+                });
               }
             );
           }

@@ -70,7 +70,7 @@ import { reactive, ref, onBeforeMount } from "vue";
 import { ScrollBoard, DigitalFlop } from "@kjgl77/datav-vue3";
 import { BorderBox6 as DvBorderBox6 } from "@kjgl77/datav-vue3";
 import { BorderBox7 as DvBorderBox7 } from "@kjgl77/datav-vue3";
-import { getPage, getQuery, getFlows } from "@/api/content.js";
+import { getPage, getQuery} from "@/api/content.js";
 import moment from "moment";
 import axios from "axios";
 
@@ -198,7 +198,7 @@ const cumulative_flow = ref(0);
 const getSiteNameList = (pageNum, start, end, pageSize) => {
   axios({
     url:
-      "http://101.37.246.72:8084/shenlvye/getPeriodRecordByPage?pageNum=" +
+      "/OsmoticFluid/shenlvye/getPeriodRecordByPage?pageNum=" +
       pageNum +
       "&start=" +
       start +
@@ -229,13 +229,23 @@ const getSiteNameList = (pageNum, start, end, pageSize) => {
 // ==================================================================================
 
 onBeforeMount(() => {
-    getFlows().then(function (resp) {
-    // var data = resp.data.data;
-    // console.log("resp.message:" + resp.data.message)
-    //  carData.value = data;
-    today_flow.value = resp.今日流量;
-    // cumulative_flow.value = resp.累计流量;
-    console.log("today_flow:" + resp.今日流量);
+  //   getFlows().then(function (resp) {
+  //   // var data = resp.data.data;
+  //   // console.log("resp.message:" + resp.data.message)
+  //   //  carData.value = data;
+  //   today_flow.value = resp.今日流量;
+  //   // cumulative_flow.value = resp.累计流量;
+  //   console.log("today_flow:" + resp.今日流量);
+  // });
+   axios({
+    url: "/OsmoticFluid/shenlvye/getRecord",
+    method: "get",
+  }).then(function (resp) {
+    if (resp.status == 200) {
+      var data = resp.data.data;
+      today_flow.value = data.今日流量;
+     console.log("today_flow:" + resp.今日流量);
+    }
   });
   var start = moment().startOf("month").format("YYYY-MM-DD");
   var end = moment().format("YYYY-MM-DD");

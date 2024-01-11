@@ -323,6 +323,11 @@ const menuList = [
       { icon: "", title: "红花堰", to: "honghuayan" },
       { icon: "", title: "五块石", to: "wukuaishi" },
       { icon: "", title: "五里墩", to: "wulidun" },
+      { icon: "", title: "泉水", to: "quanshui" },
+      { icon: "", title: "营门口", to: "yingmenkou" },
+      { icon: "", title: "金泉", to: "jinquan" },
+      { icon: "", title: "西北桥", to: "xibeiqiao" },
+      { icon: "", title: "黄忠", to: "huangzhong" },
     ],
   },
 
@@ -330,7 +335,17 @@ const menuList = [
   { icon: "03,17", title: "垃圾焚烧数据校对", to: "ljfs", submenu: [] },
   { icon: "01,16", title: "车辆轨迹分析", to: "carRecord", submenu: [] },
   { icon: "03,09", title: "车辆预警分析", to: "carWarning", submenu: [] },
-  { icon: "03,10", title: "垃圾渗滤液", to: "osmoticFluid", submenu: [] },
+    {
+    icon: "03,10",
+    title: "垃圾渗滤液",
+    to: "osmoticFluid",
+      submenu: [
+      { icon: "", title: "大站渗滤液汇总", to: "osmoticFluid" },
+      { icon: "", title: "红星站渗滤液", to: "hongxingShenlvye" },
+      { icon: "", title: "西华站渗滤液", to: "xihuaShenlvye" },
+   
+    ],
+  },
   { icon: "02,14", title: "告警事件历史查询", to: "alarmEvent", submenu: [] },
 ];
 function displayContent(name) {

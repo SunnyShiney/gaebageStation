@@ -646,7 +646,7 @@ import CarRecord from "@/views/content/components/CarRecord.vue";
 import { getCars } from "@/api/content";
 import { getCarGps, getAllGps } from "@/api/content";
 import { getCarsLocation } from "@/api/home";
-import { getFlows, getFlows_xihua } from "@/api/content.js";
+// import { getFlows, getFlows_xihua } from "@/api/content.js";
 
 import moment from "moment";
 const xihuaVisible = ref(false);
@@ -737,7 +737,7 @@ const getSiteNameList = (pageNum, start, end, pageSize) => {
   var total = 0;
   axios({
     url:
-      "http://101.37.246.72:8084/shenlvye/getPeriodRecordByPage?pageNum=" +
+      "/OsmoticFluid/shenlvye/getPeriodRecordByPage?pageNum=" +
       pageNum +
       "&start=" +
       start +
@@ -791,12 +791,32 @@ const getSiteNameList = (pageNum, start, end, pageSize) => {
 };
 
 onBeforeMount(() => {
-  getFlows().then(function (resp) {
-    today_flow.value = resp.今日流量;
-    getFlows_xihua().then(function (data) {
+  // getFlows().then(function (resp) {
+  //   today_flow.value = resp.今日流量;
+  //   console.log(1111,today_flow.value)
+  //   getFlows_xihua().then(function (data) {
+      
+  //     today_flow.value = today_flow.value + data.今日流量;
+  //   });
+  //   console.log("jisdfjs" + today_flow.value);
+  // });
+    axios({
+    url: "/OsmoticFluid/shenlvye/getRecord",
+    method: "get",
+  }).then(function (resp) {
+    if (resp.status == 200) {
+      var data = resp.data.data;
+      today_flow.value = data.今日流量;
+         axios({
+    url: "/OsmoticFluid/shenlvye/getRecordByStation?station=xihua",
+    method: "get",
+  }).then(function (resp) {
+    if (resp.status == 200) {
+      var data = resp.data.data;
       today_flow.value = today_flow.value + data.今日流量;
-    });
-    console.log("jisdfjs" + today_flow.value);
+    }
+  });
+    }
   });
   var start = moment().startOf("month").format("YYYY-MM-DD");
   var end = moment().format("YYYY-MM-DD");
@@ -3198,13 +3218,13 @@ let smallOption = {
   xAxis: [
     {
       type: "category",
-      data: ["红花堰", "五块石", "五里墩", "其他小站"],
+      data: ["红花堰", "五块石", "五里墩", "泉水", "营门口", "金泉", "西北桥","黄忠"],
       axisTick: {
         alignWithLabel: true,
       },
       interval: 0,
       axisLabel: {
-        fontSize: fontSizeSwitch(0.15),
+        fontSize: fontSizeSwitch(0.1),
         show: true,
         textStyle: {
           color: "rgba(255,255,255,0.8)",
@@ -3252,7 +3272,12 @@ let smallOption = {
         { value: 0, name: "红花堰" },
         { value: 0, name: "五块石" },
         { value: 0, name: "五里墩" },
-        { value: 0, name: "其他小站" },
+        { value: 0, name: "泉水" },
+        { value: 0, name: "营门口" },
+        { value: 0, name: "金泉" },
+        { value: 0, name: "西北桥" },
+        { value: 0, name: "黄忠" },
+        // { value: 0, name: "其他小站" },
       ],
       emphasis: {
         itemStyle: {
@@ -3289,6 +3314,12 @@ const create_small_data = () => {
   let honghuayan = 0;
   let wukuaishi = 0;
   let wulidun = 0;
+  let quanshui = 0;
+  let huangzhong = 0;
+  let yingmenkou = 0;
+  let jinquan = 0;
+  let xibeiqiao = 0;
+  
   let xihua = 0;
   let hongxing = 0;
 
@@ -3319,7 +3350,7 @@ const create_small_data = () => {
     honghuayan = total0.value.toFixed(2);
     // console.log(smallOption.series[0].data[0].value+"第一个")
     //更新页面上的图表
-    // small_chart.setOption(smallOption);
+    small_chart.setOption(smallOption);
   });
   getQuery(
     "五块石",
@@ -3347,7 +3378,7 @@ const create_small_data = () => {
     smallOption.series[0].data[1].value = total0.value.toFixed(2);
     wukuaishi = total0.value.toFixed(2);
     //更新页面上的图表
-    // small_chart.setOption(smallOption);
+    small_chart.setOption(smallOption);
   });
   getQuery(
     "五里墩",
@@ -3374,10 +3405,10 @@ const create_small_data = () => {
     smallOption.series[0].data[2].value = total0.value.toFixed(2);
     wulidun = total0.value.toFixed(2);
     //更新页面上的图表
-    // small_chart.setOption(smallOption);
+    small_chart.setOption(smallOption);
   });
-  getQuery(
-    "红星",
+    getQuery(
+    "泉水",
     "transporter",
     new Date(time).getFullYear() +
       "-" +
@@ -3399,37 +3430,175 @@ const create_small_data = () => {
     total0.value = Math.floor((total0.value / 1000) * 100) / 100;
     //更改图表上对应位置的数据
     smallOption.series[0].data[3].value = total0.value.toFixed(2);
-    hongxing = total0.value.toFixed(2);
-    getQuery(
-      "西华",
-      "transporter",
-      new Date(time).getFullYear() +
-        "-" +
-        (new Date(time).getMonth() + 1) +
-        "-" +
-        new Date(time).getDate(),
-      new Date(time + 1 * 24 * 60 * 60 * 1000).getFullYear() +
-        "-" +
-        (new Date(time + 1 * 24 * 60 * 60 * 1000).getMonth() + 1) +
-        "-" +
-        new Date(time + 1 * 24 * 60 * 60 * 1000).getDate(),
-      1,
-      10000
-    ).then(function (resp) {
-      total0.value = 0;
-      for (let i = 0; i < resp.length; i++) {
-        total0.value = resp[i].netWeight + total0.value;
-      }
-      total0.value = Math.floor((total0.value / 1000) * 100) / 100;
-      xihua = total0.value.toFixed(2);
-      // console.log(xihua)
-      //更改图表上对应位置的数据
-      smallOption.series[0].data[3].value =
-        xihua + hongxing - wukuaishi - honghuayan - wulidun;
-      // console.log(wukuaishi+"墩")
-      small_chart.setOption(smallOption);
-    });
+    quanshui = total0.value.toFixed(2);
+    console.log(33, smallOption.series[0].data[3].value )
+    //更新页面上的图表
+
   });
+    getQuery(
+    "营门口",
+    "transporter",
+    new Date(time).getFullYear() +
+      "-" +
+      (new Date(time).getMonth() + 1) +
+      "-" +
+      new Date(time).getDate(),
+    new Date(time + 1 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time + 1 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time + 1 * 24 * 60 * 60 * 1000).getDate(),
+    1,
+    10000
+  ).then(function (resp) {
+    total0.value = 0;
+    for (let i = 0; i < resp.length; i++) {
+      total0.value = resp[i].netWeight + total0.value;
+    }
+    total0.value = Math.floor((total0.value / 1000) * 100) / 100;
+    //更改图表上对应位置的数据
+    smallOption.series[0].data[4].value = total0.value.toFixed(2);
+    yingmenkou = total0.value.toFixed(2);
+    //更新页面上的图表
+    small_chart.setOption(smallOption);
+  });
+    getQuery(
+    "金泉",
+    "transporter",
+    new Date(time).getFullYear() +
+      "-" +
+      (new Date(time).getMonth() + 1) +
+      "-" +
+      new Date(time).getDate(),
+    new Date(time + 1 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time + 1 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time + 1 * 24 * 60 * 60 * 1000).getDate(),
+    1,
+    10000
+  ).then(function (resp) {
+    total0.value = 0;
+    for (let i = 0; i < resp.length; i++) {
+      total0.value = resp[i].netWeight + total0.value;
+    }
+    total0.value = Math.floor((total0.value / 1000) * 100) / 100;
+    //更改图表上对应位置的数据
+    smallOption.series[0].data[5].value = total0.value.toFixed(2);
+    jinquan = total0.value.toFixed(2);
+    //更新页面上的图表
+    // small_chart.setOption(smallOption);
+  });
+    getQuery(
+    "西北桥",
+    "transporter",
+    new Date(time).getFullYear() +
+      "-" +
+      (new Date(time).getMonth() + 1) +
+      "-" +
+      new Date(time).getDate(),
+    new Date(time + 1 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time + 1 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time + 1 * 24 * 60 * 60 * 1000).getDate(),
+    1,
+    10000
+  ).then(function (resp) {
+    total0.value = 0;
+    for (let i = 0; i < resp.length; i++) {
+      total0.value = resp[i].netWeight + total0.value;
+    }
+    total0.value = Math.floor((total0.value / 1000) * 100) / 100;
+    //更改图表上对应位置的数据
+    smallOption.series[0].data[6].value = total0.value.toFixed(2);
+    xibeiqiao = total0.value.toFixed(2);
+    //更新页面上的图表
+    small_chart.setOption(smallOption);
+  });
+    getQuery(
+    "黄忠",
+    "transporter",
+    new Date(time).getFullYear() +
+      "-" +
+      (new Date(time).getMonth() + 1) +
+      "-" +
+      new Date(time).getDate(),
+    new Date(time + 1 * 24 * 60 * 60 * 1000).getFullYear() +
+      "-" +
+      (new Date(time + 1 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+      "-" +
+      new Date(time + 1 * 24 * 60 * 60 * 1000).getDate(),
+    1,
+    10000
+  ).then(function (resp) {
+    total0.value = 0;
+    for (let i = 0; i < resp.length; i++) {
+      total0.value = resp[i].netWeight + total0.value;
+    }
+    total0.value = Math.floor((total0.value / 1000) * 100) / 100;
+    //更改图表上对应位置的数据
+    smallOption.series[0].data[7].value = total0.value.toFixed(2);
+    huangzhong = total0.value.toFixed(2);
+    //更新页面上的图表
+    small_chart.setOption(smallOption);
+  });
+  // getQuery(
+  //   "红星",
+  //   "transporter",
+  //   new Date(time).getFullYear() +
+  //     "-" +
+  //     (new Date(time).getMonth() + 1) +
+  //     "-" +
+  //     new Date(time).getDate(),
+  //   new Date(time + 1 * 24 * 60 * 60 * 1000).getFullYear() +
+  //     "-" +
+  //     (new Date(time + 1 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+  //     "-" +
+  //     new Date(time + 1 * 24 * 60 * 60 * 1000).getDate(),
+  //   1,
+  //   10000
+  // ).then(function (resp) {
+  //   total0.value = 0;
+  //   for (let i = 0; i < resp.length; i++) {
+  //     total0.value = resp[i].netWeight + total0.value;
+  //   }
+  //   total0.value = Math.floor((total0.value / 1000) * 100) / 100;
+  //   //更改图表上对应位置的数据
+  //   smallOption.series[0].data[8].value = total0.value.toFixed(2);
+  //   small_chart.setOption(smallOption);
+  //   hongxing = total0.value.toFixed(2);
+  //   getQuery(
+  //     "西华",
+  //     "transporter",
+  //     new Date(time).getFullYear() +
+  //       "-" +
+  //       (new Date(time).getMonth() + 1) +
+  //       "-" +
+  //       new Date(time).getDate(),
+  //     new Date(time + 1 * 24 * 60 * 60 * 1000).getFullYear() +
+  //       "-" +
+  //       (new Date(time + 1 * 24 * 60 * 60 * 1000).getMonth() + 1) +
+  //       "-" +
+  //       new Date(time + 1 * 24 * 60 * 60 * 1000).getDate(),
+  //     1,
+  //     10000
+  //   ).then(function (resp) {
+  //     total0.value = 0;
+  //     for (let i = 0; i < resp.length; i++) {
+  //       total0.value = resp[i].netWeight + total0.value;
+  //     }
+  //     total0.value = Math.floor((total0.value / 1000) * 100) / 100;
+  //     xihua = total0.value.toFixed(2);
+  //     // console.log(xihua)
+  //     //更改图表上对应位置的数据
+  //     smallOption.series[0].data[8].value =
+  //       xihua + hongxing - wukuaishi - honghuayan - wulidun - quanshui - yingmenkou - jinquan - xibeiqiao - huangzhong;
+
+  //     small_chart.setOption(smallOption);
+  //   });
+  // });
+  
 };
 
 // const ageGenderRequest = () => {
@@ -4449,6 +4618,7 @@ onBeforeUnmount(() => {
   padding: 0 0.1875rem 0.5rem;
   border: 1px solid rgb(25, 196, 139, 0.17);
   margin-bottom: 0.1875rem;
+  // box-shadow: 0 0 10px rgba(0, 119, 255, 0.5) inset;
 
   background: url("@/assets/line.png") rgba(222, 222, 222, 0.06);
 }
@@ -4517,10 +4687,14 @@ onBeforeUnmount(() => {
   background: rgba(101, 132, 226, 0.1);
   padding: 0.1875rem;
   margin-bottom: 10px;
+  
+  
 }
 .no-hd {
   position: relative;
   border: 1px solid rgb(25, 186, 139, 0.17);
+  
+  
 }
 .no-hd::before {
   position: absolute;
@@ -4838,6 +5012,7 @@ li {
   padding: 0 0.1875rem 0.5rem;
   border: 1px solid rgb(25, 196, 139, 0.17);
   margin-bottom: 0.1875rem;
+//  box-shadow: 0 0 10px rgba(0, 119, 255, 0.5) inset;
 
   background: url("@/assets/line.png") rgba(222, 222, 222, 0.06);
 }

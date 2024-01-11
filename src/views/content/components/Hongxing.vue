@@ -1195,6 +1195,7 @@ onBeforeMount(() => {
         (new Date(time - i * 24 * 60 * 60 * 1000).getMonth() + 1) +
         "-" +
         new Date(time - i * 24 * 60 * 60 * 1000).getDate();
+
       var cal_time =
         new Date(time - i * 24 * 60 * 60 * 1000).getFullYear() +
         "-" +
@@ -1207,6 +1208,7 @@ onBeforeMount(() => {
           new Date(time - i * 24 * 60 * 60 * 1000).getMinutes() +
           ":" +
           new Date(time - i * 24 * 60 * 60 * 1000).getSeconds());
+      console.log("cal_day:" + cal_day + "cal_time:" + cal_time);
       getQuery("红星", "transporter", cal_day, cal_time, 1, 10000).then(
         function (resp) {
           for (let i = 0; i < resp.length; i++) {

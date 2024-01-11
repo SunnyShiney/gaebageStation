@@ -70,16 +70,16 @@ export function getAllGp(){
     })
 }
 
-export function getFlows() {
-        return request({
-        url: 'http://101.37.246.72:8084/shenlvye/getRecord',
-        method: 'get'
-    })
-}
+// export function getFlows() {
+//         return request({
+//           url: "/OsmoticFluid/shenlvye/getRecord",
+//           method: "get",
+//         });
+// }
 
-export function getFlows_xihua() {
-        return request({
-        url: 'http://101.37.246.72:8084/shenlvye/getRecordByStation?station=xihua',
-        method: 'get'
-    })
-}
+// export function getFlows_xihua() {
+//         return request({
+//           url: "/OsmoticFluid/shenlvye/getRecordByStation?station=xihua",
+//           method: "get",
+//         });
+// }
