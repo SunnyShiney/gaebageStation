@@ -321,7 +321,7 @@ const menuList = [
       { icon: "", title: "西华", to: "xihua" },
       { icon: "", title: "小站汇总分析", to: "smallstations" },
       { icon: "", title: "红花堰", to: "honghuayan" },
-      { icon: "", title: "五块石", to: "wukuaishi" },
+      { icon: "", title: "蜀道园", to: "wukuaishi" },
       { icon: "", title: "五里墩", to: "wulidun" },
       { icon: "", title: "泉水", to: "quanshui" },
       { icon: "", title: "营门口", to: "yingmenkou" },

@@ -2,7 +2,7 @@
   <el-container>
     <el-header style="font-size: 25px; padding: 5px">
       <h5 class="card-title" style="font-size: 30px; padding: 5px">
-        五块石垃圾站数据统计
+        蜀道园垃圾站数据统计
       </h5>
     </el-header>
     <el-main>
@@ -408,11 +408,11 @@ const getAllSiteCar = (site_name) => {
       carData.value = data;
       var car = {
         carNumber: "全部",
-        sitename: "五块石",
+        sitename: "蜀道园",
       };
       carListRenhe.value.push(car);
       for (var i = 0; i < carData.value.length; i++) {
-        if (carData.value[i].siteName == "五块石") {
+        if (carData.value[i].siteName == "蜀道园") {
           var car = {
             carNumber: carData.value[i].carNumber,
             sitename: carData.value[i].siteName,
@@ -519,7 +519,7 @@ const search_car_transport = () => {
       }
     }
   }
-  getTransportList(start, end, "五块石", 1, 10000, carNumber);
+  getTransportList(start, end, "蜀道园", 1, 10000, carNumber);
   // car_transport_select_way.value = "";
   if (
     queryCarNum.value == "全部所有站点" ||
@@ -596,7 +596,7 @@ const getTransportList = (
   });
 };
 
-getTransportList(transport_start, transport_start, "五块石", 1, 10000, "all");
+getTransportList(transport_start, transport_start, "蜀道园", 1, 10000, "all");
 
 const getTransport = (pageNum) => {
   // 当前页
@@ -615,7 +615,7 @@ const car_exportExcel = () => {
 
   exportExcel(
     json_data.value,
-    "五块石站" + start + "至" + end + "车辆运输量统计",
+    "蜀道园站" + start + "至" + end + "车辆运输量统计",
     titleArr,
     "sheetName"
   );
@@ -687,7 +687,7 @@ const site_name_sum = ref(0);
 // 过去一周各时段垃圾净重平均值统计
 const site_name_total = reactive({
   title: {
-    text: "五块石站垃圾总量",
+    text: "蜀道园站垃圾总量",
   },
   xAxis: {
     name: "日期",
@@ -741,7 +741,7 @@ const search_site_name = () => {
         getSiteNameList(
           site_name_date.value[i],
           site_name_date.value[i],
-          "五块石",
+          "蜀道园",
           1,
           10000,
           i
@@ -761,7 +761,7 @@ const search_site_name = () => {
         getSiteNameList(
           site_name_date.value[i],
           site_name_date.value[i],
-          "五块石",
+          "蜀道园",
           1,
           10000,
           i
@@ -783,7 +783,7 @@ const search_site_name = () => {
 
         end = moment(start).endOf("month").format("YYYY-MM-DD");
         //统计一个月的总量
-        getSiteNameList(start, end, "五块石", 1, 10000, date);
+        getSiteNameList(start, end, "蜀道园", 1, 10000, date);
         //图标x轴标签展示月份
         site_name_date.value[date] = moment(start)
           .startOf("month")
@@ -832,7 +832,7 @@ const recent_days_total = (site_name_date) => {
     getSiteNameList(
       site_name_date.value[date],
       site_name_date.value[date],
-      "五块石",
+      "蜀道园",
       1,
       10000,
       date
@@ -897,7 +897,7 @@ const junk_exportExcel = () => {
     }
   }
 
-  getJunkForm(junk_export_start, junk_export_end, "五块石");
+  getJunkForm(junk_export_start, junk_export_end, "蜀道园");
 };
 //===============================================================================================================
 //===============================================================================================================
@@ -1016,7 +1016,7 @@ function changeDate() {
     value.value[1].getDate();
     console.log("start:"+start)
     console.log("end:"+end)
-  getQuery("五块石", "transporter", start, end, 1, 10000).then(function (resp) {
+  getQuery("蜀道园", "transporter", start, end, 1, 10000).then(function (resp) {
     total_records.value = resp.length;
     console.log("total_records.value:" + total_records.value);
 
@@ -1025,7 +1025,7 @@ function changeDate() {
     console.log("page_count:"+page_count)
     
   });
-  getQuery("五块石", "transporter", start, end, 1, 10).then(function (resp) {
+  getQuery("蜀道园", "transporter", start, end, 1, 10).then(function (resp) {
     total_records.value = resp.length;
     page_count = parseInt(resp.length) % 10;
     data.value = resp;
@@ -1062,7 +1062,7 @@ const avgTime_Line = reactive({
 // =====================================================================================
 onBeforeMount(() => {
   getQuery(
-    "五块石",
+    "蜀道园",
     "transporter",
     new Date(time - 6 * 24 * 60 * 60 * 1000).getFullYear() +
       "-" +
@@ -1085,7 +1085,7 @@ onBeforeMount(() => {
     yAxis.value[0] = Number(total.value.toFixed(0));
   });
   getQuery(
-    "五块石",
+    "蜀道园",
     "transporter",
     new Date(time - 5 * 24 * 60 * 60 * 1000).getFullYear() +
       "-" +
@@ -1108,7 +1108,7 @@ onBeforeMount(() => {
     yAxis.value[1] = Number(total.value.toFixed(0));
   });
   getQuery(
-    "五块石",
+    "蜀道园",
     "transporter",
     new Date(time - 4 * 24 * 60 * 60 * 1000).getFullYear() +
       "-" +
@@ -1136,7 +1136,7 @@ onBeforeMount(() => {
     // ifShowQueryResult.value = false;
   });
   getQuery(
-    "五块石",
+    "蜀道园",
     "transporter",
     new Date(time - 3 * 24 * 60 * 60 * 1000).getFullYear() +
       "-" +
@@ -1163,7 +1163,7 @@ onBeforeMount(() => {
     // ifShowQueryResult.value = false;
   });
   getQuery(
-    "五块石",
+    "蜀道园",
     "transporter",
     new Date(time - 2 * 24 * 60 * 60 * 1000).getFullYear() +
       "-" +
@@ -1191,7 +1191,7 @@ onBeforeMount(() => {
     // ifShowQueryResult.value = false;
   });
   getQuery(
-    "五块石",
+    "蜀道园",
     "transporter",
     new Date(time - 1 * 24 * 60 * 60 * 1000).getFullYear() +
       "-" +
@@ -1219,7 +1219,7 @@ onBeforeMount(() => {
     // page_count = parseInt(resp.data.data.pages);
     // ifShowQueryResult.value = false;
   });
-  getQuery("五块石", "transporter", today, tomorrow, 1, 10000).then(function (
+  getQuery("蜀道园", "transporter", today, tomorrow, 1, 10000).then(function (
     resp
   ) {
     total.value = 0;
@@ -1253,7 +1253,7 @@ onBeforeMount(() => {
           new Date(time - i * 24 * 60 * 60 * 1000).getMinutes() +
           ":" +
           new Date(time - i * 24 * 60 * 60 * 1000).getSeconds());
-      getQuery("五块石", "transporter", cal_day, cal_time, 1, 10000).then(
+      getQuery("蜀道园", "transporter", cal_day, cal_time, 1, 10000).then(
         function (resp) {
           for (let i = 0; i < resp.length; i++) {
             month_total.value = resp[i].netWeight + month_total.value;
@@ -1294,7 +1294,7 @@ onBeforeMount(() => {
     // page_count = parseInt(resp.data.data.pages);
     // ifShowQueryResult.value = false;
   });
-  getQuery("五块石", "transporter", today, tomorrow, 1, 10).then(function (
+  getQuery("蜀道园", "transporter", today, tomorrow, 1, 10).then(function (
     resp
   ) {
     data.value = resp;
@@ -1310,7 +1310,7 @@ onBeforeMount(() => {
    * 查找开始时间是七天前凌晨开始，到今天凌晨，一共七天，比如今天是2023.02.01，则从2023.01.25凌晨开始，2023.02.01凌晨结束，不算今天的
    */
   getQuery(
-    "五块石",
+    "蜀道园",
     "transporter",
     new Date(time - 7 * 24 * 60 * 60 * 1000).getFullYear() +
       "-" +
@@ -1412,7 +1412,7 @@ const pull_page = (page) => {
   }
 
   current_page.value = page;
-  getQuery("五块石", "transporter", start, end, page, 10).then(function (resp) {
+  getQuery("蜀道园", "transporter", start, end, page, 10).then(function (resp) {
     data.value = resp;
 
   });
@@ -1577,7 +1577,7 @@ const handleEdit = (index, row) => {
 //   window.addEventListener('resize', category_chart.resize)
 //   console.log(categoryOption.series[0].data[0].value)
 //   getQuery(
-//     '五块石',
+//     '蜀道园',
 //     'transporter',
 //     new Date(time - 7 * 24 * 60 * 60 * 1000).getFullYear() +
 //       '-' +

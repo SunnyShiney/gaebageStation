@@ -205,30 +205,30 @@
             <tdt-marker
               :position="station_xibeiqiao.position"
               @click="xibeiqiaoVisible = true"
-              :icon="station_jinquan.icon"
+              
             ></tdt-marker>
             <tdt-marker
               :position="station_jinquan.position"
               @click="jinquanVisible = true"
-              :icon="station_jinquan.icon"
+            
             >
             </tdt-marker>
 
             <tdt-marker
               :position="station_quanshui.position"
               @click="quanshuiVisible = true"
-              :icon="station_jinquan.icon"
+           
             >
             </tdt-marker>
             <tdt-marker
               :position="station_huangzhong.position"
               @click="huangzhongVisible = true"
-              :icon="station_jinquan.icon"
+              
             ></tdt-marker>
             <tdt-marker
               :position="station_yingmenkou.position"
               @click="yingmenkouVisible = true"
-              :icon="station_jinquan.icon"
+            
             ></tdt-marker>
             <tdt-marker
               :position="station_xingsheng.position"
@@ -320,33 +320,23 @@
               <Wukuaishi style="width: 100%" />
             </el-dialog>
             <el-dialog v-model="xibeiqiaoVisible" title="西北桥垃圾站今日数据">
-              <div>
-                <h2>垃圾站部署中</h2>
-              </div>
+              <Xibeiqiao style="width: 100%" />
             </el-dialog>
             <el-dialog v-model="jinquanVisible" title="金泉垃圾站今日数据">
-              <div>
-                <h2>垃圾站部署中</h2>
-              </div>
+              <Jinquan style="width: 100%" />
             </el-dialog>
 
             <el-dialog v-model="quanshuiVisible" title="泉水垃圾站今日数据">
-              <div>
-                <h2>垃圾站部署中</h2>
-              </div>
+              <Quanshui style="width: 100%" />
             </el-dialog>
             <el-dialog
               v-model="huangzhongVisible"
               title="黄忠中转站垃圾站今日数据"
             >
-              <div>
-                <h2>垃圾站部署中</h2>
-              </div>
+              <Huangzhong style="width: 100%" />
             </el-dialog>
             <el-dialog v-model="yingmenkouVisible" title="营门口垃圾站今日数据">
-              <div>
-                <h2>垃圾站部署中</h2>
-              </div>
+              <Yingmenkou style="width: 100%" />
             </el-dialog>
             <el-dialog v-model="xingshengVisible" title="兴盛垃圾站今日数据">
               <div>
@@ -642,6 +632,11 @@ import Xihua from "@/views/content/components/Xihua.vue";
 import Honghuayan from "@/views/content/components/Honghuayan.vue";
 import Wukuaishi from "@/views/content/components/Wukuaishi.vue";
 import Wulidun from "@/views/content/components/Wulidun.vue";
+import Quanshui from "@/views/content/components/Quanshui.vue";
+import Yingmenkou from "@/views/content/components/Yingmenkou.vue";
+import Jinquan from "@/views/content/components/Jinquan.vue";
+import Xibeiqiao from "@/views/content/components/Xibeiqiao.vue";
+import Huangzhong from "@/views/content/components/Huangzhong.vue";
 import CarRecord from "@/views/content/components/CarRecord.vue";
 import { getCars } from "@/api/content";
 import { getCarGps, getAllGps } from "@/api/content";

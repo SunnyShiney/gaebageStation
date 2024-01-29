@@ -6,7 +6,10 @@ module.exports = defineConfig({
       "/api": {
         //target:'http://192.168.12.101:8081',
         // target: 'http://localhost:9092',
-        target: "https://175.153.176.27:18803/api",
+        //政务云
+        // target: "https://175.153.176.27:18803/api",
+        //市政务云
+        target:"https://119.4.191.13:8871/api",
         // target: 'http://101.37.246.72:9092',//服务器
         //target:'http://192.168.0.103:8081',
         //target:'http://192.168.50.7:8081',
@@ -17,7 +20,10 @@ module.exports = defineConfig({
       },
 
       "/OsmoticFluid": {
-        target: "https://175.153.176.27:18801/api",
+        //政务云
+        // target: "https://175.153.176.27:18801/api",
+        //市政务云
+        target:"https://119.4.191.13:8891/api",
         // target: 'http://localhost:8084',
         // target: "http://101.37.246.72:8084",
         changeOrigin: true,
