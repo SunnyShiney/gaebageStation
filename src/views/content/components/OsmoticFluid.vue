@@ -512,13 +512,10 @@ getCarWarning();
 const getJunkForm = (start, end) => {
   axios({
     url:
-      "/OsmoticFluid/shenlvye/getShenlvyeTwoSitesExcel",
+      "/OsmoticFluid/shenlvye/getShenlvyeTwoSitesExcel/"+start+"/"+end,
 
     method: "get",
-    params: {
-      start: start,
-      end:end,
-    },
+
     // 下载后台文件：请求头部一定要加上responseType:'blob'
     responseType: "blob",
   }).then(function (res) {
@@ -526,14 +523,15 @@ const getJunkForm = (start, end) => {
       console.log("成功了！");
       // 生成blob对象 定义下载格式
       let blob = new Blob([res.data], { type: res.type });
+      console.log(222,res)
       // 获取文件名
-      let filename = res.headers["content-disposition"];
-      filename = decodeURIComponent(filename.split("filename=")[1]);
+      // let filename = res.headers["content-disposition"];
+      // filename = decodeURIComponent(filename.split("filename=")[1]);
       // 创建 a标签 执行下载
       let downloadElement = document.createElement("a");
       let href = window.URL.createObjectURL(blob); //创建下载的链接
       downloadElement.href = href;
-      downloadElement.download = filename; //下载后文件名
+      downloadElement.download = "sdfsdf"; //下载后文件名
       document.body.appendChild(downloadElement); // 项目插入a元素
       downloadElement.click(); //点击下载
       document.body.removeChild(downloadElement); //下载完成移除元素

@@ -156,6 +156,13 @@
           size="large"
           style="margin:0.5rem 0 0.5rem"
         />
+        <el-button
+            type="primary"
+            size="large"
+            style="margin-left:2.5vw;margin-bottom:0.08rem"
+            @click="record_exportExcel"
+            >打印报表</el-button
+          >
         <!-- <el-button @click="excuteQuery" size="large" type="primary" style="padding:20px">查询</el-button> -->
 
         <el-table :data="data" :size="large" width="100%">
@@ -868,6 +875,64 @@ const getJunkForm = (start, end, site_name) => {
 var junk_export_start = moment().add(-4, "d").format("YYYY-MM-DD");
 var junk_export_end = today_time;
 
+const getRecordForm = (start, end, site_name) => {
+  axios({
+    url:
+      "/api/dump-record/record_site_trans/" + start + "/" + end + "/" + site_name,
+
+    method: "get",
+    // 下载后台文件：请求头部一定要加上responseType:'blob'
+    responseType: "blob",
+  }).then(function (res) {
+    if (res.status == 200) {
+      console.log("成功了！");
+      // 生成blob对象 定义下载格式
+      let blob = new Blob([res.data], { type: res.type });
+      // 获取文件名
+      let filename = res.headers["content-disposition"];
+      filename = decodeURIComponent(filename.split("filename=")[1]);
+      // 创建 a标签 执行下载
+      let downloadElement = document.createElement("a");
+      let href = window.URL.createObjectURL(blob); //创建下载的链接
+      downloadElement.href = href;
+      downloadElement.download = filename; //下载后文件名
+      document.body.appendChild(downloadElement); // 项目插入a元素
+      downloadElement.click(); //点击下载
+      document.body.removeChild(downloadElement); //下载完成移除元素
+      window.URL.revokeObjectURL(href); //释放blob对象
+    }
+  });
+};
+
+// 导出垃圾记录报表
+const record_exportExcel = () => {
+
+  if (
+    value.value[0] != null &&
+    value.value[1] != null
+  ) {
+      console.log(111,value.value[0]);
+    start =
+    value.value[0].getFullYear() +
+    "-" +
+    (value.value[0].getMonth() + 1) +
+    "-" +
+    value.value[0].getDate();
+  end =
+    value.value[1].getFullYear() +
+    "-" +
+    (value.value[1].getMonth() + 1) +
+    "-" +
+    value.value[1].getDate();
+      junk_export_start = start;
+      junk_export_end = end;
+  } else {
+    junk_export_start = moment().format("YYYY-MM-DD");
+    junk_export_end = moment().add(+1, "d").format("YYYY-MM-DD");
+  }
+
+  getRecordForm(junk_export_start, junk_export_end, "五里墩");
+};
 // 导出垃圾报表
 const junk_exportExcel = () => {
   if (
@@ -1262,15 +1327,15 @@ onBeforeMount(() => {
 console.log(Number((yAxis_alert.value[0] * 0.2)))
 
             if (
-              alert_status <= Number((yAxis_alert.value[0] * 0.2))
+              alert_status < Number((yAxis_alert.value[0] * 0.2))
             ) {
               alert_tag.value.type = "success";
               alert_tag.value.name = "正常";
             } else if (
-              alert_status > Number((yAxis_alert.value[0] * 0.2))
+              alert_status >= Number((yAxis_alert.value[0] * 0.2))
             ) {
               var alert_status_signed = yAxis_alert.value[0] - yAxis.value[6];
-              if (alert_status_signed > 0) {
+              if (alert_status_signed >= 0) {
                 alert_tag.value.name = "低于预测值的20%";
                 alert_tag.value.type = "danger";
               } else {

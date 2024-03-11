@@ -3,7 +3,7 @@
     <div class="ms-title">
       <el-avatar class="ms-logo" style="width: 100px; height: 100px" :src="require('@/assets/login-img.jpg')"
         :fit="fit"></el-avatar>
-      <div class="login-title">生活垃圾全生命周期管家</div>
+      <div class="login-title">生活垃圾转运处理管家</div>
     </div>
     <!--      定时触发表单显示-->
     <div class="ms-login">

@@ -2850,18 +2850,18 @@ onBeforeMount(() => {
 
                             // console.log(Number((yAxis_alert.value[0] * 0.15).toFixed(0)))
                             if (
-                              alert_status <= Number(yAxis_alert.value[0] * 0.2)
+                              alert_status < Number(yAxis_alert.value[0] * 0.2)
                             ) {
                               alert_tag.value.type = "success";
                               alert_tag.value.name = "正常";
                             } else if (
-                              alert_status > Number(yAxis_alert.value[0] * 0.2)
+                              alert_status >= Number(yAxis_alert.value[0] * 0.2)
                             ) {
                               var alert_status_signed =
                                 yAxis_alert.value[0] - yAxis_week.value[6];
                               console.log(alert_status_signed > 0);
 
-                              if (alert_status_signed > 0) {
+                              if (alert_status_signed >= 0) {
                                 alert_tag.value.name = "低于预测值的20%";
                                 alert_tag.value.type = "danger";
                               } else {

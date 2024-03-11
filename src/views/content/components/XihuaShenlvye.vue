@@ -492,14 +492,10 @@ getCarWarning();
 const getJunkForm = (start, end,site_name) => {
   axios({
     url:
-      "/OsmoticFluid/shenlvye/getShenlvyeBySiteExcel",
+      "/OsmoticFluid/shenlvye/getShenlvyeBySiteExcel/"+start+"/"+end+"/"+site_name,
 
     method: "get",
-    params: {
-      start: start,
-      end: end,
-      siteName:site_name
-    },
+
     // 下载后台文件：请求头部一定要加上responseType:'blob'
     responseType: "blob",
   }).then(function (res) {
