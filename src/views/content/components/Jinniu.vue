@@ -384,7 +384,7 @@ const getAllSiteCar = (site_name) => {
         }
       }
       for (var i = 0; i < carData.value.length; i++) {
-        if (carData.value[i].siteName == "五块石") {
+        if (carData.value[i].siteName == "蜀道园") {
           var car = {
             carNumber: carData.value[i].carNumber,
             sitename: " " + carData.value[i].siteName,
@@ -594,7 +594,7 @@ const getTransportList = (
           }
         }
         for (var car in data) {
-          if (data[car].siteName == "五块石") {
+          if (data[car].siteName == "蜀道园") {
             var currentCar = {
               day: start + " 至 " + end,
               siteName: data[car].siteName,

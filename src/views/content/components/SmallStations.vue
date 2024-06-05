@@ -384,7 +384,7 @@ const getAllSiteCar = (site_name) => {
         }
       }
       for (var i = 0; i < carData.value.length; i++) {
-        if (carData.value[i].siteName == "五块石") {
+        if (carData.value[i].siteName == "蜀道园") {
           var car = {
             carNumber: carData.value[i].carNumber,
             sitename: " " + carData.value[i].siteName,
@@ -639,7 +639,7 @@ const getTransportList = (
           }
         }
         for (var car in data) {
-          if (data[car].siteName == "五块石") {
+          if (data[car].siteName == "蜀道园") {
             var currentCar = {
               day: start + " 至 " + end,
               siteName: data[car].siteName,
@@ -1408,7 +1408,7 @@ onBeforeMount(() => {
       (yAxis_week.value[0] + total_hongxing.value).toFixed(0) * 1;
   });
   getQuery(
-    "五块石",
+    "蜀道园",
     "transporter",
     new Date(time - 6 * 24 * 60 * 60 * 1000).getFullYear() +
       "-" +
@@ -1620,7 +1620,7 @@ onBeforeMount(() => {
       (yAxis_week.value[1] + total_hongxing.value).toFixed(0) * 1;
   });
   getQuery(
-    "五块石",
+    "蜀道园",
     "transporter",
     new Date(time - 5 * 24 * 60 * 60 * 1000).getFullYear() +
       "-" +
@@ -1825,7 +1825,7 @@ onBeforeMount(() => {
       (yAxis_week.value[2] + total_hongxing.value).toFixed(0) * 1;
   });
   getQuery(
-    "五块石",
+    "蜀道园",
     "transporter",
     new Date(time - 4 * 24 * 60 * 60 * 1000).getFullYear() +
       "-" +
@@ -2029,7 +2029,7 @@ onBeforeMount(() => {
       (yAxis_week.value[3] + total_hongxing.value).toFixed(0) * 1;
   });
   getQuery(
-    "五块石",
+    "蜀道园",
     "transporter",
     new Date(time - 3 * 24 * 60 * 60 * 1000).getFullYear() +
       "-" +
@@ -2234,7 +2234,7 @@ onBeforeMount(() => {
       (yAxis_week.value[4] + total_hongxing.value).toFixed(0) * 1;
   });
   getQuery(
-    "五块石",
+    "蜀道园",
     "transporter",
     new Date(time - 2 * 24 * 60 * 60 * 1000).getFullYear() +
       "-" +
@@ -2439,7 +2439,7 @@ onBeforeMount(() => {
       (yAxis_week.value[5] + total_hongxing.value).toFixed(0) * 1;
   });
   getQuery(
-    "五块石",
+    "蜀道园",
     "transporter",
     new Date(time - 1 * 24 * 60 * 60 * 1000).getFullYear() +
       "-" +
@@ -2642,7 +2642,7 @@ onBeforeMount(() => {
     total_records.value = resp.length;
     page_count = parseInt(resp.length) % 10;
   });
-  getQuery("五块石", "transporter", today, tomorrow, 1, 10000).then(function (
+  getQuery("蜀道园", "transporter", today, tomorrow, 1, 10000).then(function (
     resp
   ) {
     for (let i = 0; i < resp.length; i++) {
@@ -2772,7 +2772,7 @@ onBeforeMount(() => {
         for (let i = 0; i < resp.length; i++) {
           month_total.value = resp[i].netWeight + month_total.value;
         }
-        getQuery("五块石", "transporter", cal_day, cal_time, 1, 10000).then(
+        getQuery("蜀道园", "transporter", cal_day, cal_time, 1, 10000).then(
           function (resp) {
             for (let i = 0; i < resp.length; i++) {
               month_total.value = resp[i].netWeight + month_total.value;
@@ -2974,7 +2974,7 @@ onBeforeMount(() => {
     yAxis_line.value[5] = Number(total.value.toFixed(0));
   });
   getQuery(
-    "五块石",
+    "蜀道园",
     "transporter",
     new Date(time - 6 * 24 * 60 * 60 * 1000).getFullYear() +
       "-" +

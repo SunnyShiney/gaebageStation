@@ -206,7 +206,7 @@ const getAllSiteCar = (site_name) => {
         }
       }
       for (var i = 0; i < carData.value.length; i++) {
-        if (carData.value[i].siteName == "五块石") {
+        if (carData.value[i].siteName == "蜀道园") {
           var car = {
             carNumber: carData.value[i].carNumber,
             sitename: " "+carData.value[i].siteName,

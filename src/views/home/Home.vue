@@ -316,7 +316,7 @@
               
               <Wulidun style="width: 100%" />
             </el-dialog>
-            <el-dialog v-model="wukuaishiVisible" title="五块石垃圾站今日数据">
+            <el-dialog v-model="wukuaishiVisible" title="蜀道园垃圾站今日数据">
               <Wukuaishi style="width: 100%" />
             </el-dialog>
             <el-dialog v-model="xibeiqiaoVisible" title="西北桥垃圾站今日数据">
@@ -3213,7 +3213,7 @@ let smallOption = {
   xAxis: [
     {
       type: "category",
-      data: ["红花堰", "五块石", "五里墩", "泉水", "营门口", "金泉", "西北桥","黄忠"],
+      data: ["红花堰", "蜀道园", "五里墩", "泉水", "营门口", "金泉", "西北桥","黄忠"],
       axisTick: {
         alignWithLabel: true,
       },
@@ -3265,7 +3265,7 @@ let smallOption = {
       //  barMaxHeight:200,
       data: [
         { value: 0, name: "红花堰" },
-        { value: 0, name: "五块石" },
+        { value: 0, name: "蜀道园" },
         { value: 0, name: "五里墩" },
         { value: 0, name: "泉水" },
         { value: 0, name: "营门口" },
@@ -3348,7 +3348,7 @@ const create_small_data = () => {
     small_chart.setOption(smallOption);
   });
   getQuery(
-    "五块石",
+    "蜀道园",
     "transporter",
     new Date(time).getFullYear() +
       "-" +
@@ -3712,7 +3712,7 @@ let towOption = {
       stack: "Total",
       data: [
         { value: 0, name: "红花堰" },
-        { value: 0, name: "五块石" },
+        { value: 0, name: "蜀道园" },
         { value: 0, name: "五里墩" },
         { value: 0, name: "其他小站" },
         { value: 0, name: "其他小站" },
@@ -3727,7 +3727,7 @@ let towOption = {
     //   stack: 'Total',
     //   data: [
     //             { value: 0, name: "红花堰" },
-    //     { value: 0, name: "五块石" },
+    //     { value: 0, name: "蜀道园" },
     //     { value: 0, name: "五里墩" },
     //     { value: 0, name: "其他小站" },
     //     { value: 0, name: "其他小站" },
